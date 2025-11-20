@@ -43,10 +43,10 @@
 service ModelInference {
   // Synchronous inference (when caller needs immediate result)
   rpc GenerateEmbedding(EmbeddingRequest) returns (EmbeddingResponse);
-  
+
   // Batch inference for efficiency
   rpc GenerateBatch(BatchRequest) returns (stream EmbeddingResponse);
-  
+
   // Stream for real-time progress updates
   rpc GenerateEmbeddingStream(EmbeddingRequest) returns (stream InferenceStatus);
 }
@@ -276,7 +276,7 @@ models:
       enabled: true
       samples: 10
     default: true  # Load on startup
-    
+
   - name: "dinov2-vitl"
     type: "embedding"
     provider: "DINOv2Provider"
@@ -290,7 +290,7 @@ models:
     warmup:
       enabled: true
       samples: 5
-    
+
   - name: "sam-vit-h"
     type: "segmentation"
     provider: "SAMProvider"
@@ -310,7 +310,7 @@ models:
 ```python
 class ModelManager:
     """Manages model lifecycle with LRU eviction"""
-    
+
     def __init__(self, max_memory_mb: int = 8192):
         self._loaded_models: Dict[str, IModelProvider] = {}
         self._lru_cache: OrderedDict = OrderedDict()
@@ -318,7 +318,7 @@ class ModelManager:
         self._current_memory = 0
         self._registry: ModelRegistry = None
         self._lock = asyncio.Lock()
-    
+
     async def get_model(self, model_name: str) -> IModelProvider:
         """Load model if needed, evict LRU if memory constrained"""
         async with self._lock:
@@ -326,24 +326,24 @@ class ModelManager:
                 # Move to end (most recently used)
                 self._lru_cache.move_to_end(model_name)
                 return self._loaded_models[model_name]
-            
+
             # Check if we have memory
             model_config = self._registry.get_model(model_name)
             await self._ensure_memory(model_config.resources.memory_mb)
-            
+
             # Load model
             provider = await self._load_provider(model_config)
             self._loaded_models[model_name] = provider
             self._lru_cache[model_name] = model_config.resources.memory_mb
             self._current_memory += model_config.resources.memory_mb
-            
+
             logger.info(
                 f"Loaded model: {model_name} "
                 f"(Memory: {self._current_memory}/{self._max_memory} MB)"
             )
-            
+
             return provider
-    
+
     async def _ensure_memory(self, required_mb: int):
         """Evict LRU models until we have enough memory"""
         while self._current_memory + required_mb > self._max_memory:
@@ -352,19 +352,19 @@ class ModelManager:
                     f"Cannot allocate {required_mb}MB. "
                     f"Max: {self._max_memory}MB, Current: {self._current_memory}MB"
                 )
-            
+
             # Evict least recently used
             lru_name, lru_memory = self._lru_cache.popitem(last=False)
             await self._unload_model(lru_name)
             logger.info(f"Evicted model: {lru_name} (freed {lru_memory}MB)")
-    
+
     async def _load_provider(self, model_config: ModelConfig) -> IModelProvider:
         """Factory method to instantiate provider"""
         provider_class = self._get_provider_class(model_config.provider)
         provider = provider_class(model_config)
         await provider.initialize()
         return provider
-    
+
     async def _unload_model(self, model_name: str):
         """Unload model and free resources"""
         if model_name in self._loaded_models:
@@ -381,26 +381,26 @@ class ModelManager:
 async def warm_up_models(self):
     """Pre-load default models and run test inference"""
     default_models = self._registry.get_default_models()
-    
+
     for model_config in default_models:
         if not model_config.warmup.enabled:
             continue
-        
+
         try:
             model = await self.get_model(model_config.name)
-            
+
             # Run test inference to load weights fully
             start_time = time.time()
             for i in range(model_config.warmup.samples):
                 await model.generate_test_embedding()
                 logger.debug(f"Warmup {i+1}/{model_config.warmup.samples}")
-            
+
             warmup_time = int((time.time() - start_time) * 1000)
             logger.info(
                 f"Warmed up model: {model_config.name} "
                 f"({warmup_time}ms for {model_config.warmup.samples} samples)"
             )
-            
+
             # Publish event
             await self._event_publisher.publish(
                 ModelLoadedEvent(
@@ -435,11 +435,11 @@ class UploadImageHandler:
         self._minio_service = minio_service
         self._qdrant_service = qdrant_service
         self._database_manager_factory = database_manager_factory
-    
+
     async def handle(self, command: UploadImageCommand) -> HandlerResponse:
         # Save image to MinIO
         image_url = await self._minio_service.upload(command.file)
-        
+
         # Register metadata in database
         with self._database_manager_factory.create() as db_manager:
             repository = db_manager.get_repository(IImageMetadataRepository)
@@ -449,7 +449,7 @@ class UploadImageHandler:
                 image_url=image_url
             )
             repository.save(metadata)
-        
+
         # Try synchronous embedding generation (if user needs immediate search)
         try:
             embedding = await self._modemora_client.generate_embedding(
@@ -457,20 +457,20 @@ class UploadImageHandler:
                 model_name="clip-vit-g-14",
                 timeout=5.0  # 5 second timeout
             )
-            
+
             # Store embedding immediately
             vector_id = await self._qdrant_service.store(
                 collection="image_embeddings",
                 vector=embedding.vector,
                 payload={"image_metadata_id": metadata.id}
             )
-            
+
             # Update metadata with vector ID
             metadata.assign_vector_id(vector_id)
             repository.save(metadata)
-            
+
             logger.info(f"Generated embedding synchronously: {metadata.id}")
-            
+
         except (TimeoutError, grpc.RpcError) as e:
             # Fallback to async processing if ModelMora is slow/unavailable
             logger.warning(f"Sync embedding failed, falling back to async: {e}")
@@ -482,7 +482,7 @@ class UploadImageHandler:
                     content_type=command.file.content_type
                 )
             )
-        
+
         return {"image_metadata_id": str(metadata.id)}
 ```
 
@@ -492,7 +492,7 @@ class UploadImageHandler:
 # worker/src/MiravejaWorker/Subscribers/GenerateImageVector.py
 class GenerateImageVector(IEventSubscriber[ImageMetadataRegisteredEvent]):
     """Handles async embedding generation triggered by Kafka events"""
-    
+
     def __init__(
         self,
         modemora_client: ModelMoraGrpcClient,
@@ -506,18 +506,18 @@ class GenerateImageVector(IEventSubscriber[ImageMetadataRegisteredEvent]):
         self._qdrant_service = qdrant_service
         self._kafka_producer = kafka_producer
         self._database_manager_factory = database_manager_factory
-    
+
     async def handle(self, event: ImageMetadataRegisteredEvent):
         try:
             # Download image from MinIO
             image_data = await self._minio_service.download(event.image_url)
-            
+
             # Request embedding via gRPC (no timeout - background task)
             embedding = await self._modemora_client.generate_embedding(
                 image_data=image_data,
                 model_name="clip-vit-g-14"
             )
-            
+
             # Store in Qdrant
             vector_id = await self._qdrant_service.store(
                 collection="image_embeddings",
@@ -529,14 +529,14 @@ class GenerateImageVector(IEventSubscriber[ImageMetadataRegisteredEvent]):
                     "dimension": embedding.dimension
                 }
             )
-            
+
             # Update database with vector ID
             with self._database_manager_factory.create() as db_manager:
                 repository = db_manager.get_repository(IImageMetadataRepository)
                 metadata = repository.find_by_id(event.image_metadata_id)
                 metadata.assign_vector_id(vector_id)
                 repository.save(metadata)
-            
+
             # Publish completion event
             await self._kafka_producer.publish(
                 EmbeddingGeneratedEvent(
@@ -547,12 +547,12 @@ class GenerateImageVector(IEventSubscriber[ImageMetadataRegisteredEvent]):
                     generation_time_ms=embedding.inference_time_ms
                 )
             )
-            
+
             logger.info(
                 f"Generated embedding for {event.image_metadata_id} "
                 f"in {embedding.inference_time_ms}ms"
             )
-            
+
         except Exception as e:
             logger.error(f"Failed to generate embedding: {e}")
             # Could publish failure event here for monitoring
@@ -757,21 +757,21 @@ from typing import List
 
 class ModemoraConfig(BaseSettings):
     """ModelMora service configuration"""
-    
+
     # Service Identity
     service_name: str = "ModelMora"
     service_version: str = "0.1.0"
-    
+
     # Server Ports
     rest_port: int = Field(default=8080, env="MODEMORA_REST_PORT")
     grpc_port: int = Field(default=50051, env="MODEMORA_GRPC_PORT")
-    
+
     # Performance
     max_concurrent_requests: int = Field(default=100, env="MODEMORA_MAX_CONCURRENT_REQUESTS")
     request_timeout_sec: int = Field(default=30, env="MODEMORA_REQUEST_TIMEOUT_SEC")
     batch_size: int = Field(default=32, env="MODEMORA_BATCH_SIZE")
     num_workers: int = Field(default=4, env="MODEMORA_NUM_WORKERS")
-    
+
     # Model Management
     model_registry_path: str = Field(
         default="/app/Configuration/ModelRegistry.yaml",
@@ -780,11 +780,11 @@ class ModemoraConfig(BaseSettings):
     model_cache_dir: str = Field(default="/models", env="MODEMORA_MODEL_CACHE_DIR")
     max_model_memory_mb: int = Field(default=8192, env="MODEMORA_MAX_MODEL_MEMORY_MB")
     auto_warmup: bool = Field(default=True, env="MODEMORA_AUTO_WARMUP")
-    
+
     # GPU Configuration
     gpu_enabled: bool = Field(default=False, env="MODEMORA_GPU_ENABLED")
     gpu_device_id: int = Field(default=0, env="MODEMORA_GPU_DEVICE_ID")
-    
+
     # Kafka Integration
     kafka_config: "KafkaConfig"  # Imported from miraveja-core
     subscribe_to_events: List[str] = Field(
@@ -794,12 +794,12 @@ class ModemoraConfig(BaseSettings):
         ],
         env="MODEMORA_SUBSCRIBE_TO_EVENTS"
     )
-    
+
     # Monitoring
     prometheus_port: int = Field(default=9090, env="MODEMORA_PROMETHEUS_PORT")
     log_level: str = Field(default="INFO", env="MODEMORA_LOG_LEVEL")
     enable_tracing: bool = Field(default=False, env="MODEMORA_ENABLE_TRACING")
-    
+
     class Config:
         env_prefix = "MODEMORA_"
         env_file = ".env"
@@ -810,15 +810,15 @@ class ModemoraConfig(BaseSettings):
 
 ## 8. Key Advantages
 
-✅ **Performance**: gRPC reduces latency by 40-60% vs REST for inference  
-✅ **Scalability**: Horizontal scaling with load balancing (gRPC + Kafka)  
-✅ **Resilience**: LRU cache prevents OOM, Kafka ensures no dropped requests  
-✅ **Flexibility**: Supports both sync (gRPC) and async (Kafka) patterns  
-✅ **Maintainability**: Follows existing MiraVeja patterns (DI, repositories, events)  
-✅ **Observability**: Prometheus metrics, structured logging, health checks  
-✅ **Resource Efficiency**: Dynamic model loading, memory management  
-✅ **Extensibility**: Easy to add new models via provider pattern  
-✅ **Decoupling**: Services don't directly depend on model implementations  
+✅ **Performance**: gRPC reduces latency by 40-60% vs REST for inference
+✅ **Scalability**: Horizontal scaling with load balancing (gRPC + Kafka)
+✅ **Resilience**: LRU cache prevents OOM, Kafka ensures no dropped requests
+✅ **Flexibility**: Supports both sync (gRPC) and async (Kafka) patterns
+✅ **Maintainability**: Follows existing MiraVeja patterns (DI, repositories, events)
+✅ **Observability**: Prometheus metrics, structured logging, health checks
+✅ **Resource Efficiency**: Dynamic model loading, memory management
+✅ **Extensibility**: Easy to add new models via provider pattern
+✅ **Decoupling**: Services don't directly depend on model implementations
 
 ---
 
@@ -1058,7 +1058,7 @@ The phased migration path ensures minimal disruption to existing services while 
 
 ---
 
-**Document Version**: 1.0  
-**Last Updated**: November 19, 2025  
-**Author**: GitHub Copilot (Claude Sonnet 4.5)  
+**Document Version**: 1.0
+**Last Updated**: November 19, 2025
+**Author**: GitHub Copilot (Claude Sonnet 4.5)
 **Status**: Planning / Not Implemented

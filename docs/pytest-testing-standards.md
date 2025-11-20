@@ -73,7 +73,7 @@ class TestClassName:
     def test_initialize_with_valid_data_should_set_correct_values(self):
         """Test that ClassName initializes with valid data."""
         # Arrange
-        # Act  
+        # Act
         # Assert
 
     def test_initialize_with_invalid_data_should_raise_validation_error(self):
@@ -81,7 +81,7 @@ class TestClassName:
         with pytest.raises(ValidationError) as exc_info:
             # Act that should raise error
             pass
-        
+
         # Verify error details
         assert "expected error message" in str(exc_info.value)
 
@@ -204,7 +204,7 @@ def test_initialize_with_invalid_data_should_raise_validation_error(self):
     """Test that initialization raises validation error with invalid data."""
     with pytest.raises(ValidationError) as exc_info:
         ModelConfig(max_memory_mb=-1)
-    
+
     assert "expected error substring" in str(exc_info.value)
 ```
 
@@ -215,7 +215,7 @@ def test_load_model_with_insufficient_memory_should_raise_out_of_memory_error(se
     """Test that model loading raises custom exception when memory insufficient."""
     with pytest.raises(OutOfMemoryError) as exc_info:
         await model_manager.load_model("large-model")
-    
+
     assert exc_info.value.message == "Insufficient memory to load model"
 
 @pytest.mark.asyncio
@@ -223,7 +223,7 @@ async def test_generate_embedding_with_timeout_should_raise_grpc_deadline_exceed
     """Test that embedding generation raises gRPC deadline error on timeout."""
     with pytest.raises(grpc.RpcError) as exc_info:
         await client.generate_embedding(image_data, timeout=0.001)
-    
+
     assert exc_info.value.code() == grpc.StatusCode.DEADLINE_EXCEEDED
 ```
 
@@ -275,9 +275,9 @@ async def test_generate_embedding_with_mocked_inference_should_return_vector(sel
     expected_embedding = torch.randn(768)
     mock_model = AsyncMock()
     mock_model.encode_image.return_value = expected_embedding
-    
+
     result = await provider.generate_embedding(image_data)
-    
+
     assert result.shape == (768,)
     assert torch.allclose(result, expected_embedding)
 ```
@@ -293,7 +293,7 @@ class TestData:
     VALID_IMAGE_SIZE = (224, 224)
     VALID_EMBEDDING_DIM = 768
     VALID_BATCH_SIZE = 32
-    
+
     @staticmethod
     def create_valid_model_config():
         return {
@@ -310,7 +310,7 @@ class TestData:
                 "cpu_threads": 4
             }
         }
-    
+
     @staticmethod
     def create_test_image_tensor():
         """Create a test image tensor for inference testing."""
@@ -353,7 +353,7 @@ Use comments sparingly, only for complex test logic:
 
 ```python
 # Arrange - complex setup
-# Act - the action being tested  
+# Act - the action being tested
 # Assert - verification with explanation if complex
 ```
 
@@ -373,7 +373,7 @@ assert len(result.collection) == expected_count
 ```python
 with pytest.raises(ExceptionType) as exc_info:
     # Action that should raise exception
-    
+
 assert "expected message" in str(exc_info.value)
 assert exc_info.value.code == expected_code
 ```
