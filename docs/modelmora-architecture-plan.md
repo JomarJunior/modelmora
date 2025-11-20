@@ -10,14 +10,13 @@
 
 ### Runtime & Framework
 
-- **Python 3.11** (consistent with existing services)
+- **Python 3.10** (stable and widely supported)
 - **FastAPI** for REST/HTTP endpoints (health checks, model management)
 - **gRPC** for high-throughput inference requests
 - **Uvicorn** as ASGI server
 
 ### Dependencies
 
-- **miraveja-core** (shared domain models, infrastructure patterns)
 - **PyTorch 2.5.0+** (CPU/GPU configurable)
 - **OpenCLIP, Transformers, etc.** (model-specific libraries)
 - **grpcio + grpcio-tools** for gRPC communication
@@ -39,7 +38,7 @@
 **Protocol Buffer Definition:**
 
 ```protobuf
-// modemora.proto
+// modelmora.proto
 service ModelInference {
   // Synchronous inference (when caller needs immediate result)
   rpc GenerateEmbedding(EmbeddingRequest) returns (EmbeddingResponse);
@@ -171,11 +170,21 @@ async def metrics() -> dict:
 ### Directory Structure
 
 ```bash
-modemora/
-├── Dockerfile
-├── pyproject.toml
+ModelMora/
+├── .github/
+│   └── workflows/
+│       └── ci.yml                     # CI/CD pipeline
+├── .pre-commit-config.yaml            # Pre-commit hooks configuration
+├── .gitignore
+├── Dockerfile                         # Container configuration
+├── pyproject.toml                     # Poetry dependencies and tool configs
 ├── poetry.lock
 ├── README.md
+├── docs/
+│   ├── modelmora-architecture-plan.md # This document
+│   ├── modelmora-backlog.md          # Implementation backlog
+│   └── pytest-testing-standards.md   # Testing conventions
+│
 ├── src/
 │   └── ModelMora/
 │       ├── __init__.py
@@ -184,7 +193,7 @@ modemora/
 │       │
 │       ├── Configuration/             # Pydantic settings
 │       │   ├── __init__.py
-│       │   ├── ModeModaConfig.py
+│       │   ├── ModelMoraConfig.py
 │       │   └── ModelRegistry.yaml     # Model definitions
 │       │
 │       ├── Domain/                    # Business logic
@@ -214,7 +223,7 @@ modemora/
 │       │   ├── GRPC/
 │       │   │   ├── __init__.py
 │       │   │   ├── protos/
-│       │   │   │   └── modemora.proto
+│       │   │   │   └── modelmora.proto
 │       │   │   ├── Server.py
 │       │   │   └── Services.py        # gRPC service implementation
 │       │   │
@@ -236,13 +245,59 @@ modemora/
 │
 └── tests/
     ├── __init__.py
-    ├── unit/
+    ├── unit/                          # Unit tests (mirrors src structure)
     │   ├── __init__.py
-    │   ├── test_model_manager.py
-    │   └── test_providers.py
-    └── integration/
+    │   ├── Configuration/
+    │   │   └── __init__.py
+    │   ├── Domain/
+    │   │   ├── __init__.py
+    │   │   ├── Models/
+    │   │   │   └── __init__.py
+    │   │   └── Services/
+    │   │       └── __init__.py
+    │   ├── Application/
+    │   │   ├── __init__.py
+    │   │   ├── Commands/
+    │   │   │   └── __init__.py
+    │   │   └── Subscribers/
+    │   │       └── __init__.py
+    │   ├── Infrastructure/
+    │   │   ├── __init__.py
+    │   │   ├── GRPC/
+    │   │   │   └── __init__.py
+    │   │   ├── Providers/
+    │   │   │   └── __init__.py
+    │   │   └── Cache/
+    │   │       └── __init__.py
+    │   └── API/
+    │       └── __init__.py
+    │
+    └── integration/                   # Integration tests (mirrors src structure)
         ├── __init__.py
-        └── test_grpc_server.py
+        ├── Configuration/
+        │   └── __init__.py
+        ├── Domain/
+        │   ├── __init__.py
+        │   ├── Models/
+        │   │   └── __init__.py
+        │   └── Services/
+        │       └── __init__.py
+        ├── Application/
+        │   ├── __init__.py
+        │   ├── Commands/
+        │   │   └── __init__.py
+        │   └── Subscribers/
+        │       └── __init__.py
+        ├── Infrastructure/
+        │   ├── __init__.py
+        │   ├── GRPC/
+        │   │   └── __init__.py
+        │   ├── Providers/
+        │   │   └── __init__.py
+        │   └── Cache/
+        │       └── __init__.py
+        └── API/
+            └── __init__.py
 ```
 
 ### Key Design Decisions
@@ -424,13 +479,13 @@ async def warm_up_models(self):
 class UploadImageHandler:
     def __init__(
         self,
-        modemora_client: ModelMoraGrpcClient,  # gRPC stub
+        modelmora_client: ModelMoraGrpcClient,  # gRPC stub
         kafka_producer: IKafkaProducer,        # Fallback to async
         minio_service: IMinioService,
         qdrant_service: IQdrantService,
         database_manager_factory: IDatabaseManagerFactory,
     ):
-        self._modemora_client = modemora_client
+        self._modelmora_client = modelmora_client
         self._kafka_producer = kafka_producer
         self._minio_service = minio_service
         self._qdrant_service = qdrant_service
@@ -452,7 +507,7 @@ class UploadImageHandler:
 
         # Try synchronous embedding generation (if user needs immediate search)
         try:
-            embedding = await self._modemora_client.generate_embedding(
+            embedding = await self._modelmora_client.generate_embedding(
                 image_data=command.file.read(),
                 model_name="clip-vit-g-14",
                 timeout=5.0  # 5 second timeout
@@ -495,13 +550,13 @@ class GenerateImageVector(IEventSubscriber[ImageMetadataRegisteredEvent]):
 
     def __init__(
         self,
-        modemora_client: ModelMoraGrpcClient,
+        modelmora_client: ModelMoraGrpcClient,
         minio_service: IMinioService,
         qdrant_service: IQdrantService,
         kafka_producer: IKafkaProducer,
         database_manager_factory: IDatabaseManagerFactory,
     ):
-        self._modemora_client = modemora_client
+        self._modelmora_client = modelmora_client
         self._minio_service = minio_service
         self._qdrant_service = qdrant_service
         self._kafka_producer = kafka_producer
@@ -513,7 +568,7 @@ class GenerateImageVector(IEventSubscriber[ImageMetadataRegisteredEvent]):
             image_data = await self._minio_service.download(event.image_url)
 
             # Request embedding via gRPC (no timeout - background task)
-            embedding = await self._modemora_client.generate_embedding(
+            embedding = await self._modelmora_client.generate_embedding(
                 image_data=image_data,
                 model_name="clip-vit-g-14"
             )
@@ -565,8 +620,8 @@ class GenerateImageVector(IEventSubscriber[ImageMetadataRegisteredEvent]):
 ### Dockerfile
 
 ```dockerfile
-# modemora/Dockerfile
-FROM python:3.11-slim
+# Dockerfile
+FROM python:3.10-slim
 
 # Set working directory
 WORKDIR /app
@@ -583,20 +638,16 @@ RUN apt-get update && apt-get install -y \
 RUN pip install --no-cache-dir poetry==2.0.1
 RUN poetry config virtualenvs.create false
 
-# Copy and install core package first
-COPY ./core /core
-RUN cd /core && poetry install --only main
-
 # Copy Poetry configuration files
-COPY ./modemora/pyproject.toml ./modemora/poetry.lock ./modemora/README.md ./
+COPY ./pyproject.toml ./poetry.lock ./README.md ./
 
 # Install dependencies
 RUN poetry install --only main --no-root
 
 # Copy application source
-COPY ./modemora/src ./src
+COPY ./src ./src
 
-# Install the modemora package itself
+# Install the ModelMora package itself
 RUN poetry install --only-root
 
 # Expose ports
@@ -614,32 +665,30 @@ CMD ["poetry", "run", "python", "-m", "ModelMora.main"]
 ### Docker Compose Integration
 
 ```yaml
-# docker-compose.yml (additions)
+# docker-compose.yml
 services:
-  modemora:
+  modelmora:
     build:
       context: .
-      dockerfile: ./modemora/Dockerfile
-    container_name: miraveja-modemora
+      dockerfile: ./Dockerfile
+    container_name: modelmora
     env_file:
       - .env
     environment:
-      - MODEMORA_REST_PORT=8080
-      - MODEMORA_GRPC_PORT=50051
-      - MODEMORA_MAX_MODEL_MEMORY_MB=8192
-      - MODEMORA_AUTO_WARMUP=true
-      - MODEMORA_GPU_ENABLED=false
+      - MODELMORA_REST_PORT=8080
+      - MODELMORA_GRPC_PORT=50051
+      - MODELMORA_MAX_MODEL_MEMORY_MB=8192
+      - MODELMORA_AUTO_WARMUP=true
+      - MODELMORA_GPU_ENABLED=false
     ports:
-      - "${MODEMORA_REST_PORT:-8080}:8080"
-      - "${MODEMORA_GRPC_PORT:-50051}:50051"
+      - "${MODELMORA_REST_PORT:-8080}:8080"
+      - "${MODELMORA_GRPC_PORT:-50051}:50051"
     volumes:
-      - ./models:/models              # Model cache (shared with worker if needed)
-      - ./modemora/src:/app/src       # Hot reload (dev only)
-      - ./modemora/Configuration:/app/Configuration  # Model registry
-      - ./core:/core                  # Shared library
-      - ./schemas:/schemas            # Event schemas
+      - ./models:/models              # Model cache
+      - ./src:/app/src                # Hot reload (dev only)
+      - ./src/ModelMora/Configuration:/app/Configuration  # Model registry
     networks:
-      - miraveja
+      - modelmora
     depends_on:
       - kafka
       - minio
@@ -652,14 +701,9 @@ services:
           memory: 4G
           cpus: '2'
     restart: unless-stopped
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.modemora.rule=Host(`${APPLICATION_HOST}`) && PathPrefix(`/modemora`)"
-      - "traefik.http.routers.modemora.entrypoints=web,websecure"
-      - "traefik.http.services.modemora.loadbalancer.server.port=8080"
 
 networks:
-  miraveja:
+  modelmora:
     driver: bridge
 
 volumes:
@@ -685,9 +729,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.11"
-# Local core package dependency
-miraveja-core = {path = "../core", develop = true}
+python = "<3.15,>=3.10"
 # Web frameworks
 fastapi = ">=0.117.1"
 uvicorn = {extras = ["standard"], version = ">=0.37.0"}
@@ -724,7 +766,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.black]
 line-length = 120
-target-version = ["py311"]
+target-version = ["py310"]
 
 [tool.pylint.master]
 module-naming-style = "snake_case"
@@ -739,7 +781,7 @@ variable-naming-style = "snake_case"
 [tool.isort]
 profile = "black"
 line_length = 120
-known_first_party = ["ModelMora", "MiravejaCore"]
+known_first_party = ["ModelMora"]
 
 [tool.pytest.ini_options]
 minversion = "7.0"
@@ -750,12 +792,12 @@ testpaths = ["tests"]
 ### Application Configuration
 
 ```python
-# ModelMora/Configuration/modemora_config.py
+# ModelMora/Configuration/ModelMoraConfig.py
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings
 from typing import List
 
-class ModemoraConfig(BaseSettings):
+class ModelMoraConfig(BaseSettings):
     """ModelMora service configuration"""
 
     # Service Identity
@@ -763,45 +805,46 @@ class ModemoraConfig(BaseSettings):
     service_version: str = "0.1.0"
 
     # Server Ports
-    rest_port: int = Field(default=8080, env="MODEMORA_REST_PORT")
-    grpc_port: int = Field(default=50051, env="MODEMORA_GRPC_PORT")
+    rest_port: int = Field(default=8080, env="MODELMORA_REST_PORT")
+    grpc_port: int = Field(default=50051, env="MODELMORA_GRPC_PORT")
 
     # Performance
-    max_concurrent_requests: int = Field(default=100, env="MODEMORA_MAX_CONCURRENT_REQUESTS")
-    request_timeout_sec: int = Field(default=30, env="MODEMORA_REQUEST_TIMEOUT_SEC")
-    batch_size: int = Field(default=32, env="MODEMORA_BATCH_SIZE")
-    num_workers: int = Field(default=4, env="MODEMORA_NUM_WORKERS")
+    max_concurrent_requests: int = Field(default=100, env="MODELMORA_MAX_CONCURRENT_REQUESTS")
+    request_timeout_sec: int = Field(default=30, env="MODELMORA_REQUEST_TIMEOUT_SEC")
+    batch_size: int = Field(default=32, env="MODELMORA_BATCH_SIZE")
+    num_workers: int = Field(default=4, env="MODELMORA_NUM_WORKERS")
 
     # Model Management
     model_registry_path: str = Field(
         default="/app/Configuration/ModelRegistry.yaml",
-        env="MODEMORA_MODEL_REGISTRY_PATH"
+        env="MODELMORA_MODEL_REGISTRY_PATH"
     )
-    model_cache_dir: str = Field(default="/models", env="MODEMORA_MODEL_CACHE_DIR")
-    max_model_memory_mb: int = Field(default=8192, env="MODEMORA_MAX_MODEL_MEMORY_MB")
-    auto_warmup: bool = Field(default=True, env="MODEMORA_AUTO_WARMUP")
+    model_cache_dir: str = Field(default="/models", env="MODELMORA_MODEL_CACHE_DIR")
+    max_model_memory_mb: int = Field(default=8192, env="MODELMORA_MAX_MODEL_MEMORY_MB")
+    auto_warmup: bool = Field(default=True, env="MODELMORA_AUTO_WARMUP")
 
     # GPU Configuration
-    gpu_enabled: bool = Field(default=False, env="MODEMORA_GPU_ENABLED")
-    gpu_device_id: int = Field(default=0, env="MODEMORA_GPU_DEVICE_ID")
+    gpu_enabled: bool = Field(default=False, env="MODELMORA_GPU_ENABLED")
+    gpu_device_id: int = Field(default=0, env="MODELMORA_GPU_DEVICE_ID")
 
-    # Kafka Integration
-    kafka_config: "KafkaConfig"  # Imported from miraveja-core
+    # Kafka Integration (to be implemented)
+    kafka_bootstrap_servers: str = Field(default="localhost:9092", env="KAFKA_BOOTSTRAP_SERVERS")
+    kafka_consumer_group: str = Field(default="modelmora-consumer", env="KAFKA_CONSUMER_GROUP")
     subscribe_to_events: List[str] = Field(
         default=[
             "image.metadata.registered.v1",
             "model.retrain.requested.v1"
         ],
-        env="MODEMORA_SUBSCRIBE_TO_EVENTS"
+        env="MODELMORA_SUBSCRIBE_TO_EVENTS"
     )
 
     # Monitoring
-    prometheus_port: int = Field(default=9090, env="MODEMORA_PROMETHEUS_PORT")
-    log_level: str = Field(default="INFO", env="MODEMORA_LOG_LEVEL")
-    enable_tracing: bool = Field(default=False, env="MODEMORA_ENABLE_TRACING")
+    prometheus_port: int = Field(default=9090, env="MODELMORA_PROMETHEUS_PORT")
+    log_level: str = Field(default="INFO", env="MODELMORA_LOG_LEVEL")
+    enable_tracing: bool = Field(default=False, env="MODELMORA_ENABLE_TRACING")
 
     class Config:
-        env_prefix = "MODEMORA_"
+        env_prefix = "MODELMORA_"
         env_file = ".env"
         case_sensitive = False
 ```
@@ -884,13 +927,13 @@ from prometheus_client import Counter, Histogram, Gauge, Info
 
 # Request metrics
 inference_requests_total = Counter(
-    'modemora_inference_requests_total',
+    'modelmora_inference_requests_total',
     'Total inference requests',
     ['model_name', 'status']
 )
 
 inference_duration_seconds = Histogram(
-    'modemora_inference_duration_seconds',
+    'modelmora_inference_duration_seconds',
     'Inference request duration',
     ['model_name'],
     buckets=[0.1, 0.5, 1.0, 2.0, 5.0, 10.0]
@@ -898,35 +941,35 @@ inference_duration_seconds = Histogram(
 
 # Model metrics
 models_loaded = Gauge(
-    'modemora_models_loaded',
+    'modelmora_models_loaded',
     'Number of models currently loaded'
 )
 
 model_memory_usage_bytes = Gauge(
-    'modemora_model_memory_usage_bytes',
+    'modelmora_model_memory_usage_bytes',
     'Memory used by loaded models',
     ['model_name']
 )
 
 model_evictions_total = Counter(
-    'modemora_model_evictions_total',
+    'modelmora_model_evictions_total',
     'Total number of model evictions due to memory pressure'
 )
 
 # System metrics
 system_memory_available_bytes = Gauge(
-    'modemora_system_memory_available_bytes',
+    'modelmora_system_memory_available_bytes',
     'Available system memory'
 )
 
 # Service info
 service_info = Info(
-    'modemora_service',
+    'modelmora_service',
     'ModelMora service information'
 )
 service_info.info({
     'version': '0.1.0',
-    'python_version': '3.11',
+    'python_version': '3.10',
     'gpu_enabled': 'false'
 })
 ```
@@ -955,10 +998,6 @@ async def health(model_manager: ModelManager) -> dict:
             "cpu_percent": psutil.cpu_percent(),
             "memory_percent": psutil.virtual_memory().percent,
             "disk_percent": psutil.disk_usage('/').percent
-        },
-        "dependencies": {
-            "kafka": await check_kafka_connection(),
-            "minio": await check_minio_connection()
         }
     }
 ```
@@ -966,20 +1005,18 @@ async def health(model_manager: ModelManager) -> dict:
 ### Logging
 
 ```python
-# Use MiravejaCore logging infrastructure
-from MiravejaCore.Shared.Logger import ILogger
+# Use structlog for structured logging
+import structlog
 
-logger: ILogger = container.Get(ILogger)
+logger = structlog.get_logger()
 
 # Structured logging
 logger.info(
-    "Model inference completed",
-    extra={
-        "model_name": "clip-vit-g-14",
-        "inference_time_ms": 245,
-        "request_id": request_id,
-        "image_size_bytes": len(image_data)
-    }
+    "model_inference_completed",
+    model_name="clip-vit-g-14",
+    inference_time_ms=245,
+    request_id=request_id,
+    image_size_bytes=len(image_data)
 )
 ```
 
@@ -1033,7 +1070,7 @@ logger.info(
 
 - [ ] How to handle model updates without downtime?
 - [ ] Should we support blue/green deployment for models?
-- [ ] Do we need a model registry service (separate from ModeMora)?
+- [ ] Do we need a model registry service (separate from ModelMora)?
 
 ### Advanced Features
 
