@@ -1,6 +1,6 @@
 # 🧠 ModelMora
 
-[![Python Version](https://img.shields.io/badge/python-3.13-blue.svg)](https://www.python.org/downloads/)
+[![Python Version](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Coverage](https://codecov.io/gh/JomarJunior/ModelMora/branch/main/graph/badge.svg)](https://codecov.io/gh/JomarJunior/ModelMora)
@@ -10,7 +10,7 @@
 
 > A dedicated neural network model management and inference serving microservice
 
-**Etymology**: Combining "Mode(l)" (neural network models) and "Mora" (Spanish/Portuguese for "to dwell/reside")
+**Etymology**: Combining "Model" (neural network models) and "Mora" (Spanish/Portuguese for "to dwell/reside")
 
 ## 🚀 Overview
 
@@ -31,7 +31,7 @@ Part of the **MiraVeja** ecosystem, ModelMora centralizes neural network operati
 
 ### 🐍 Core Runtime
 
-- **Python 3.13** - Latest Python version with enhanced performance
+- **Python 3.10** - Stable and widely supported version
 - **FastAPI** - Modern async web framework for REST APIs
 - **gRPC** - High-performance RPC framework
 - **Uvicorn** - ASGI server with async support
@@ -78,7 +78,7 @@ src/ModelMora/
 
 ### 📋 Prerequisites
 
-- Python 3.13+
+- Python 3.10+
 - Poetry 2.0+
 - Docker & Docker Compose (optional)
 
