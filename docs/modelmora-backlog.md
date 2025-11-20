@@ -70,7 +70,7 @@
   - Validation works for invalid values
 - **Dependencies**: Story 1.1.2
 
-#### Story 1.1.4: Set Up Dependency Injection Container
+#### 🔄 Story 1.1.4: Set Up Dependency Injection Container
 
 - **Priority**: P0
 - **Story Points**: 3
