@@ -5,6 +5,7 @@
 [![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Coverage](https://codecov.io/gh/JomarJunior/ModelMora/branch/main/graph/badge.svg)](https://codecov.io/gh/JomarJunior/ModelMora)
 [![Status](https://img.shields.io/badge/status-planning-yellow.svg)](#-development-status)
+[![CI](https://github.com/JomarJunior/ModelMora/actions/workflows/ci.yml/badge.svg)](https://github.com/JomarJunior/ModelMora/actions)
 
 ![ModelMora Logo](docs/assets/model-mora-logo.png)
 
