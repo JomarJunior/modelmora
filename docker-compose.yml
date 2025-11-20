@@ -1,0 +1,17 @@
+services:
+  modelmora:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: modelmora
+    env_file:
+      - .env
+    ports:
+      - "8080:8080" # Expose port 8080 for FastAPI
+      - "50051:50051" # Expose port 50051 for gRPC
+    volumes:
+      - ./src:/app/src
+      - ./config:/app/config
+      - ${MODELS_DIR}:/models
+    restart: unless-stopped
+    command: poetry run python -m ModelMora.main
