@@ -1,32 +1,58 @@
-[tool.poetry]
+[project]
 name = "ModelMora"
 version = "0.1.0"
 description = "Neural network model management and inference serving microservice for MiraVeja"
-authors = ["Jomar Júnior de Souza Pereira <jomarjunior@poli.ufrj.br>"]
 readme = "README.md"
+requires-python = "<3.15,>=3.10"
 license = "MIT"
-packages = [
-    { include = "modelmora", from = "src" }
+license-files = ["LICENSE"]
+authors = [
+    {"name" = "Jomar Júnior de Souza Pereira", "email" = "jomarjunior@poli.ufrj.br"}
 ]
+keywords = ["model management", "deep learning", "inference serving", "microservice", "MiraVeja"]
+dynamic = ["dependencies"]
 
 [tool.poetry.dependencies]
+# Specify the Python version compatibility
 python = "<3.15,>=3.10"
-
-miraveja-di = "^0.1.0"
-miraveja-log = {extras = ["fastapi"], version = "^0.1.0"}
-miraveja-authentication = "^0.1"
-miraveja-protos = "^0.1.2"
+# MiraVeja internal packages
+miraveja-di = "^0.1.0" # Dependency Injection framework
+miraveja-log = {extras = ["fastapi"], version = "^0.1.0"} # Logging utilities
+miraveja-authentication = "^0.1" # Authentication and authorization
+miraveja-protos = "^0.1.2" # Protobuf definitions for MiraVeja services
+# Data validation and settings management using Python type annotations
 typing-extensions = "^4.15.0"
+# High-performance data structures and data analysis tools
 psutil = "^7.1.3"
-
 # PyTorch deep learning framework with CUDA support
 torch = {version = "^2.9.0", source = "torch_cuda_13"}
 # Computer vision library for PyTorch
 torchvision = {version = "^0.24.0", source = "torch_cuda_13"}
-transformers = "^4.57.3"
-sentence-transformers = "^5.1.2"
-diffusers = "^0.35.2"
+# Hugging Face libraries for NLP and diffusion models
+transformers = "^4.57.3" # Natural language processing models and tools
+sentence-transformers = "^5.1.2" # Sentence embeddings and similarity models
+diffusers = "^0.35.2" # Diffusion models for image generation
+# gRPC libraries for remote procedure calls
+grpcio = "^1.76.0" # gRPC core library
+grpcio-tools = "^1.76.0" # gRPC tools for code generation
+# Image processing library
+pillow = "^12.0.0"
+# Web framework for building APIs
+fastapi = "^0.123.9"
+# ASGI server for serving FastAPI applications
+uvicorn = {extras = ["standard"], version = "^0.38.0"}
+# Database migration tool
+alembic = "^1.17.2"
+# SQLAlchemy ORM for database interactions
+sqlalchemy = "^2.0.44"
+# PostgreSQL database adapter
+psycopg2-binary = "^2.9.11"
+# Environment variable management
+python-dotenv = "^1.2.1"
+# Data serialization and validation using Python type annotations
+pydantic = "^2.12.5"
 
+# Additional package indexes
 [[tool.poetry.source]]
 name = "torch_cuda_13"
 url = "https://download.pytorch.org/whl/cu130"
@@ -45,7 +71,6 @@ pytest-grpc = "^0.8.0"
 pytest-mock = "^3.15.1"
 # HTTP client for testing FastAPI endpoints
 httpx = "^0.28.1"
-
 # Code formatter for consistent style
 black = "^25.11.0"
 # Import statement sorter
@@ -56,17 +81,14 @@ pylint = "^4.0.3"
 mypy = "^1.18.2"
 # Git hooks manager for automated checks
 pre-commit = "^4.4.0"
-
 # Pylint plugin for pytest compatibility
 pylint-pytest = "^1.1.8"
 # Pylint plugin for Pydantic model validation
 pylint-pydantic = "^0.4.1"
+# Protocol Buffers linter
 protolint-bin = "^0.56.4"
-grpcio = "^1.76.0"
+# gRPC tools for code generation
 grpcio-tools = "^1.76.0"
-pillow = "^12.0.0"
-fastapi = "^0.123.8"
-uvicorn = "^0.38.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -130,4 +152,5 @@ markers = [
 omit = [
     "__init__.py",
     "main.py",
+    "**/examples/**",
 ]
