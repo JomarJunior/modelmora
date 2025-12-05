@@ -12,6 +12,9 @@ authors = [
 keywords = ["model management", "deep learning", "inference serving", "microservice", "MiraVeja"]
 dynamic = ["dependencies"]
 
+[tool.poetry]
+packages = [{include = "modelmora", from = "src"}]
+
 [tool.poetry.dependencies]
 # Specify the Python version compatibility
 python = "<3.15,>=3.10"
