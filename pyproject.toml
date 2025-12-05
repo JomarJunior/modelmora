@@ -12,42 +12,20 @@ packages = [
 [tool.poetry.dependencies]
 python = "<3.15,>=3.10"
 
-# Web framework for REST API endpoints
-fastapi = "^0.121.3"
-# ASGI server for running FastAPI with async support
-uvicorn = {extras = ["standard"], version = "^0.38.0"}
-
-# gRPC framework for high-performance inference requests
-grpcio = "^1.76.0"
-# Tools for generating Python code from .proto files
-grpcio-tools = "^1.76.0"
-
-# Async Kafka client for event streaming
-aiokafka = "^0.12.0"
+miraveja-di = "^0.1.0"
+miraveja-log = {extras = ["fastapi"], version = "^0.1.0"}
+miraveja-authentication = "^0.1"
+miraveja-protos = "^0.1.2"
+typing-extensions = "^4.15.0"
+psutil = "^7.1.3"
 
 # PyTorch deep learning framework with CUDA support
 torch = {version = "^2.9.0", source = "torch_cuda_13"}
 # Computer vision library for PyTorch
 torchvision = {version = "^0.24.0", source = "torch_cuda_13"}
-
-# YAML parser for model registry configuration
-pyyaml = "^6.0.3"
-
-# Metrics collection for Prometheus monitoring
-prometheus-client = "^0.23.1"
-# Structured logging for production environments
-structlog = "^25.5.0"
-# Load environment variables from .env files
-python-dotenv = "^1.2.1"
-# Dependency injection framework
-miraveja-di = "^0.1.0"
-miraveja-log = {extras = ["fastapi"], version = "^0.1.0"}
-miraveja-authentication = "^0.1"
-miraveja-protos = "^0.1.2"
 transformers = "^4.57.3"
-open-clip-torch = "^3.2.0"
-psutil = "^7.1.3"
-typing-extensions = "^4.15.0"
+sentence-transformers = "^5.1.2"
+diffusers = "^0.35.2"
 
 [[tool.poetry.source]]
 name = "torch_cuda_13"
@@ -84,6 +62,11 @@ pylint-pytest = "^1.1.8"
 # Pylint plugin for Pydantic model validation
 pylint-pydantic = "^0.4.1"
 protolint-bin = "^0.56.4"
+grpcio = "^1.76.0"
+grpcio-tools = "^1.76.0"
+pillow = "^12.0.0"
+fastapi = "^0.123.8"
+uvicorn = "^0.38.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -99,7 +82,7 @@ line_length = 120
 known_first_party = ["ModelMora"]
 
 [tool.pylint.master]
-ignore = ["tests", "venv", ".venv", "build", "dist", "main.py"]
+ignore = ["tests", "venv", ".venv", "build", "dist", "main.py", "examples/"]
 jobs = 0
 module-naming-style = "snake_case"
 const-naming-style = "UPPER_CASE"
