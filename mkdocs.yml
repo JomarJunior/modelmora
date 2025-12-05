@@ -1,0 +1,104 @@
+site_name: ModelMora Documentation
+site_description: Neural network model management and inference serving microservice for MiraVeja
+site_author: Jomar Júnior de Souza Pereira
+site_url: https://jomarjunior.github.io/modelmora
+
+repo_name: JomarJunior/modelmora
+repo_url: https://github.com/JomarJunior/modelmora
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  palette:
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
+            show_root_full_path: false
+            heading_level: 2
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - tables
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Installation: getting-started/installation.md
+      - Quick Start: getting-started/quickstart.md
+      - Configuration: getting-started/configuration.md
+  - Architecture:
+      - Overview: architecture.md
+      - Design Decisions: design-decisions.md
+      - Data Models: data_models.md
+  - API Reference:
+      - REST API: api-reference/rest.md
+      - gRPC API: api-reference/grpc.md
+  - Development:
+      - Roadmap: roadmap.md
+      - Requirements: requirements.md
+      - Contributing: contributing.md
+  - Deployment:
+      - Docker: deployment/docker.md
+      - Kubernetes: deployment/kubernetes.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/JomarJunior/modelmora
+  version:
+    provider: mike

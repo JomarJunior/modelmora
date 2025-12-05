@@ -108,32 +108,32 @@
   - Configure `src/` layout in `pyproject.toml` for proper imports
   - **Acceptance**: `from modelmora.{...} import Registry` works; structure matches conventions
 
-- [ ] **CI/CD pipeline (GitHub Actions)**
+- [X] **CI/CD pipeline (GitHub Actions)**
   - Create `.github/workflows/ci.yml` (lint + test on PR/push)
   - Create `.github/workflows/docker-build.yml` (build and push on release)
   - Add dependency caching for Poetry in workflows
-  - Optional: `deploy-docs.yml` for MkDocs to GitHub Pages
+  - Create `deploy-docs.yml` for MkDocs to GitHub Pages
   - **Acceptance**: PR checks run and report status; Docker build completes successfully
 
-- [ ] **Code quality tools (ruff, black, mypy)**
+- [X] **Code quality tools (pylint, black, mypy)**
   - Configure `black` in `pyproject.toml` (line length, target version)
-  - Configure `ruff` rules (select/ignore, extend-select) in `pyproject.toml`
+  - Configure `pylint` rules (select/ignore, extend-select) in `pyproject.toml`
   - Configure `mypy` strictness (disallow-untyped-defs, plugins) in `pyproject.toml` or `mypy.ini`
-  - Add `.pre-commit-config.yaml` with black, ruff, mypy hooks
+  - Add `.pre-commit-config.yaml` with black, pylint, mypy hooks
   - Add lint job to CI workflow
   - **Acceptance**: `pre-commit run --all-files` passes; CI enforces checks
 
-- [ ] **Testing framework (pytest)**
+- [X] **Testing framework (pytest)**
   - Add `pytest.ini` or `[tool.pytest.ini_options]` in `pyproject.toml`
   - Create `conftest.py` with common fixtures (temp dirs, mock models, DB fixtures)
   - Add sample unit tests for core modules
-  - Configure coverage measurement (`pytest-cov`) with >70% threshold
+  - Configure coverage measurement (`pytest-cov`) with >90% threshold
   - **Acceptance**: `pytest` runs locally and in CI; coverage enforced in CI
 
-- [ ] **Documentation site (MkDocs)**
+- [X] **Documentation site (MkDocs)**
   - Create `mkdocs.yml` with site metadata and navigation structure
   - Bootstrap initial docs pages: `getting-started.md`, `architecture.md`, `api-reference.md`, `deployment.md`
-  - Add GitHub Pages deployment workflow (or manual `mkdocs gh-deploy`)
+  - Add GitHub Pages deployment workflow (`.github/workflows/deploy-docs.yml`)
   - **Acceptance**: `mkdocs serve` renders site locally; docs deployed on push to main
 
 ### 1.2 Model Registry (Week 2)

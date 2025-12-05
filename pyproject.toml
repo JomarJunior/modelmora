@@ -90,6 +90,16 @@ protolint-bin = "^0.56.4"
 # gRPC tools for code generation
 grpcio-tools = "^1.76.0"
 
+[tool.poetry.group.docs.dependencies]
+# Documentation generator
+mkdocs = "^1.6.0"
+# Material theme for MkDocs
+mkdocs-material = "^9.5.0"
+# Python API documentation generator
+mkdocstrings = {extras = ["python"], version = "^0.26.0"}
+# Code highlighting
+pymdown-extensions = "^10.12.0"
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"

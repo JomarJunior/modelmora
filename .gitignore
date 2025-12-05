@@ -72,3 +72,6 @@ Thumbs.db
 # logs
 logs/
 *.log
+
+# MKDocs
+site/
