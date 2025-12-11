@@ -20,6 +20,18 @@ jobs:
         with:
           python-version: '3.10'
 
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install PyTorch
+        run: |
+          pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:

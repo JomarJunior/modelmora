@@ -57,9 +57,9 @@ markdown_extensions:
   - pymdownx.details
   - pymdownx.superfences:
       custom_fences:
-        - name: mermaid
-          class: mermaid
-          format: !!python/name:pymdownx.superfences.fence_code_format
+        - name: plantuml
+          class: uml-diagram
+          format: !!python/name:plantuml_markdown.PlantUMLMarkdownExtension.formatUML
   - pymdownx.tabbed:
       alternate_style: true
   - pymdownx.highlight:
@@ -81,6 +81,8 @@ nav:
       - Installation: getting-started/installation.md
       - Quick Start: getting-started/quickstart.md
       - Configuration: getting-started/configuration.md
+  - RFCs:
+      - RFC Writing Patterns: rfc/#1 - RFC Writting Patterns.md
   - Architecture:
       - Overview: architecture.md
       - Design Decisions: design-decisions.md
