@@ -1,6 +1,6 @@
 from typing import List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from modelmora.shared.events.domain_event import DomainEvent
 
@@ -43,7 +43,7 @@ class EventEmitter(BaseModel):
         'UserNameChanged'
     """
 
-    events: List[DomainEvent] = []
+    events: List[DomainEvent] = Field(default_factory=list)
 
     def emit_event(self, event: DomainEvent) -> None:
         self.events.append(event)

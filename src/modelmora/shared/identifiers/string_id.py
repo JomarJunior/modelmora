@@ -41,6 +41,9 @@ class StringId(str):
             return NotImplemented
         return super().__eq__(other)
 
+    def __hash__(self) -> int:
+        return super().__hash__()
+
     @classmethod
     def __get_pydantic_core_schema__(cls: type[T], source: type[BaseModel], handler: GetCoreSchemaHandler):
         return core_schema.no_info_after_validator_function(

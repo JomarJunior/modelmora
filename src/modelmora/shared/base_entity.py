@@ -36,13 +36,13 @@ class BaseEntity(BaseModel):
     version: NaturalNumber = Field(
         default=1,
         description="The version number of the entity, used for optimistic concurrency control.",
-        frozen=True,
     )
 
     def __setattr__(self, name: str, value: Any) -> None:
         if name == "id":
             raise AttributeError("The 'id' attribute is immutable and cannot be modified.")
 
-        if name != "updated_at":
+        if name != "updated_at" and name != "version":
             super().__setattr__("updated_at", datetime.now(timezone.utc))
+            super().__setattr__("version", self.version + 1)
         super().__setattr__(name, value)

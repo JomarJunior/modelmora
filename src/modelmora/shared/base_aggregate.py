@@ -5,7 +5,7 @@ from pydantic import ConfigDict, Field
 from modelmora.shared.base_entity import BaseEntity
 from modelmora.shared.events import EventEmitter
 
-T = TypeVar("T", bound="BaseEntity")
+T = TypeVar("T", bound=BaseEntity)
 
 
 class BaseAggregate(EventEmitter, Generic[T]):  # EventEmitter is a subclass of BaseModel

@@ -1,11 +1,11 @@
 from modelmora.shared.events import DomainEvent
 
 
-class ModelRegisteredEvent(DomainEvent):
+class ModelUnregisteredEvent(DomainEvent):
     @classmethod
-    def from_model(cls, model) -> "ModelRegisteredEvent":
+    def from_model(cls, model) -> "ModelUnregisteredEvent":
         return cls(
-            event_type="ModelRegistered",
+            event_type="ModelUnregistered",
             aggregate_id=str(model.id),
             aggregate_type="Model",
             payload={
