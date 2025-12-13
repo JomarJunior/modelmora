@@ -1,0 +1,2050 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Neural network model management and inference serving microservice for MiraVeja">
+      
+      
+        <meta name="author" content="Jomar Júnior de Souza Pereira">
+      
+      
+        <link rel="canonical" href="https://jomarjunior.github.io/modelmora/data_models/lifecycle/health_status/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Health Status Value Object - ModelMora Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../assets/mkdocs_puml/puml.css">
+    
+      <link rel="stylesheet" href="../../../assets/mkdocs_puml/interaction.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#health-status-value-object" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="ModelMora Documentation" class="md-header__button md-logo" aria-label="ModelMora Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ModelMora Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Health Status Value Object
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/JomarJunior/modelmora" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    JomarJunior/modelmora
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../getting-started/installation/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../rfc/%231%20-%20RFC%20Writting%20Patterns/" class="md-tabs__link">
+          
+  
+  
+  RFCs
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../architecture/" class="md-tabs__link">
+          
+  
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../api-reference/rest/" class="md-tabs__link">
+          
+  
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../roadmap/" class="md-tabs__link">
+          
+  
+  
+  Development
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../deployment/docker/" class="md-tabs__link">
+          
+  
+  
+  Deployment
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="ModelMora Documentation" class="md-nav__button md-logo" aria-label="ModelMora Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ModelMora Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/JomarJunior/modelmora" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    JomarJunior/modelmora
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFCs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    RFCs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../rfc/%231%20-%20RFC%20Writting%20Patterns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC Writing Patterns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../design-decisions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Decisions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api-reference/rest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REST API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api-reference/grpc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gRPC API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Development
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../requirements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Requirements
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deployment
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../deployment/docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../deployment/kubernetes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Structure
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Structure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-plantuml-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 PlantUML Diagram
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-field-specifications" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Field Specifications
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Field Specifications">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-healthy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 healthy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-last_check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 last_check
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-error_message" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 error_message
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-consecutive_failures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 consecutive_failures
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-response_time_ms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 response_time_ms
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Constraints
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Constraints">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-value-object-constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Value Object Constraints
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-business-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Business Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Validation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-syntax-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Syntax Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-semantic-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Semantic Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Behavior
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Behavior">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Creation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-status-queries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Status Queries
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-value-object-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 Value Object Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-serialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Serialization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Serialization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-json-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 JSON Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-protocol-buffers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 Protocol Buffers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-database-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Database Schema
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-usage-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Usage Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Usage Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#91-performing-health-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.1 Performing Health Check
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#92-health-monitoring-loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2 Health Monitoring Loop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#93-state-transition-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3 State Transition Integration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#94-health-dashboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.4 Health Dashboard
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-related-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Related Models
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="health-status-value-object">Health Status Value Object<a class="headerlink" href="#health-status-value-object" title="Permanent link">&para;</a></h1>
+<p><strong>Context:</strong> Lifecycle
+<strong>Type:</strong> Value Object
+<strong>Version:</strong> 1.0.0
+<strong>Date:</strong> 2025-12-04</p>
+<hr />
+<h2 id="1-overview">1. Overview<a class="headerlink" href="#1-overview" title="Permanent link">&para;</a></h2>
+<p>The <code>HealthStatus</code> value object represents the health state of a loaded model, including readiness for inference and diagnostic information.</p>
+<hr />
+<h2 id="2-structure">2. Structure<a class="headerlink" href="#2-structure" title="Permanent link">&para;</a></h2>
+<h3 id="21-plantuml-diagram">2.1 PlantUML Diagram<a class="headerlink" href="#21-plantuml-diagram" title="Permanent link">&para;</a></h3>
+<div class='puml-container'><div class="puml light" style=""><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" data-diagram-type="CLASS" height="224px" preserveAspectRatio="xMidYMid meet" style="width:656px;height:224px;background:#FFFFFF;" version="1.1" viewBox="0 0 656 224" width="656px" zoomAndPan="magnify" class="diagram"><defs/><g><g class="entity" data-entity="HealthStatus" data-source-line="2" data-uid="ent0002" id="entity_HealthStatus"><rect fill="#F1F1F1" height="210.9688" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="365.3496" x="7" y="7"/><ellipse cx="140.1333" cy="23" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/><path d="M143.1021,28.6406 Q142.5239,28.9375 141.8833,29.0781 Q141.2427,29.2344 140.5396,29.2344 Q138.0396,29.2344 136.7114,27.5938 Q135.3989,25.9375 135.3989,22.8125 Q135.3989,19.6875 136.7114,18.0313 Q138.0396,16.375 140.5396,16.375 Q141.2427,16.375 141.8833,16.5313 Q142.5396,16.6875 143.1021,16.9844 L143.1021,19.7031 Q142.4771,19.125 141.8833,18.8594 Q141.2896,18.5781 140.6646,18.5781 Q139.3208,18.5781 138.6333,19.6563 Q137.9458,20.7188 137.9458,22.8125 Q137.9458,24.9063 138.6333,25.9844 Q139.3208,27.0469 140.6646,27.0469 Q141.2896,27.0469 141.8833,26.7813 Q142.4771,26.5 143.1021,25.9219 L143.1021,28.6406 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="90.583" x="160.6333" y="27.8467">HealthStatus</text><line style="stroke:#181818;stroke-width:0.5;" x1="8" x2="371.3496" y1="39" y2="39"/><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="52.6484" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="265.125" x="27" y="55.9951">healthy: Boolean {MUST, Immutable}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="68.9453" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="307.6514" x="27" y="72.292">last_check: Timestamp {MUST, Immutable}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="85.2422" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="292.4209" x="27" y="88.5889">error_message: String {MAY, Immutable}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="101.5391" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="339.3496" x="27" y="104.8857">consecutive_failures: Integer {MAY, Immutable}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="117.8359" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="311.3086" x="27" y="121.1826">response_time_ms: Float {MAY, Immutable}</text><line style="stroke:#181818;stroke-width:1;" x1="8" x2="371.3496" y1="128.4844" y2="128.4844"/><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="142.1328" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="259.9639" x="27" y="145.4795">equals(other: HealthStatus): Boolean</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="158.4297" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="104.0703" x="27" y="161.7764">hash(): Integer</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="174.7266" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="117.708" x="27" y="178.0732">toString(): String</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="191.0234" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="162.0732" x="27" y="194.3701">is_degraded(): Boolean</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="207.3203" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="188.4395" x="27" y="210.667">requires_restart(): Boolean</text></g><g class="entity" data-entity="GMN3" data-source-line="17" data-uid="ent0004" id="entity_GMN3"><path d="M407.59,84.79 L407.59,108.49 L372.75,112.49 L407.59,116.49 L407.59,140.1884 A0,0 0 0 0 407.59,140.1884 L649.7614,140.1884 A0,0 0 0 0 649.7614,140.1884 L649.7614,94.79 L639.7614,84.79 L407.59,84.79 A0,0 0 0 0 407.59,84.79" fill="#FEFFDD" style="stroke:#181818;stroke-width:0.5;"/><path d="M639.7614,84.79 L639.7614,94.79 L649.7614,94.79 L639.7614,84.79" fill="#FEFFDD" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="213.7319" x="413.59" y="101.8569">Value Object Pattern: Immutable</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="189.5029" x="413.59" y="116.9897">Health check result snapshot</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="221.1714" x="413.59" y="132.1225">Influences model state transitions</text></g></g></svg></div><div class="puml dark" style=""><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" data-diagram-type="CLASS" height="224px" preserveAspectRatio="xMidYMid meet" style="width:656px;height:224px;background:#1B1B1B;" version="1.1" viewBox="0 0 656 224" width="656px" zoomAndPan="magnify" class="diagram"><defs/><g><rect fill="#1B1B1B" height="224" style="stroke:none;stroke-width:1;" width="656" x="0" y="0"/><g class="entity" data-entity="HealthStatus" data-source-line="2" data-uid="ent0002" id="entity_HealthStatus"><rect fill="#313139" height="210.9688" rx="2.5" ry="2.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="365.3496" x="7" y="7"/><ellipse cx="140.1333" cy="23" fill="#2E5233" rx="11" ry="11" style="stroke:#E7E7E7;stroke-width:1;"/><path d="M143.1021,28.6406 Q142.5239,28.9375 141.8833,29.0781 Q141.2427,29.2344 140.5396,29.2344 Q138.0396,29.2344 136.7114,27.5938 Q135.3989,25.9375 135.3989,22.8125 Q135.3989,19.6875 136.7114,18.0313 Q138.0396,16.375 140.5396,16.375 Q141.2427,16.375 141.8833,16.5313 Q142.5396,16.6875 143.1021,16.9844 L143.1021,19.7031 Q142.4771,19.125 141.8833,18.8594 Q141.2896,18.5781 140.6646,18.5781 Q139.3208,18.5781 138.6333,19.6563 Q137.9458,20.7188 137.9458,22.8125 Q137.9458,24.9063 138.6333,25.9844 Q139.3208,27.0469 140.6646,27.0469 Q141.2896,27.0469 141.8833,26.7813 Q142.4771,26.5 143.1021,25.9219 L143.1021,28.6406 Z " fill="#FFFFFF"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="90.583" x="160.6333" y="27.8467">HealthStatus</text><line style="stroke:#E7E7E7;stroke-width:0.5;" x1="8" x2="371.3496" y1="39" y2="39"/><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="52.6484" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="265.125" x="27" y="55.9951">healthy: Boolean {MUST, Immutable}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="68.9453" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="307.6514" x="27" y="72.292">last_check: Timestamp {MUST, Immutable}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="85.2422" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="292.4209" x="27" y="88.5889">error_message: String {MAY, Immutable}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="101.5391" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="339.3496" x="27" y="104.8857">consecutive_failures: Integer {MAY, Immutable}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="117.8359" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="311.3086" x="27" y="121.1826">response_time_ms: Float {MAY, Immutable}</text><line style="stroke:#E7E7E7;stroke-width:1;" x1="8" x2="371.3496" y1="128.4844" y2="128.4844"/><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="142.1328" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="259.9639" x="27" y="145.4795">equals(other: HealthStatus): Boolean</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="158.4297" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="104.0703" x="27" y="161.7764">hash(): Integer</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="174.7266" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="117.708" x="27" y="178.0732">toString(): String</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="191.0234" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="162.0732" x="27" y="194.3701">is_degraded(): Boolean</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="207.3203" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="188.4395" x="27" y="210.667">requires_restart(): Boolean</text></g><g class="entity" data-entity="GMN3" data-source-line="17" data-uid="ent0004" id="entity_GMN3"><path d="M407.59,84.79 L407.59,108.49 L372.75,112.49 L407.59,116.49 L407.59,140.1884 A0,0 0 0 0 407.59,140.1884 L649.7614,140.1884 A0,0 0 0 0 649.7614,140.1884 L649.7614,94.79 L639.7614,84.79 L407.59,84.79 A0,0 0 0 0 407.59,84.79" fill="#714137" style="stroke:#E7E7E7;stroke-width:0.5;"/><path d="M639.7614,84.79 L639.7614,94.79 L649.7614,94.79 L639.7614,84.79" fill="#714137" style="stroke:#E7E7E7;stroke-width:0.5;"/><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="213.7319" x="413.59" y="101.8569">Value Object Pattern: Immutable</text><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="189.5029" x="413.59" y="116.9897">Health check result snapshot</text><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="221.1714" x="413.59" y="132.1225">Influences model state transitions</text></g></g></svg></div></div>
+
+<hr />
+<h2 id="3-field-specifications">3. Field Specifications<a class="headerlink" href="#3-field-specifications" title="Permanent link">&para;</a></h2>
+<h3 id="31-healthy">3.1 healthy<a class="headerlink" href="#31-healthy" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Type:</strong> Boolean</li>
+<li><strong>Constraint:</strong> MUST, Immutable</li>
+<li><strong>Description:</strong> Overall health status</li>
+<li><strong>Validation:</strong></li>
+<li><code>true</code>: Model operational and passing health checks</li>
+<li><code>false</code>: Model failing health checks</li>
+</ul>
+<h3 id="32-last_check">3.2 last_check<a class="headerlink" href="#32-last_check" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Type:</strong> Timestamp</li>
+<li><strong>Constraint:</strong> MUST, Immutable</li>
+<li><strong>Description:</strong> When health check was performed</li>
+<li><strong>Validation:</strong></li>
+<li>MUST be valid ISO 8601 timestamp</li>
+</ul>
+<h3 id="33-error_message">3.3 error_message<a class="headerlink" href="#33-error_message" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Type:</strong> String</li>
+<li><strong>Constraint:</strong> MAY, Immutable</li>
+<li><strong>Description:</strong> Error details if unhealthy</li>
+<li><strong>Validation:</strong></li>
+<li>Length: 0-1000 characters</li>
+<li>Should be present when <code>healthy = false</code></li>
+</ul>
+<h3 id="34-consecutive_failures">3.4 consecutive_failures<a class="headerlink" href="#34-consecutive_failures" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Type:</strong> Integer</li>
+<li><strong>Constraint:</strong> MAY, Immutable</li>
+<li><strong>Description:</strong> Number of consecutive failed health checks</li>
+<li><strong>Validation:</strong></li>
+<li>MUST be &gt;= 0</li>
+<li>Used to trigger automatic restarts</li>
+</ul>
+<h3 id="35-response_time_ms">3.5 response_time_ms<a class="headerlink" href="#35-response_time_ms" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Type:</strong> Float</li>
+<li><strong>Constraint:</strong> MAY, Immutable</li>
+<li><strong>Description:</strong> Health check response time in milliseconds</li>
+<li><strong>Validation:</strong></li>
+<li>MUST be &gt;= 0</li>
+<li>Used to detect performance degradation</li>
+</ul>
+<hr />
+<h2 id="4-constraints">4. Constraints<a class="headerlink" href="#4-constraints" title="Permanent link">&para;</a></h2>
+<h3 id="41-value-object-constraints">4.1 Value Object Constraints<a class="headerlink" href="#41-value-object-constraints" title="Permanent link">&para;</a></h3>
+<ul>
+<li>All fields MUST be immutable after creation</li>
+<li>Equality based on structural comparison</li>
+<li>No identity field required</li>
+</ul>
+<h3 id="42-business-rules">4.2 Business Rules<a class="headerlink" href="#42-business-rules" title="Permanent link">&para;</a></h3>
+<ul>
+<li>If <code>healthy = false</code>, <code>error_message</code> SHOULD be present</li>
+<li><code>consecutive_failures</code> resets to 0 when <code>healthy = true</code></li>
+<li>High <code>response_time_ms</code> may indicate degraded performance</li>
+<li>Exceeding failure threshold triggers state transition to UNHEALTHY</li>
+</ul>
+<hr />
+<h2 id="5-validation">5. Validation<a class="headerlink" href="#5-validation" title="Permanent link">&para;</a></h2>
+<h3 id="51-syntax-validation">5.1 Syntax Validation<a class="headerlink" href="#51-syntax-validation" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def validate_syntax(status: HealthStatus) -&gt; ValidationResult:
+    errors = []
+
+    if status.healthy is None:
+        errors.append(&quot;healthy is required&quot;)
+
+    if not status.last_check:
+        errors.append(&quot;last_check is required&quot;)
+
+    if status.consecutive_failures is not None and status.consecutive_failures &lt; 0:
+        errors.append(&quot;consecutive_failures must be &gt;= 0&quot;)
+
+    if status.response_time_ms is not None and status.response_time_ms &lt; 0:
+        errors.append(&quot;response_time_ms must be &gt;= 0&quot;)
+
+    return ValidationResult(valid=len(errors) == 0, errors=errors)
+</code></pre>
+<h3 id="52-semantic-validation">5.2 Semantic Validation<a class="headerlink" href="#52-semantic-validation" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def validate_semantic(status: HealthStatus) -&gt; ValidationResult:
+    warnings = []
+
+    # Unhealthy without error message
+    if not status.healthy and not status.error_message:
+        warnings.append(&quot;Unhealthy status should include error_message&quot;)
+
+    # High consecutive failures
+    if status.consecutive_failures and status.consecutive_failures &gt; 3:
+        warnings.append(
+            f&quot;High consecutive failures: {status.consecutive_failures}&quot;
+        )
+
+    # Slow response time
+    if status.response_time_ms and status.response_time_ms &gt; 5000:
+        warnings.append(
+            f&quot;Slow health check response: {status.response_time_ms}ms&quot;
+        )
+
+    return ValidationResult(valid=True, warnings=warnings)
+</code></pre>
+<hr />
+<h2 id="6-behavior">6. Behavior<a class="headerlink" href="#6-behavior" title="Permanent link">&para;</a></h2>
+<h3 id="61-creation">6.1 Creation<a class="headerlink" href="#61-creation" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def create_healthy_status(response_time_ms: float = None) -&gt; HealthStatus:
+    &quot;&quot;&quot;Create a healthy status&quot;&quot;&quot;
+    return HealthStatus(
+        healthy=True,
+        last_check=current_timestamp(),
+        error_message=None,
+        consecutive_failures=0,
+        response_time_ms=response_time_ms
+    )
+
+def create_unhealthy_status(
+    error_message: str,
+    consecutive_failures: int = 1,
+    response_time_ms: float = None
+) -&gt; HealthStatus:
+    &quot;&quot;&quot;Create an unhealthy status&quot;&quot;&quot;
+    return HealthStatus(
+        healthy=False,
+        last_check=current_timestamp(),
+        error_message=error_message,
+        consecutive_failures=consecutive_failures,
+        response_time_ms=response_time_ms
+    )
+</code></pre>
+<h3 id="62-status-queries">6.2 Status Queries<a class="headerlink" href="#62-status-queries" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def is_degraded(self) -&gt; bool:
+    &quot;&quot;&quot;Check if performance is degraded but still operational&quot;&quot;&quot;
+    if not self.healthy:
+        return False
+
+    # Slow response time indicates degradation
+    if self.response_time_ms and self.response_time_ms &gt; 3000:
+        return True
+
+    return False
+
+def requires_restart(self) -&gt; bool:
+    &quot;&quot;&quot;Check if model should be restarted&quot;&quot;&quot;
+    # Too many consecutive failures
+    if self.consecutive_failures and self.consecutive_failures &gt;= 5:
+        return True
+
+    return False
+
+def is_stale(self, max_age_seconds: int = 60) -&gt; bool:
+    &quot;&quot;&quot;Check if health check is stale&quot;&quot;&quot;
+    age_seconds = (current_timestamp() - self.last_check).total_seconds()
+    return age_seconds &gt; max_age_seconds
+</code></pre>
+<h3 id="63-value-object-methods">6.3 Value Object Methods<a class="headerlink" href="#63-value-object-methods" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def equals(self, other: HealthStatus) -&gt; bool:
+    &quot;&quot;&quot;Structural equality&quot;&quot;&quot;
+    return (
+        self.healthy == other.healthy and
+        self.last_check == other.last_check
+    )
+
+def hash(self) -&gt; int:
+    &quot;&quot;&quot;Hash based on values&quot;&quot;&quot;
+    return hash((self.healthy, self.last_check))
+
+def toString(self) -&gt; str:
+    &quot;&quot;&quot;Human-readable representation&quot;&quot;&quot;
+    status_str = &quot;healthy&quot; if self.healthy else &quot;unhealthy&quot;
+    details = &quot;&quot;
+
+    if not self.healthy and self.error_message:
+        details = f&quot; ({self.error_message})&quot;
+    elif self.consecutive_failures and self.consecutive_failures &gt; 0:
+        details = f&quot; ({self.consecutive_failures} failures)&quot;
+
+    return f&quot;{status_str}{details}&quot;
+</code></pre>
+<hr />
+<h2 id="7-serialization">7. Serialization<a class="headerlink" href="#7-serialization" title="Permanent link">&para;</a></h2>
+<h3 id="71-json-example">7.1 JSON Example<a class="headerlink" href="#71-json-example" title="Permanent link">&para;</a></h3>
+<pre><code class="language-json">{
+  &quot;healthy&quot;: true,
+  &quot;last_check&quot;: &quot;2025-12-04T10:30:15Z&quot;,
+  &quot;consecutive_failures&quot;: 0,
+  &quot;response_time_ms&quot;: 45.3
+}
+</code></pre>
+<pre><code class="language-json">{
+  &quot;healthy&quot;: false,
+  &quot;last_check&quot;: &quot;2025-12-04T10:30:15Z&quot;,
+  &quot;error_message&quot;: &quot;Model inference timeout after 30s&quot;,
+  &quot;consecutive_failures&quot;: 3,
+  &quot;response_time_ms&quot;: 30000.0
+}
+</code></pre>
+<h3 id="72-protocol-buffers">7.2 Protocol Buffers<a class="headerlink" href="#72-protocol-buffers" title="Permanent link">&para;</a></h3>
+<pre><code class="language-protobuf">message HealthStatus {
+  bool healthy = 1;
+  google.protobuf.Timestamp last_check = 2;
+  string error_message = 3;
+  int32 consecutive_failures = 4;
+  float response_time_ms = 5;
+}
+</code></pre>
+<hr />
+<h2 id="8-database-schema">8. Database Schema<a class="headerlink" href="#8-database-schema" title="Permanent link">&para;</a></h2>
+<pre><code class="language-sql">-- Embedded in loaded_model table as JSONB
+CREATE TABLE loaded_model (
+    ...
+    health_status JSONB NOT NULL,
+    ...
+);
+
+-- Or separate table for history
+CREATE TABLE health_check_history (
+    loaded_model_id UUID NOT NULL REFERENCES loaded_model(id) ON DELETE CASCADE,
+    healthy BOOLEAN NOT NULL,
+    last_check TIMESTAMP NOT NULL DEFAULT NOW(),
+    error_message TEXT,
+    consecutive_failures INTEGER DEFAULT 0,
+    response_time_ms REAL,
+    PRIMARY KEY (loaded_model_id, last_check)
+);
+
+CREATE INDEX idx_health_check_timestamp ON health_check_history(last_check);
+CREATE INDEX idx_health_check_model ON health_check_history(loaded_model_id);
+CREATE INDEX idx_health_check_status ON health_check_history(healthy);
+</code></pre>
+<hr />
+<h2 id="9-usage-examples">9. Usage Examples<a class="headerlink" href="#9-usage-examples" title="Permanent link">&para;</a></h2>
+<h3 id="91-performing-health-check">9.1 Performing Health Check<a class="headerlink" href="#91-performing-health-check" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def perform_health_check(model) -&gt; HealthStatus:
+    &quot;&quot;&quot;Execute health check on loaded model&quot;&quot;&quot;
+    start_time = time.time()
+
+    try:
+        # Simple inference test
+        result = model.inference(test_input)
+        response_time_ms = (time.time() - start_time) * 1000
+
+        if result is None:
+            return create_unhealthy_status(
+                error_message=&quot;Model returned None&quot;,
+                response_time_ms=response_time_ms
+            )
+
+        return create_healthy_status(response_time_ms=response_time_ms)
+
+    except TimeoutError as e:
+        response_time_ms = (time.time() - start_time) * 1000
+        return create_unhealthy_status(
+            error_message=f&quot;Inference timeout: {str(e)}&quot;,
+            response_time_ms=response_time_ms
+        )
+    except Exception as e:
+        response_time_ms = (time.time() - start_time) * 1000
+        return create_unhealthy_status(
+            error_message=f&quot;Inference failed: {str(e)}&quot;,
+            response_time_ms=response_time_ms
+        )
+</code></pre>
+<h3 id="92-health-monitoring-loop">9.2 Health Monitoring Loop<a class="headerlink" href="#92-health-monitoring-loop" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def monitor_model_health(loaded_model, check_interval_seconds: int = 30):
+    &quot;&quot;&quot;Continuously monitor model health&quot;&quot;&quot;
+    previous_status = loaded_model.health_status
+
+    while loaded_model.state.is_operational():
+        # Perform health check
+        current_status = perform_health_check(loaded_model)
+
+        # Update consecutive failures
+        if not current_status.healthy:
+            failures = (previous_status.consecutive_failures or 0) + 1
+            current_status = HealthStatus(
+                healthy=current_status.healthy,
+                last_check=current_status.last_check,
+                error_message=current_status.error_message,
+                consecutive_failures=failures,
+                response_time_ms=current_status.response_time_ms
+            )
+
+        # Update model health status
+        loaded_model.health_status = current_status
+
+        # Check if restart needed
+        if current_status.requires_restart():
+            logger.error(f&quot;Model {loaded_model.model_id} requires restart&quot;)
+            restart_model(loaded_model)
+
+        previous_status = current_status
+        time.sleep(check_interval_seconds)
+</code></pre>
+<h3 id="93-state-transition-integration">9.3 State Transition Integration<a class="headerlink" href="#93-state-transition-integration" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def update_model_state_from_health(loaded_model):
+    &quot;&quot;&quot;Update model state based on health status&quot;&quot;&quot;
+    status = loaded_model.health_status
+
+    if loaded_model.state == ModelState.LOADED:
+        if not status.healthy and status.consecutive_failures &gt;= 3:
+            # Transition to UNHEALTHY
+            loaded_model.state = ModelState(state=ModelStateEnum.UNHEALTHY)
+            logger.warning(
+                f&quot;Model {loaded_model.model_id} transitioned to UNHEALTHY&quot;
+            )
+
+    elif loaded_model.state == ModelState.UNHEALTHY:
+        if status.healthy and status.consecutive_failures == 0:
+            # Recovery: transition back to LOADED
+            loaded_model.state = ModelState(state=ModelStateEnum.LOADED)
+            logger.info(
+                f&quot;Model {loaded_model.model_id} recovered to LOADED&quot;
+            )
+</code></pre>
+<h3 id="94-health-dashboard">9.4 Health Dashboard<a class="headerlink" href="#94-health-dashboard" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def get_health_summary(lifecycle_manager):
+    &quot;&quot;&quot;Get overall health summary of all loaded models&quot;&quot;&quot;
+    healthy_count = 0
+    unhealthy_count = 0
+    degraded_count = 0
+
+    for model in lifecycle_manager.loaded_models.values():
+        status = model.health_status
+
+        if status.healthy:
+            if status.is_degraded():
+                degraded_count += 1
+            else:
+                healthy_count += 1
+        else:
+            unhealthy_count += 1
+
+    return {
+        &quot;healthy&quot;: healthy_count,
+        &quot;degraded&quot;: degraded_count,
+        &quot;unhealthy&quot;: unhealthy_count,
+        &quot;total&quot;: len(lifecycle_manager.loaded_models)
+    }
+</code></pre>
+<hr />
+<h2 id="10-related-models">10. Related Models<a class="headerlink" href="#10-related-models" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../loaded_model/">Loaded Model</a> - Contains HealthStatus</li>
+<li><a href="../model_state/">Model State</a> - Influenced by HealthStatus (healthy ↔ unhealthy)</li>
+<li><a href="../model_lifecycle_manager/">Model Lifecycle Manager</a> - Monitors health and manages transitions</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/JomarJunior/modelmora" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+        <script src="../../../assets/mkdocs_puml/puml.js"></script>
+      
+        <script src="https://unpkg.com/@panzoom/panzoom@4.5.1/dist/panzoom.min.js"></script>
+      
+        <script src="../../../assets/mkdocs_puml/interaction.js"></script>
+      
+    
+  </body>
+</html>

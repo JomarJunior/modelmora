@@ -1,0 +1,2085 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Neural network model management and inference serving microservice for MiraVeja">
+      
+      
+        <meta name="author" content="Jomar Júnior de Souza Pereira">
+      
+      
+        <link rel="canonical" href="https://jomarjunior.github.io/modelmora/data_models/lifecycle/model_state/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Model State Value Object - ModelMora Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../assets/mkdocs_puml/puml.css">
+    
+      <link rel="stylesheet" href="../../../assets/mkdocs_puml/interaction.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#model-state-value-object" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="ModelMora Documentation" class="md-header__button md-logo" aria-label="ModelMora Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ModelMora Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Model State Value Object
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/JomarJunior/modelmora" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    JomarJunior/modelmora
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../getting-started/installation/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../rfc/%231%20-%20RFC%20Writting%20Patterns/" class="md-tabs__link">
+          
+  
+  
+  RFCs
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../architecture/" class="md-tabs__link">
+          
+  
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../api-reference/rest/" class="md-tabs__link">
+          
+  
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../roadmap/" class="md-tabs__link">
+          
+  
+  
+  Development
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../deployment/docker/" class="md-tabs__link">
+          
+  
+  
+  Deployment
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="ModelMora Documentation" class="md-nav__button md-logo" aria-label="ModelMora Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ModelMora Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/JomarJunior/modelmora" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    JomarJunior/modelmora
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFCs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    RFCs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../rfc/%231%20-%20RFC%20Writting%20Patterns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC Writing Patterns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../design-decisions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Decisions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api-reference/rest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REST API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api-reference/grpc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gRPC API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Development
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../requirements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Requirements
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deployment
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../deployment/docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../deployment/kubernetes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Structure
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Structure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-plantuml-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 PlantUML Diagram
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-state-transition-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 State Transition Diagram
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-field-specifications" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Field Specifications
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Field Specifications">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 state
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-state-enumeration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. State Enumeration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. State Enumeration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-state-definitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 State Definitions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-state-behaviors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 State Behaviors
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.2 State Behaviors">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#unloaded" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UNLOADED
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LOADING
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loaded" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LOADED
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unhealthy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UNHEALTHY
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unloading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UNLOADING
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#failed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FAILED
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Constraints
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Constraints">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-value-object-constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Value Object Constraints
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-state-transition-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 State Transition Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Validation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-syntax-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Syntax Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-transition-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Transition Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Behavior
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Behavior">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 Creation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-state-queries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 State Queries
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-value-object-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 Value Object Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-serialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Serialization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Serialization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81-json-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1 JSON Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82-protocol-buffers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2 Protocol Buffers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-database-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Database Schema
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-usage-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Usage Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10. Usage Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#101-state-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.1 State Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#102-state-machine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.2 State Machine
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#103-state-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3 State Monitoring
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-related-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Related Models
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="model-state-value-object">Model State Value Object<a class="headerlink" href="#model-state-value-object" title="Permanent link">&para;</a></h1>
+<p><strong>Context:</strong> Lifecycle
+<strong>Type:</strong> Value Object
+<strong>Version:</strong> 1.0.0
+<strong>Date:</strong> 2025-12-04</p>
+<hr />
+<h2 id="1-overview">1. Overview<a class="headerlink" href="#1-overview" title="Permanent link">&para;</a></h2>
+<p>The <code>ModelState</code> value object represents the current state of a loaded model in its lifecycle. It defines valid states and transitions for model management.</p>
+<hr />
+<h2 id="2-structure">2. Structure<a class="headerlink" href="#2-structure" title="Permanent link">&para;</a></h2>
+<h3 id="21-plantuml-diagram">2.1 PlantUML Diagram<a class="headerlink" href="#21-plantuml-diagram" title="Permanent link">&para;</a></h3>
+<div class='puml-container'><div class="puml light" style=""><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" data-diagram-type="CLASS" height="349px" preserveAspectRatio="xMidYMid meet" style="width:637px;height:349px;background:#FFFFFF;" version="1.1" viewBox="0 0 637 349" width="637px" zoomAndPan="magnify" class="diagram"><defs/><g><g class="entity" data-entity="ModelState" data-source-line="2" data-uid="ent0002" id="entity_ModelState"><rect fill="#F1F1F1" height="129.4844" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="353.7559" x="7" y="7"/><ellipse cx="140.082" cy="23" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/><path d="M143.0508,28.6406 Q142.4727,28.9375 141.832,29.0781 Q141.1914,29.2344 140.4883,29.2344 Q137.9883,29.2344 136.6602,27.5938 Q135.3477,25.9375 135.3477,22.8125 Q135.3477,19.6875 136.6602,18.0313 Q137.9883,16.375 140.4883,16.375 Q141.1914,16.375 141.832,16.5313 Q142.4883,16.6875 143.0508,16.9844 L143.0508,19.7031 Q142.4258,19.125 141.832,18.8594 Q141.2383,18.5781 140.6133,18.5781 Q139.2695,18.5781 138.582,19.6563 Q137.8945,20.7188 137.8945,22.8125 Q137.8945,24.9063 138.582,25.9844 Q139.2695,27.0469 140.6133,27.0469 Q141.2383,27.0469 141.832,26.7813 Q142.4258,26.5 143.0508,25.9219 L143.0508,28.6406 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="79.0918" x="160.582" y="27.8467">ModelState</text><line style="stroke:#181818;stroke-width:0.5;" x1="8" x2="359.7559" y1="39" y2="39"/><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="52.6484" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="310.6182" x="27" y="55.9951">state: ModelStateEnum {MUST, Immutable}</text><line style="stroke:#181818;stroke-width:1;" x1="8" x2="359.7559" y1="63.2969" y2="63.2969"/><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="76.9453" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="248.4727" x="27" y="80.292">equals(other: ModelState): Boolean</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="93.2422" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="104.0703" x="27" y="96.5889">hash(): Integer</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="109.5391" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="117.708" x="27" y="112.8857">toString(): String</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="125.8359" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="327.7559" x="27" y="129.1826">can_transition_to(target: ModelState): Boolean</text></g><g class="entity" data-entity="ModelStateEnum" data-source-line="11" data-uid="ent0003" id="entity_ModelStateEnum"><rect fill="#F1F1F1" height="145.7813" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="151.3213" x="108.22" y="196.49"/><ellipse cx="123.22" cy="212.49" fill="#EB937F" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/><path d="M127.3294,218.49 L119.6106,218.49 L119.6106,206.0994 L127.3294,206.0994 L127.3294,208.2556 L122.0638,208.2556 L122.0638,210.9275 L126.8294,210.9275 L126.8294,213.0837 L122.0638,213.0837 L122.0638,216.3337 L127.3294,216.3337 L127.3294,218.49 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="119.3213" x="137.22" y="217.3367">ModelStateEnum</text><line style="stroke:#181818;stroke-width:0.5;" x1="109.22" x2="258.5413" y1="228.49" y2="228.49"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="79.5225" x="114.22" y="245.4851">UNLOADED</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="64.627" x="114.22" y="261.782">LOADING</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="58.8027" x="114.22" y="278.0789">LOADED</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="85.1006" x="114.22" y="294.3757">UNHEALTHY</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="85.3467" x="114.22" y="310.6726">UNLOADING</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="49.1846" x="114.22" y="326.9695">FAILED</text><line style="stroke:#181818;stroke-width:0.5;" x1="109.22" x2="258.5413" y1="334.2713" y2="334.2713"/></g><g class="entity" data-entity="GMN5" data-source-line="23" data-uid="ent0006" id="entity_GMN5"><path d="M395.51,44.05 L395.51,67.75 L361.23,71.75 L395.51,75.75 L395.51,99.4484 A0,0 0 0 0 395.51,99.4484 L630.2419,99.4484 A0,0 0 0 0 630.2419,99.4484 L630.2419,54.05 L620.2419,44.05 L395.51,44.05 A0,0 0 0 0 395.51,44.05" fill="#FEFFDD" style="stroke:#181818;stroke-width:0.5;"/><path d="M620.2419,44.05 L620.2419,54.05 L630.2419,54.05 L620.2419,44.05" fill="#FEFFDD" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="213.7319" x="401.51" y="61.1169">Value Object Pattern: Immutable</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="150.5728" x="401.51" y="76.2497">Defines lifecycle states</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="166.1499" x="401.51" y="91.3825">Enforces state transitions</text></g><g class="link" data-entity-1="ModelState" data-entity-2="ModelStateEnum" data-link-type="dependency" data-source-line="20" data-uid="lnk4" id="link_ModelState_ModelStateEnum"><path codeLine="20" d="M183.88,136.8 C183.88,155.75 183.88,170.62 183.88,190.05" fill="none" id="ModelState-to-ModelStateEnum" style="stroke:#181818;stroke-width:1;"/><polygon fill="#181818" points="183.88,196.05,187.88,187.05,183.88,191.05,179.88,187.05,183.88,196.05" style="stroke:#181818;stroke-width:1;"/></g></g></svg></div><div class="puml dark" style=""><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" data-diagram-type="CLASS" height="349px" preserveAspectRatio="xMidYMid meet" style="width:637px;height:349px;background:#1B1B1B;" version="1.1" viewBox="0 0 637 349" width="637px" zoomAndPan="magnify" class="diagram"><defs/><g><rect fill="#1B1B1B" height="349" style="stroke:none;stroke-width:1;" width="637" x="0" y="0"/><g class="entity" data-entity="ModelState" data-source-line="2" data-uid="ent0002" id="entity_ModelState"><rect fill="#313139" height="129.4844" rx="2.5" ry="2.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="353.7559" x="7" y="7"/><ellipse cx="140.082" cy="23" fill="#2E5233" rx="11" ry="11" style="stroke:#E7E7E7;stroke-width:1;"/><path d="M143.0508,28.6406 Q142.4727,28.9375 141.832,29.0781 Q141.1914,29.2344 140.4883,29.2344 Q137.9883,29.2344 136.6602,27.5938 Q135.3477,25.9375 135.3477,22.8125 Q135.3477,19.6875 136.6602,18.0313 Q137.9883,16.375 140.4883,16.375 Q141.1914,16.375 141.832,16.5313 Q142.4883,16.6875 143.0508,16.9844 L143.0508,19.7031 Q142.4258,19.125 141.832,18.8594 Q141.2383,18.5781 140.6133,18.5781 Q139.2695,18.5781 138.582,19.6563 Q137.8945,20.7188 137.8945,22.8125 Q137.8945,24.9063 138.582,25.9844 Q139.2695,27.0469 140.6133,27.0469 Q141.2383,27.0469 141.832,26.7813 Q142.4258,26.5 143.0508,25.9219 L143.0508,28.6406 Z " fill="#FFFFFF"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="79.0918" x="160.582" y="27.8467">ModelState</text><line style="stroke:#E7E7E7;stroke-width:0.5;" x1="8" x2="359.7559" y1="39" y2="39"/><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="52.6484" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="310.6182" x="27" y="55.9951">state: ModelStateEnum {MUST, Immutable}</text><line style="stroke:#E7E7E7;stroke-width:1;" x1="8" x2="359.7559" y1="63.2969" y2="63.2969"/><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="76.9453" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="248.4727" x="27" y="80.292">equals(other: ModelState): Boolean</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="93.2422" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="104.0703" x="27" y="96.5889">hash(): Integer</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="109.5391" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="117.708" x="27" y="112.8857">toString(): String</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="125.8359" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="327.7559" x="27" y="129.1826">can_transition_to(target: ModelState): Boolean</text></g><g class="entity" data-entity="ModelStateEnum" data-source-line="11" data-uid="ent0003" id="entity_ModelStateEnum"><rect fill="#313139" height="145.7813" rx="2.5" ry="2.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="151.3213" x="108.22" y="196.49"/><ellipse cx="123.22" cy="212.49" fill="#852D19" rx="11" ry="11" style="stroke:#E7E7E7;stroke-width:1;"/><path d="M127.3294,218.49 L119.6106,218.49 L119.6106,206.0994 L127.3294,206.0994 L127.3294,208.2556 L122.0638,208.2556 L122.0638,210.9275 L126.8294,210.9275 L126.8294,213.0837 L122.0638,213.0837 L122.0638,216.3337 L127.3294,216.3337 L127.3294,218.49 Z " fill="#FFFFFF"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="119.3213" x="137.22" y="217.3367">ModelStateEnum</text><line style="stroke:#E7E7E7;stroke-width:0.5;" x1="109.22" x2="258.5413" y1="228.49" y2="228.49"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="79.5225" x="114.22" y="245.4851">UNLOADED</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="64.627" x="114.22" y="261.782">LOADING</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="58.8027" x="114.22" y="278.0789">LOADED</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="85.1006" x="114.22" y="294.3757">UNHEALTHY</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="85.3467" x="114.22" y="310.6726">UNLOADING</text><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="49.1846" x="114.22" y="326.9695">FAILED</text><line style="stroke:#E7E7E7;stroke-width:0.5;" x1="109.22" x2="258.5413" y1="334.2713" y2="334.2713"/></g><g class="entity" data-entity="GMN5" data-source-line="23" data-uid="ent0006" id="entity_GMN5"><path d="M395.51,44.05 L395.51,67.75 L361.23,71.75 L395.51,75.75 L395.51,99.4484 A0,0 0 0 0 395.51,99.4484 L630.2419,99.4484 A0,0 0 0 0 630.2419,99.4484 L630.2419,54.05 L620.2419,44.05 L395.51,44.05 A0,0 0 0 0 395.51,44.05" fill="#714137" style="stroke:#E7E7E7;stroke-width:0.5;"/><path d="M620.2419,44.05 L620.2419,54.05 L630.2419,54.05 L620.2419,44.05" fill="#714137" style="stroke:#E7E7E7;stroke-width:0.5;"/><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="213.7319" x="401.51" y="61.1169">Value Object Pattern: Immutable</text><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="150.5728" x="401.51" y="76.2497">Defines lifecycle states</text><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="166.1499" x="401.51" y="91.3825">Enforces state transitions</text></g><g class="link" data-entity-1="ModelState" data-entity-2="ModelStateEnum" data-link-type="dependency" data-source-line="20" data-uid="lnk4" id="link_ModelState_ModelStateEnum"><path codeLine="20" d="M183.88,136.8 C183.88,155.75 183.88,170.62 183.88,190.05" fill="none" id="ModelState-to-ModelStateEnum" style="stroke:#E7E7E7;stroke-width:1;"/><polygon fill="#E7E7E7" points="183.88,196.05,187.88,187.05,183.88,191.05,179.88,187.05,183.88,196.05" style="stroke:#E7E7E7;stroke-width:1;"/></g></g></svg></div></div>
+
+<h3 id="22-state-transition-diagram">2.2 State Transition Diagram<a class="headerlink" href="#22-state-transition-diagram" title="Permanent link">&para;</a></h3>
+<div class='puml-container'><div class="puml light" style=""><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" data-diagram-type="STATE" height="651px" preserveAspectRatio="xMidYMid meet" style="width:376px;height:651px;background:#FFFFFF;" version="1.1" viewBox="0 0 376 651" width="376px" zoomAndPan="magnify" class="diagram"><defs/><g><ellipse cx="177.55" cy="16" fill="#222222" rx="10" ry="10" style="stroke:#222222;stroke-width:0.5;"/><g id="UNLOADED"><rect fill="#F1F1F1" height="50" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="99.5225" x="127.79" y="87"/><line style="stroke:#181818;stroke-width:0.5;" x1="127.79" x2="227.3125" y1="113.2969" y2="113.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="79.5225" x="137.79" y="104.9951">UNLOADED</text></g><g id="LOADING"><rect fill="#F1F1F1" height="50" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="84.627" x="7.24" y="214"/><line style="stroke:#181818;stroke-width:0.5;" x1="7.24" x2="91.867" y1="240.2969" y2="240.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="64.627" x="17.24" y="231.9951">LOADING</text></g><g id="LOADED"><rect fill="#F1F1F1" height="50" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="78.8027" x="10.15" y="341"/><line style="stroke:#181818;stroke-width:0.5;" x1="10.15" x2="88.9527" y1="367.2969" y2="367.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="58.8027" x="20.15" y="358.9951">LOADED</text></g><g id="FAILED"><rect fill="#F1F1F1" height="50" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="69.1846" x="145.96" y="341"/><line style="stroke:#181818;stroke-width:0.5;" x1="145.96" x2="215.1446" y1="367.2969" y2="367.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="49.1846" x="155.96" y="358.9951">FAILED</text></g><g id="UNHEALTHY"><rect fill="#F1F1F1" height="50" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="105.1006" x="7" y="468"/><line style="stroke:#181818;stroke-width:0.5;" x1="7" x2="112.1006" y1="494.2969" y2="494.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="85.1006" x="17" y="485.9951">UNHEALTHY</text></g><g id="UNLOADING"><rect fill="#F1F1F1" height="50" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="105.3467" x="144.88" y="595"/><line style="stroke:#181818;stroke-width:0.5;" x1="144.88" x2="250.2267" y1="621.2969" y2="621.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="85.3467" x="154.88" y="612.9951">UNLOADING</text></g><ellipse cx="137.55" cy="239" fill="none" rx="11" ry="11" style="stroke:#222222;stroke-width:0.5;"/><ellipse cx="137.55" cy="239" fill="#222222" rx="6" ry="6" style="stroke:#222222;stroke-width:1;"/><g class="link" data-entity-1=".start." data-entity-2="UNLOADED" data-link-type="dependency" data-source-line="2" data-uid="lnk4" id="link_.start._UNLOADED"><path d="M177.55,26.36 C177.55,40.29 177.55,60.95 177.55,80.65" fill="none" id="*start*-to-UNLOADED" style="stroke:#181818;stroke-width:1;"/><polygon fill="#181818" points="177.55,86.65,181.55,77.65,177.55,81.65,173.55,77.65,177.55,86.65" style="stroke:#181818;stroke-width:1;"/></g><g class="link" data-entity-1="UNLOADED" data-entity-2="LOADING" data-link-type="dependency" data-source-line="3" data-uid="lnk6" id="link_UNLOADED_LOADING"><path d="M143.36,137.45 C131.86,146.27 119.24,156.61 108.55,167 C93.72,181.4 82.5403,194.5891 71.4403,208.8191" fill="none" id="UNLOADED-to-LOADING" style="stroke:#181818;stroke-width:1;"/><polygon fill="#181818" points="67.75,213.55,76.4394,208.9138,70.8253,209.6076,70.1315,203.9934,67.75,213.55" style="stroke:#181818;stroke-width:1;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="37.9272" x="109.55" y="180.0669">load()</text></g><g class="link" data-entity-1="LOADING" data-entity-2="LOADED" data-link-type="dependency" data-source-line="4" data-uid="lnk8" id="link_LOADING_LOADED"><path d="M49.55,264.4 C49.55,286.42 49.55,312.66 49.55,334.66" fill="none" id="LOADING-to-LOADED" style="stroke:#181818;stroke-width:1;"/><polygon fill="#181818" points="49.55,340.66,53.55,331.66,49.55,335.66,45.55,331.66,49.55,340.66" style="stroke:#181818;stroke-width:1;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="50.8511" x="50.55" y="307.0669">success</text></g><g class="link" data-entity-1="LOADING" data-entity-2="FAILED" data-link-type="dependency" data-source-line="5" data-uid="lnk10" id="link_LOADING_FAILED"><path d="M77.31,264.43 C87.55,273.59 99.18,284.16 109.55,294 C125.61,309.24 138.9983,322.5566 152.6583,336.4166" fill="none" id="LOADING-to-FAILED" style="stroke:#181818;stroke-width:1;"/><polygon fill="#181818" points="156.87,340.69,153.4014,331.4722,153.3603,337.1289,147.7035,337.0878,156.87,340.69" style="stroke:#181818;stroke-width:1;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="31.9858" x="126.55" y="307.0669">error</text></g><g class="link" data-entity-1="LOADED" data-entity-2="UNHEALTHY" data-link-type="dependency" data-source-line="6" data-uid="lnk12" id="link_LOADED_UNHEALTHY"><path d="M43.52,391.4 C40.95,405.13 39.05,422.57 41.55,438 C43.16,447.95 44.3418,452.8861 47.5918,462.0361" fill="none" id="LOADED-to-UNHEALTHY" style="stroke:#181818;stroke-width:1;"/><polygon fill="#181818" points="49.6,467.69,50.3569,457.8703,47.9265,462.9784,42.8184,460.5479,49.6,467.69" style="stroke:#181818;stroke-width:1;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="128.229" x="42.55" y="434.0669">health_check_failed</text></g><g class="link" data-entity-1="LOADED" data-entity-2="UNLOADING" data-link-type="dependency" data-source-line="7" data-uid="lnk14" id="link_LOADED_UNLOADING"><path d="M89.38,379.2 C122.09,390.05 164.74,406.43 175.55,421 C213.98,472.8 208.9759,548.2758 202.9459,588.6658" fill="none" id="LOADED-to-UNLOADING" style="stroke:#181818;stroke-width:1;"/><polygon fill="#181818" points="202.06,594.6,207.3451,586.2893,202.7983,589.6548,199.4328,585.108,202.06,594.6" style="stroke:#181818;stroke-width:1;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="54.4058" x="206.55" y="497.5669">unload()</text></g><g class="link" data-entity-1="UNHEALTHY" data-entity-2="UNLOADING" data-link-type="dependency" data-source-line="8" data-uid="lnk15" id="link_UNHEALTHY_UNLOADING"><path d="M75.73,518.3 C86.09,532.83 100.4,551.09 115.55,565 C127.35,575.84 136.5055,582.7414 149.7355,591.2614" fill="none" id="UNHEALTHY-to-UNLOADING" style="stroke:#181818;stroke-width:1;"/><polygon fill="#181818" points="154.78,594.51,149.379,586.2741,150.5763,591.8028,145.0476,593.0001,154.78,594.51" style="stroke:#181818;stroke-width:1;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="54.4058" x="116.55" y="561.0669">unload()</text></g><g class="link" data-entity-1="UNLOADING" data-entity-2="UNLOADED" data-link-type="dependency" data-source-line="9" data-uid="lnk16" id="link_UNLOADING_UNLOADED"><path d="M238.14,594.67 C269.13,572.68 306.55,537.19 306.55,494 C306.55,238 306.55,238 306.55,238 C306.55,192.16 269.211,160.7589 232.981,139.7589" fill="none" id="UNLOADING-to-UNLOADED" style="stroke:#181818;stroke-width:1;"/><polygon fill="#181818" points="227.79,136.75,233.5706,144.724,232.1159,139.2574,237.5824,137.8026,227.79,136.75" style="stroke:#181818;stroke-width:1;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="60.7217" x="307.55" y="370.5669">complete</text></g><g class="link" data-entity-1="FAILED" data-entity-2="UNLOADED" data-link-type="dependency" data-source-line="10" data-uid="lnk17" id="link_FAILED_UNLOADED"><path d="M182.02,340.59 C184.03,303.19 187.01,229.47 183.55,167 C183.01,157.3 182.6485,152.618 181.5485,143.368" fill="none" id="FAILED-to-UNLOADED" style="stroke:#181818;stroke-width:1;"/><polygon fill="#181818" points="180.84,137.41,177.9308,146.8194,181.4304,142.375,185.8748,145.8747,180.84,137.41" style="stroke:#181818;stroke-width:1;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="33.2109" x="185.55" y="243.5669">reset</text></g><g class="link" data-entity-1="UNLOADED" data-entity-2=".end." data-link-type="dependency" data-source-line="11" data-uid="lnk19" id="link_UNLOADED_.end."><path d="M169.74,137.4 C160.92,164.97 148.8068,202.8049 142.5768,222.2949" fill="none" id="UNLOADED-to-*end*" style="stroke:#181818;stroke-width:1;"/><polygon fill="#181818" points="140.75,228.01,147.3004,220.6552,142.2724,223.2474,139.6802,218.2194,140.75,228.01" style="stroke:#181818;stroke-width:1;"/></g></g></svg></div><div class="puml dark" style=""><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" data-diagram-type="STATE" height="651px" preserveAspectRatio="xMidYMid meet" style="width:376px;height:651px;background:#1B1B1B;" version="1.1" viewBox="0 0 376 651" width="376px" zoomAndPan="magnify" class="diagram"><defs/><g><rect fill="#1B1B1B" height="651" style="stroke:none;stroke-width:1;" width="376" x="0" y="0"/><ellipse cx="177.55" cy="16" fill="#222222" rx="10" ry="10" style="stroke:#222222;stroke-width:0.5;"/><g id="UNLOADED"><rect fill="#313139" height="50" rx="12.5" ry="12.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="99.5225" x="127.79" y="87"/><line style="stroke:#E7E7E7;stroke-width:0.5;" x1="127.79" x2="227.3125" y1="113.2969" y2="113.2969"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="79.5225" x="137.79" y="104.9951">UNLOADED</text></g><g id="LOADING"><rect fill="#313139" height="50" rx="12.5" ry="12.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="84.627" x="7.24" y="214"/><line style="stroke:#E7E7E7;stroke-width:0.5;" x1="7.24" x2="91.867" y1="240.2969" y2="240.2969"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="64.627" x="17.24" y="231.9951">LOADING</text></g><g id="LOADED"><rect fill="#313139" height="50" rx="12.5" ry="12.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="78.8027" x="10.15" y="341"/><line style="stroke:#E7E7E7;stroke-width:0.5;" x1="10.15" x2="88.9527" y1="367.2969" y2="367.2969"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="58.8027" x="20.15" y="358.9951">LOADED</text></g><g id="FAILED"><rect fill="#313139" height="50" rx="12.5" ry="12.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="69.1846" x="145.96" y="341"/><line style="stroke:#E7E7E7;stroke-width:0.5;" x1="145.96" x2="215.1446" y1="367.2969" y2="367.2969"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="49.1846" x="155.96" y="358.9951">FAILED</text></g><g id="UNHEALTHY"><rect fill="#313139" height="50" rx="12.5" ry="12.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="105.1006" x="7" y="468"/><line style="stroke:#E7E7E7;stroke-width:0.5;" x1="7" x2="112.1006" y1="494.2969" y2="494.2969"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="85.1006" x="17" y="485.9951">UNHEALTHY</text></g><g id="UNLOADING"><rect fill="#313139" height="50" rx="12.5" ry="12.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="105.3467" x="144.88" y="595"/><line style="stroke:#E7E7E7;stroke-width:0.5;" x1="144.88" x2="250.2267" y1="621.2969" y2="621.2969"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="85.3467" x="154.88" y="612.9951">UNLOADING</text></g><ellipse cx="137.55" cy="239" fill="none" rx="11" ry="11" style="stroke:#222222;stroke-width:0.5;"/><ellipse cx="137.55" cy="239" fill="#222222" rx="6" ry="6" style="stroke:#222222;stroke-width:1;"/><g class="link" data-entity-1=".start." data-entity-2="UNLOADED" data-link-type="dependency" data-source-line="2" data-uid="lnk4" id="link_.start._UNLOADED"><path d="M177.55,26.36 C177.55,40.29 177.55,60.95 177.55,80.65" fill="none" id="*start*-to-UNLOADED" style="stroke:#E7E7E7;stroke-width:1;"/><polygon fill="#E7E7E7" points="177.55,86.65,181.55,77.65,177.55,81.65,173.55,77.65,177.55,86.65" style="stroke:#E7E7E7;stroke-width:1;"/></g><g class="link" data-entity-1="UNLOADED" data-entity-2="LOADING" data-link-type="dependency" data-source-line="3" data-uid="lnk6" id="link_UNLOADED_LOADING"><path d="M143.36,137.45 C131.86,146.27 119.24,156.61 108.55,167 C93.72,181.4 82.5403,194.5891 71.4403,208.8191" fill="none" id="UNLOADED-to-LOADING" style="stroke:#E7E7E7;stroke-width:1;"/><polygon fill="#E7E7E7" points="67.75,213.55,76.4394,208.9138,70.8253,209.6076,70.1315,203.9934,67.75,213.55" style="stroke:#E7E7E7;stroke-width:1;"/><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="37.9272" x="109.55" y="180.0669">load()</text></g><g class="link" data-entity-1="LOADING" data-entity-2="LOADED" data-link-type="dependency" data-source-line="4" data-uid="lnk8" id="link_LOADING_LOADED"><path d="M49.55,264.4 C49.55,286.42 49.55,312.66 49.55,334.66" fill="none" id="LOADING-to-LOADED" style="stroke:#E7E7E7;stroke-width:1;"/><polygon fill="#E7E7E7" points="49.55,340.66,53.55,331.66,49.55,335.66,45.55,331.66,49.55,340.66" style="stroke:#E7E7E7;stroke-width:1;"/><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="50.8511" x="50.55" y="307.0669">success</text></g><g class="link" data-entity-1="LOADING" data-entity-2="FAILED" data-link-type="dependency" data-source-line="5" data-uid="lnk10" id="link_LOADING_FAILED"><path d="M77.31,264.43 C87.55,273.59 99.18,284.16 109.55,294 C125.61,309.24 138.9983,322.5566 152.6583,336.4166" fill="none" id="LOADING-to-FAILED" style="stroke:#E7E7E7;stroke-width:1;"/><polygon fill="#E7E7E7" points="156.87,340.69,153.4014,331.4722,153.3603,337.1289,147.7035,337.0878,156.87,340.69" style="stroke:#E7E7E7;stroke-width:1;"/><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="31.9858" x="126.55" y="307.0669">error</text></g><g class="link" data-entity-1="LOADED" data-entity-2="UNHEALTHY" data-link-type="dependency" data-source-line="6" data-uid="lnk12" id="link_LOADED_UNHEALTHY"><path d="M43.52,391.4 C40.95,405.13 39.05,422.57 41.55,438 C43.16,447.95 44.3418,452.8861 47.5918,462.0361" fill="none" id="LOADED-to-UNHEALTHY" style="stroke:#E7E7E7;stroke-width:1;"/><polygon fill="#E7E7E7" points="49.6,467.69,50.3569,457.8703,47.9265,462.9784,42.8184,460.5479,49.6,467.69" style="stroke:#E7E7E7;stroke-width:1;"/><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="128.229" x="42.55" y="434.0669">health_check_failed</text></g><g class="link" data-entity-1="LOADED" data-entity-2="UNLOADING" data-link-type="dependency" data-source-line="7" data-uid="lnk14" id="link_LOADED_UNLOADING"><path d="M89.38,379.2 C122.09,390.05 164.74,406.43 175.55,421 C213.98,472.8 208.9759,548.2758 202.9459,588.6658" fill="none" id="LOADED-to-UNLOADING" style="stroke:#E7E7E7;stroke-width:1;"/><polygon fill="#E7E7E7" points="202.06,594.6,207.3451,586.2893,202.7983,589.6548,199.4328,585.108,202.06,594.6" style="stroke:#E7E7E7;stroke-width:1;"/><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="54.4058" x="206.55" y="497.5669">unload()</text></g><g class="link" data-entity-1="UNHEALTHY" data-entity-2="UNLOADING" data-link-type="dependency" data-source-line="8" data-uid="lnk15" id="link_UNHEALTHY_UNLOADING"><path d="M75.73,518.3 C86.09,532.83 100.4,551.09 115.55,565 C127.35,575.84 136.5055,582.7414 149.7355,591.2614" fill="none" id="UNHEALTHY-to-UNLOADING" style="stroke:#E7E7E7;stroke-width:1;"/><polygon fill="#E7E7E7" points="154.78,594.51,149.379,586.2741,150.5763,591.8028,145.0476,593.0001,154.78,594.51" style="stroke:#E7E7E7;stroke-width:1;"/><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="54.4058" x="116.55" y="561.0669">unload()</text></g><g class="link" data-entity-1="UNLOADING" data-entity-2="UNLOADED" data-link-type="dependency" data-source-line="9" data-uid="lnk16" id="link_UNLOADING_UNLOADED"><path d="M238.14,594.67 C269.13,572.68 306.55,537.19 306.55,494 C306.55,238 306.55,238 306.55,238 C306.55,192.16 269.211,160.7589 232.981,139.7589" fill="none" id="UNLOADING-to-UNLOADED" style="stroke:#E7E7E7;stroke-width:1;"/><polygon fill="#E7E7E7" points="227.79,136.75,233.5706,144.724,232.1159,139.2574,237.5824,137.8026,227.79,136.75" style="stroke:#E7E7E7;stroke-width:1;"/><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="60.7217" x="307.55" y="370.5669">complete</text></g><g class="link" data-entity-1="FAILED" data-entity-2="UNLOADED" data-link-type="dependency" data-source-line="10" data-uid="lnk17" id="link_FAILED_UNLOADED"><path d="M182.02,340.59 C184.03,303.19 187.01,229.47 183.55,167 C183.01,157.3 182.6485,152.618 181.5485,143.368" fill="none" id="FAILED-to-UNLOADED" style="stroke:#E7E7E7;stroke-width:1;"/><polygon fill="#E7E7E7" points="180.84,137.41,177.9308,146.8194,181.4304,142.375,185.8748,145.8747,180.84,137.41" style="stroke:#E7E7E7;stroke-width:1;"/><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="33.2109" x="185.55" y="243.5669">reset</text></g><g class="link" data-entity-1="UNLOADED" data-entity-2=".end." data-link-type="dependency" data-source-line="11" data-uid="lnk19" id="link_UNLOADED_.end."><path d="M169.74,137.4 C160.92,164.97 148.8068,202.8049 142.5768,222.2949" fill="none" id="UNLOADED-to-*end*" style="stroke:#E7E7E7;stroke-width:1;"/><polygon fill="#E7E7E7" points="140.75,228.01,147.3004,220.6552,142.2724,223.2474,139.6802,218.2194,140.75,228.01" style="stroke:#E7E7E7;stroke-width:1;"/></g></g></svg></div></div>
+
+<hr />
+<h2 id="3-field-specifications">3. Field Specifications<a class="headerlink" href="#3-field-specifications" title="Permanent link">&para;</a></h2>
+<h3 id="31-state">3.1 state<a class="headerlink" href="#31-state" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Type:</strong> ModelStateEnum</li>
+<li><strong>Constraint:</strong> MUST, Immutable</li>
+<li><strong>Description:</strong> The current lifecycle state</li>
+<li><strong>Validation:</strong></li>
+<li>MUST be one of the defined enum values</li>
+</ul>
+<hr />
+<h2 id="4-state-enumeration">4. State Enumeration<a class="headerlink" href="#4-state-enumeration" title="Permanent link">&para;</a></h2>
+<h3 id="41-state-definitions">4.1 State Definitions<a class="headerlink" href="#41-state-definitions" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Description</th>
+<th>Entry Condition</th>
+<th>Exit Actions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>UNLOADED</code></td>
+<td>Model not in memory</td>
+<td>Initial state, after unload</td>
+<td>None</td>
+</tr>
+<tr>
+<td><code>LOADING</code></td>
+<td>Model being loaded</td>
+<td>load() called</td>
+<td>Allocate resources</td>
+</tr>
+<tr>
+<td><code>LOADED</code></td>
+<td>Model ready for inference</td>
+<td>Load successful</td>
+<td>Accept requests</td>
+</tr>
+<tr>
+<td><code>UNHEALTHY</code></td>
+<td>Model loaded but failing</td>
+<td>Health check failed</td>
+<td>Reject new requests</td>
+</tr>
+<tr>
+<td><code>UNLOADING</code></td>
+<td>Model being removed</td>
+<td>unload() called</td>
+<td>Release resources</td>
+</tr>
+<tr>
+<td><code>FAILED</code></td>
+<td>Load operation failed</td>
+<td>Load error</td>
+<td>Log error, cleanup</td>
+</tr>
+</tbody>
+</table>
+<h3 id="42-state-behaviors">4.2 State Behaviors<a class="headerlink" href="#42-state-behaviors" title="Permanent link">&para;</a></h3>
+<h4 id="unloaded">UNLOADED<a class="headerlink" href="#unloaded" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Model artifacts not in memory</li>
+<li>No resources allocated</li>
+<li>Can transition to: LOADING</li>
+<li>Cannot accept inference requests</li>
+</ul>
+<h4 id="loading">LOADING<a class="headerlink" href="#loading" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Model artifacts being loaded into memory</li>
+<li>Resources being allocated</li>
+<li>Can transition to: LOADED, FAILED</li>
+<li>Cannot accept inference requests</li>
+</ul>
+<h4 id="loaded">LOADED<a class="headerlink" href="#loaded" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Model fully loaded and operational</li>
+<li>All resources allocated</li>
+<li>Can transition to: UNHEALTHY, UNLOADING</li>
+<li>Can accept inference requests</li>
+</ul>
+<h4 id="unhealthy">UNHEALTHY<a class="headerlink" href="#unhealthy" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Model loaded but failing health checks</li>
+<li>Resources still allocated</li>
+<li>Can transition to: UNLOADING, LOADED (recovery)</li>
+<li>Should reject new inference requests</li>
+<li>Existing requests may complete</li>
+</ul>
+<h4 id="unloading">UNLOADING<a class="headerlink" href="#unloading" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Model being removed from memory</li>
+<li>Resources being released</li>
+<li>Can transition to: UNLOADED</li>
+<li>Cannot accept inference requests</li>
+</ul>
+<h4 id="failed">FAILED<a class="headerlink" href="#failed" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Load operation encountered error</li>
+<li>Partial resources may be allocated</li>
+<li>Can transition to: UNLOADED (cleanup)</li>
+<li>Cannot accept inference requests</li>
+</ul>
+<hr />
+<h2 id="5-constraints">5. Constraints<a class="headerlink" href="#5-constraints" title="Permanent link">&para;</a></h2>
+<h3 id="51-value-object-constraints">5.1 Value Object Constraints<a class="headerlink" href="#51-value-object-constraints" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>state</code> MUST be immutable after creation</li>
+<li>Equality based on <code>state</code> value (structural)</li>
+<li>No identity field required</li>
+</ul>
+<h3 id="52-state-transition-rules">5.2 State Transition Rules<a class="headerlink" href="#52-state-transition-rules" title="Permanent link">&para;</a></h3>
+<p>Valid transitions:</p>
+<ul>
+<li>UNLOADED → LOADING</li>
+<li>LOADING → LOADED</li>
+<li>LOADING → FAILED</li>
+<li>LOADED → UNHEALTHY</li>
+<li>LOADED → UNLOADING</li>
+<li>UNHEALTHY → UNLOADING</li>
+<li>UNHEALTHY → LOADED (recovery)</li>
+<li>UNLOADING → UNLOADED</li>
+<li>FAILED → UNLOADED</li>
+</ul>
+<p>Invalid transitions (must follow valid path):</p>
+<ul>
+<li>LOADING → UNLOADED (must complete or fail)</li>
+<li>UNLOADED → LOADED (must go through LOADING)</li>
+<li>FAILED → LOADED (must unload first)</li>
+</ul>
+<hr />
+<h2 id="6-validation">6. Validation<a class="headerlink" href="#6-validation" title="Permanent link">&para;</a></h2>
+<h3 id="61-syntax-validation">6.1 Syntax Validation<a class="headerlink" href="#61-syntax-validation" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def validate_syntax(state: ModelState) -&gt; ValidationResult:
+    errors = []
+
+    if not state.state:
+        errors.append(&quot;state is required&quot;)
+
+    valid_states = [
+        &quot;unloaded&quot;, &quot;loading&quot;, &quot;loaded&quot;,
+        &quot;unhealthy&quot;, &quot;unloading&quot;, &quot;failed&quot;
+    ]
+
+    if state.state not in valid_states:
+        errors.append(f&quot;state must be one of: {', '.join(valid_states)}&quot;)
+
+    return ValidationResult(valid=len(errors) == 0, errors=errors)
+</code></pre>
+<h3 id="62-transition-validation">6.2 Transition Validation<a class="headerlink" href="#62-transition-validation" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def can_transition_to(self, target: ModelState) -&gt; bool:
+    &quot;&quot;&quot;Check if transition to target state is valid&quot;&quot;&quot;
+    valid_transitions = {
+        ModelStateEnum.UNLOADED: [ModelStateEnum.LOADING],
+        ModelStateEnum.LOADING: [ModelStateEnum.LOADED, ModelStateEnum.FAILED],
+        ModelStateEnum.LOADED: [ModelStateEnum.UNHEALTHY, ModelStateEnum.UNLOADING],
+        ModelStateEnum.UNHEALTHY: [ModelStateEnum.UNLOADING, ModelStateEnum.LOADED],
+        ModelStateEnum.UNLOADING: [ModelStateEnum.UNLOADED],
+        ModelStateEnum.FAILED: [ModelStateEnum.UNLOADED],
+    }
+
+    return target.state in valid_transitions.get(self.state, [])
+</code></pre>
+<hr />
+<h2 id="7-behavior">7. Behavior<a class="headerlink" href="#7-behavior" title="Permanent link">&para;</a></h2>
+<h3 id="71-creation">7.1 Creation<a class="headerlink" href="#71-creation" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def create_model_state(state_str: str) -&gt; ModelState:
+    &quot;&quot;&quot;Create ModelState from string&quot;&quot;&quot;
+    return ModelState(state=ModelStateEnum[state_str.upper()])
+</code></pre>
+<h3 id="72-state-queries">7.2 State Queries<a class="headerlink" href="#72-state-queries" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def is_operational(self) -&gt; bool:
+    &quot;&quot;&quot;Check if model can handle requests&quot;&quot;&quot;
+    return self.state == ModelStateEnum.LOADED
+
+def is_transitioning(self) -&gt; bool:
+    &quot;&quot;&quot;Check if model is in transition state&quot;&quot;&quot;
+    return self.state in [ModelStateEnum.LOADING, ModelStateEnum.UNLOADING]
+
+def is_terminal(self) -&gt; bool:
+    &quot;&quot;&quot;Check if state is terminal (requires intervention)&quot;&quot;&quot;
+    return self.state in [ModelStateEnum.FAILED, ModelStateEnum.UNHEALTHY]
+
+def requires_resources(self) -&gt; bool:
+    &quot;&quot;&quot;Check if state requires resources allocated&quot;&quot;&quot;
+    return self.state in [
+        ModelStateEnum.LOADING,
+        ModelStateEnum.LOADED,
+        ModelStateEnum.UNHEALTHY,
+        ModelStateEnum.UNLOADING
+    ]
+</code></pre>
+<h3 id="73-value-object-methods">7.3 Value Object Methods<a class="headerlink" href="#73-value-object-methods" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def equals(self, other: ModelState) -&gt; bool:
+    &quot;&quot;&quot;Structural equality&quot;&quot;&quot;
+    return self.state == other.state
+
+def hash(self) -&gt; int:
+    &quot;&quot;&quot;Hash based on value&quot;&quot;&quot;
+    return hash(self.state)
+
+def toString(self) -&gt; str:
+    &quot;&quot;&quot;String representation&quot;&quot;&quot;
+    return self.state.lower()
+</code></pre>
+<hr />
+<h2 id="8-serialization">8. Serialization<a class="headerlink" href="#8-serialization" title="Permanent link">&para;</a></h2>
+<h3 id="81-json-example">8.1 JSON Example<a class="headerlink" href="#81-json-example" title="Permanent link">&para;</a></h3>
+<pre><code class="language-json">{
+  &quot;state&quot;: &quot;loaded&quot;
+}
+</code></pre>
+<h3 id="82-protocol-buffers">8.2 Protocol Buffers<a class="headerlink" href="#82-protocol-buffers" title="Permanent link">&para;</a></h3>
+<pre><code class="language-protobuf">enum ModelState {
+  MODEL_STATE_UNSPECIFIED = 0;
+  MODEL_STATE_UNLOADED = 1;
+  MODEL_STATE_LOADING = 2;
+  MODEL_STATE_LOADED = 3;
+  MODEL_STATE_UNHEALTHY = 4;
+  MODEL_STATE_UNLOADING = 5;
+  MODEL_STATE_FAILED = 6;
+}
+</code></pre>
+<hr />
+<h2 id="9-database-schema">9. Database Schema<a class="headerlink" href="#9-database-schema" title="Permanent link">&para;</a></h2>
+<pre><code class="language-sql">CREATE TYPE model_state_enum AS ENUM (
+    'unloaded',
+    'loading',
+    'loaded',
+    'unhealthy',
+    'unloading',
+    'failed'
+);
+
+CREATE TABLE loaded_model (
+    ...
+    state model_state_enum NOT NULL DEFAULT 'unloaded',
+    ...
+);
+
+CREATE INDEX idx_loaded_model_state ON loaded_model(state);
+</code></pre>
+<hr />
+<h2 id="10-usage-examples">10. Usage Examples<a class="headerlink" href="#10-usage-examples" title="Permanent link">&para;</a></h2>
+<h3 id="101-state-management">10.1 State Management<a class="headerlink" href="#101-state-management" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python"># Create initial state
+state = ModelState(state=ModelStateEnum.UNLOADED)
+
+# Check if operational
+if state.is_operational():
+    # Process request
+    pass
+
+# Validate transition
+new_state = ModelState(state=ModelStateEnum.LOADING)
+if state.can_transition_to(new_state):
+    # Perform state transition
+    model.state = new_state
+</code></pre>
+<h3 id="102-state-machine">10.2 State Machine<a class="headerlink" href="#102-state-machine" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">class LoadedModelStateMachine:
+    def __init__(self):
+        self.state = ModelState(state=ModelStateEnum.UNLOADED)
+
+    def load(self):
+        if not self.state.can_transition_to(
+            ModelState(state=ModelStateEnum.LOADING)
+        ):
+            raise InvalidStateTransition(
+                f&quot;Cannot load from state {self.state}&quot;
+            )
+
+        self.state = ModelState(state=ModelStateEnum.LOADING)
+        # Perform loading...
+        self.state = ModelState(state=ModelStateEnum.LOADED)
+
+    def unload(self):
+        if not self.state.can_transition_to(
+            ModelState(state=ModelStateEnum.UNLOADING)
+        ):
+            raise InvalidStateTransition(
+                f&quot;Cannot unload from state {self.state}&quot;
+            )
+
+        self.state = ModelState(state=ModelStateEnum.UNLOADING)
+        # Perform unloading...
+        self.state = ModelState(state=ModelStateEnum.UNLOADED)
+</code></pre>
+<h3 id="103-state-monitoring">10.3 State Monitoring<a class="headerlink" href="#103-state-monitoring" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def monitor_model_states(lifecycle_manager):
+    &quot;&quot;&quot;Monitor and log model states&quot;&quot;&quot;
+    state_counts = {}
+
+    for model in lifecycle_manager.loaded_models.values():
+        state_str = model.state.toString()
+        state_counts[state_str] = state_counts.get(state_str, 0) + 1
+
+    logger.info(f&quot;Model states: {state_counts}&quot;)
+
+    # Alert on unhealthy models
+    if state_counts.get(&quot;unhealthy&quot;, 0) &gt; 0:
+        alert(&quot;Models in unhealthy state detected&quot;)
+</code></pre>
+<hr />
+<h2 id="11-related-models">11. Related Models<a class="headerlink" href="#11-related-models" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../loaded_model/">Loaded Model</a> - Uses ModelState to track lifecycle</li>
+<li><a href="../model_lifecycle_manager/">Model Lifecycle Manager</a> - Manages state transitions</li>
+<li><a href="../health_status/">Health Status</a> - Influences state (healthy → unhealthy)</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/JomarJunior/modelmora" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+        <script src="../../../assets/mkdocs_puml/puml.js"></script>
+      
+        <script src="https://unpkg.com/@panzoom/panzoom@4.5.1/dist/panzoom.min.js"></script>
+      
+        <script src="../../../assets/mkdocs_puml/interaction.js"></script>
+      
+    
+  </body>
+</html>

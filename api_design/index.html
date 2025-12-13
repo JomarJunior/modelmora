@@ -1,0 +1,4069 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Neural network model management and inference serving microservice for MiraVeja">
+      
+      
+        <meta name="author" content="Jomar Júnior de Souza Pereira">
+      
+      
+        <link rel="canonical" href="https://jomarjunior.github.io/modelmora/api_design/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>ModelMora - API Design Document - ModelMora Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../assets/mkdocs_puml/puml.css">
+    
+      <link rel="stylesheet" href="../assets/mkdocs_puml/interaction.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#modelmora-api-design-document" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="ModelMora Documentation" class="md-header__button md-logo" aria-label="ModelMora Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ModelMora Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              ModelMora - API Design Document
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/JomarJunior/modelmora" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    JomarJunior/modelmora
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../getting-started/installation/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../rfc/%231%20-%20RFC%20Writting%20Patterns/" class="md-tabs__link">
+          
+  
+  
+  RFCs
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../architecture/" class="md-tabs__link">
+          
+  
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../api-reference/rest/" class="md-tabs__link">
+          
+  
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../roadmap/" class="md-tabs__link">
+          
+  
+  
+  Development
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../deployment/docker/" class="md-tabs__link">
+          
+  
+  
+  Deployment
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="ModelMora Documentation" class="md-nav__button md-logo" aria-label="ModelMora Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ModelMora Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/JomarJunior/modelmora" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    JomarJunior/modelmora
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFCs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    RFCs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rfc/%231%20-%20RFC%20Writting%20Patterns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC Writing Patterns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../design-decisions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Decisions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../data_models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api-reference/rest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REST API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api-reference/grpc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gRPC API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Development
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../requirements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Requirements
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deployment
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployment/docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployment/kubernetes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Introduction
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Introduction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-purpose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Purpose
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-api-versioning-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 API Versioning Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-api-principles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 API Principles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-poc-validated-performance-characteristics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 POC-Validated Performance Characteristics
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-rest-api-specification-openapi-30" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. REST API Specification (OpenAPI 3.0)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. REST API Specification (OpenAPI 3.0)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-openapi-metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 OpenAPI Metadata
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-common-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Common Components
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.2 Common Components">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#221-security-schemes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2.1 Security Schemes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#222-common-schemas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2.2 Common Schemas
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-registry-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Registry API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.3 Registry API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#231-register-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3.1 Register Model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#232-list-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3.2 List Models
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#233-get-model-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3.3 Get Model Details
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#234-update-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3.4 Update Model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#235-delete-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3.5 Delete Model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#236-download-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3.6 Download Model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#237-generate-lock-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3.7 Generate Lock File
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-inference-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Inference API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.4 Inference API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#241-synchronous-inference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4.1 Synchronous Inference
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#242-asynchronous-inference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4.2 Asynchronous Inference
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25-job-management-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 Job Management API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.5 Job Management API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#251-get-job-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5.1 Get Job Status
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#252-get-job-result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5.2 Get Job Result
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#253-cancel-job" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5.3 Cancel Job
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#26-lifecycle-management-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.6 Lifecycle Management API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.6 Lifecycle Management API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#261-load-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.6.1 Load Model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#262-unload-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.6.2 Unload Model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#263-system-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.6.3 System Status
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#27-health-check-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.7 Health Check API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#28-metrics-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.8 Metrics API
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-grpc-service-specification-protocol-buffers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. gRPC Service Specification (Protocol Buffers)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. gRPC Service Specification (Protocol Buffers)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-package-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Package Structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-common-types-commonproto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Common Types (common.proto)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-inference-service-inferenceproto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Inference Service (inference.proto)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-registry-service-registryproto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 Registry Service (registry.proto)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-management-service-managementproto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 Management Service (management.proto)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-kafka-message-schemas-future" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Kafka Message Schemas (Future)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Kafka Message Schemas (Future)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-topic-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Topic Structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-message-format-json-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Message Format (JSON Schema)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4.2 Message Format (JSON Schema)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#421-inference-request-message" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2.1 Inference Request Message
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#422-inference-response-message" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2.2 Inference Response Message
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#423-lifecycle-event-message" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2.3 Lifecycle Event Message
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Error Handling
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Error Handling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-http-status-codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 HTTP Status Codes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-grpc-status-codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 gRPC Status Codes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-error-codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Error Codes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-client-sdk-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Client SDK Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Client SDK Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-python-rest-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Python REST Client
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-python-grpc-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Python gRPC Client
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-revision-history" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Revision History
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="modelmora-api-design-document">ModelMora - API Design Document<a class="headerlink" href="#modelmora-api-design-document" title="Permanent link">&para;</a></h1>
+<p><strong>Version:</strong> 1.0.0
+<strong>Date:</strong> 2025-12-04
+<strong>Status:</strong> Draft</p>
+<hr />
+<h2 id="1-introduction">1. Introduction<a class="headerlink" href="#1-introduction" title="Permanent link">&para;</a></h2>
+<h3 id="11-purpose">1.1 Purpose<a class="headerlink" href="#11-purpose" title="Permanent link">&para;</a></h3>
+<p>This document defines the API contracts for ModelMora, including REST endpoints (OpenAPI specification), gRPC service definitions (Protocol Buffers), and message schemas for event-driven communication. These specifications serve as the contract between ModelMora and its clients.</p>
+<h3 id="12-api-versioning-strategy">1.2 API Versioning Strategy<a class="headerlink" href="#12-api-versioning-strategy" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>REST API</strong>: Version prefix in URL path (<code>/api/v1/...</code>)</li>
+<li><strong>gRPC</strong>: Version suffix in package name (<code>modelmora.v1</code>)</li>
+<li><strong>Breaking Changes</strong>: Require major version increment</li>
+<li><strong>Deprecation</strong>: Supported for 2 minor versions before removal</li>
+</ul>
+<h3 id="13-api-principles">1.3 API Principles<a class="headerlink" href="#13-api-principles" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Resource-Oriented</strong>: REST endpoints follow RESTful conventions</li>
+<li><strong>Idempotent Operations</strong>: PUT/DELETE operations are idempotent</li>
+<li><strong>Consistency</strong>: Common error formats and status codes</li>
+<li><strong>Validation</strong>: Input validation with detailed error messages</li>
+<li><strong>Documentation</strong>: Self-documenting with OpenAPI/Swagger UI</li>
+</ul>
+<h3 id="14-poc-validated-performance-characteristics">1.4 POC-Validated Performance Characteristics<a class="headerlink" href="#14-poc-validated-performance-characteristics" title="Permanent link">&para;</a></h3>
+<p><strong>REST API Performance:</strong></p>
+<ul>
+<li>Suitable for: Small requests/responses (embeddings, text, metadata)</li>
+<li>Typical latency: &lt;50ms for simple inference</li>
+<li>Synchronous by default, async endpoints for long-running tasks</li>
+</ul>
+<p><strong>gRPC Streaming Performance:</strong> ✅ <strong>(POC 2: Validated)</strong></p>
+<ul>
+<li><strong>Throughput</strong> 31.92 MB/s (single client), 33.31 MB/s (10 concurrent clients)</li>
+<li><strong>Latency</strong>: 23.53ms per chunk average</li>
+<li><strong>Use cases</strong>:</li>
+<li>Image generation (3MB+ per result)</li>
+<li>Large batch embeddings</li>
+<li>Video/audio processing</li>
+<li><strong>Protocol</strong>: Server-side streaming with Protocol Buffers</li>
+<li><strong>Verdict</strong>: gRPC performs well for large payloads, both protocols viable</li>
+</ul>
+<p><strong>API Selection Guide:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Use Case</th>
+<th>Protocol</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Text embedding (&lt;1KB)</td>
+<td>REST</td>
+<td>Simple, low overhead</td>
+</tr>
+<tr>
+<td>Batch embeddings (&gt;100KB)</td>
+<td>gRPC</td>
+<td>Streaming efficiency</td>
+</tr>
+<tr>
+<td>Image generation (3MB+)</td>
+<td>gRPC</td>
+<td>Validated 31.92 MB/s throughput</td>
+</tr>
+<tr>
+<td>Model management (CRUD)</td>
+<td>REST</td>
+<td>Resource-oriented operations</td>
+</tr>
+<tr>
+<td>Health checks</td>
+<td>REST</td>
+<td>Simple request/response</td>
+</tr>
+<tr>
+<td>Real-time streaming</td>
+<td>gRPC</td>
+<td>Bidirectional streaming support</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-rest-api-specification-openapi-30">2. REST API Specification (OpenAPI 3.0)<a class="headerlink" href="#2-rest-api-specification-openapi-30" title="Permanent link">&para;</a></h2>
+<h3 id="21-openapi-metadata">2.1 OpenAPI Metadata<a class="headerlink" href="#21-openapi-metadata" title="Permanent link">&para;</a></h3>
+<pre><code class="language-yaml">openapi: 3.0.3
+info:
+  title: ModelMora API
+  version: 1.0.0
+  description: |
+    ModelMora is a lightweight model serving framework for managing and executing
+    machine learning model inference at scale.
+
+    ## Features
+    - Model registry with version management
+    - Lazy model loading with LRU eviction
+    - Synchronous and asynchronous inference
+    - Priority-based request queuing
+    - Batch processing for improved throughput
+
+  contact:
+    name: MiraVeja Team
+    email: support@miraveja.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8000/api/v1
+    description: Local development server
+  - url: https://modelmora.miraveja.com/api/v1
+    description: Production server
+
+tags:
+  - name: Registry
+    description: Model catalog management
+  - name: Inference
+    description: Model inference operations
+  - name: Lifecycle
+    description: Model lifecycle management
+  - name: Jobs
+    description: Asynchronous job management
+  - name: Health
+    description: Health check endpoints
+  - name: Metrics
+    description: Observability and metrics
+
+security:
+  - BearerAuth: []
+</code></pre>
+<h3 id="22-common-components">2.2 Common Components<a class="headerlink" href="#22-common-components" title="Permanent link">&para;</a></h3>
+<h4 id="221-security-schemes">2.2.1 Security Schemes<a class="headerlink" href="#221-security-schemes" title="Permanent link">&para;</a></h4>
+<pre><code class="language-yaml">components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token for API authentication (optional in MVP)
+</code></pre>
+<h4 id="222-common-schemas">2.2.2 Common Schemas<a class="headerlink" href="#222-common-schemas" title="Permanent link">&para;</a></h4>
+<pre><code class="language-yaml">components:
+  schemas:
+    # Error Response
+    Error:
+      type: object
+      required:
+        - error_code
+        - message
+      properties:
+        error_code:
+          type: string
+          example: &quot;MODEL_NOT_FOUND&quot;
+        message:
+          type: string
+          example: &quot;Model 'invalid-model-id' not found in registry&quot;
+        details:
+          type: object
+          additionalProperties: true
+        trace_id:
+          type: string
+          format: uuid
+          description: Distributed tracing ID
+
+    # Validation Error
+    ValidationError:
+      type: object
+      required:
+        - error_code
+        - message
+        - validation_errors
+      properties:
+        error_code:
+          type: string
+          example: &quot;VALIDATION_ERROR&quot;
+        message:
+          type: string
+          example: &quot;Request validation failed&quot;
+        validation_errors:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: &quot;model_id&quot;
+              message:
+                type: string
+                example: &quot;Field is required&quot;
+
+    # Pagination
+    PaginationMeta:
+      type: object
+      properties:
+        total:
+          type: integer
+          example: 42
+        page:
+          type: integer
+          example: 1
+        page_size:
+          type: integer
+          example: 20
+        total_pages:
+          type: integer
+          example: 3
+</code></pre>
+<h3 id="23-registry-api">2.3 Registry API<a class="headerlink" href="#23-registry-api" title="Permanent link">&para;</a></h3>
+<h4 id="231-register-model">2.3.1 Register Model<a class="headerlink" href="#231-register-model" title="Permanent link">&para;</a></h4>
+<pre><code class="language-yaml">paths:
+  /models:
+    post:
+      tags:
+        - Registry
+      summary: Register a new model
+      description: |
+        Registers a new model in the ModelMora catalog. The model files are not
+        downloaded immediately; use the `/download` endpoint or lazy loading will
+        occur on first inference request.
+      operationId: registerModel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterModelRequest'
+            examples:
+              embedding_model:
+                summary: Text embedding model
+                value:
+                  model_id: &quot;sentence-transformers/all-MiniLM-L6-v2&quot;
+                  version: &quot;v2.2.2&quot;
+                  task_type: &quot;txt2embed&quot;
+                  display_name: &quot;MiniLM-L6 Sentence Embeddings&quot;
+                  config:
+                    vector_size: 384
+                    max_length: 512
+                    batch_size: 32
+              image_gen_model:
+                summary: Text-to-image model
+                value:
+                  model_id: &quot;stabilityai/stable-diffusion-2-1&quot;
+                  version: &quot;fp16&quot;
+                  task_type: &quot;txt2img&quot;
+                  resource_requirements:
+                    gpu_vram_mb: 8192
+      responses:
+        '201':
+          description: Model registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '409':
+          description: Model already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    RegisterModelRequest:
+      type: object
+      required:
+        - model_id
+        - task_type
+      properties:
+        model_id:
+          type: string
+          description: HuggingFace model identifier
+          example: &quot;sentence-transformers/all-MiniLM-L6-v2&quot;
+        version:
+          type: string
+          description: Specific version or branch name
+          example: &quot;v2.2.2&quot;
+          default: &quot;main&quot;
+        task_type:
+          $ref: '#/components/schemas/TaskType'
+        display_name:
+          type: string
+          example: &quot;MiniLM-L6 Sentence Embeddings&quot;
+        description:
+          type: string
+          example: &quot;Lightweight sentence embedding model&quot;
+        source_url:
+          type: string
+          format: uri
+          description: Custom download URL (overrides HuggingFace)
+        resource_requirements:
+          $ref: '#/components/schemas/ResourceRequirements'
+        config:
+          type: object
+          description: Model-specific configuration
+          additionalProperties: true
+
+    ModelResponse:
+      type: object
+      properties:
+        model_id:
+          type: string
+        version:
+          type: string
+        task_type:
+          $ref: '#/components/schemas/TaskType'
+        display_name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [registered, downloading, ready, failed]
+        resource_requirements:
+          $ref: '#/components/schemas/ResourceRequirements'
+        config:
+          type: object
+          additionalProperties: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    TaskType:
+      type: string
+      enum:
+        - txt2embed
+        - img2embed
+        - txt2img
+        - img2txt
+        - txt2txt
+      description: |
+        - `txt2embed`: Text to embedding vector
+        - `img2embed`: Image to embedding vector
+        - `txt2img`: Text to image generation
+        - `img2txt`: Image to text (captioning)
+        - `txt2txt`: Text to text (generation, translation)
+
+    ResourceRequirements:
+      type: object
+      properties:
+        memory_mb:
+          type: integer
+          description: Estimated RAM requirement
+          example: 2048
+        gpu_vram_mb:
+          type: integer
+          description: Estimated VRAM requirement
+          example: 4096
+        cpu_threads:
+          type: integer
+          description: Recommended CPU threads
+          example: 4
+</code></pre>
+<h4 id="232-list-models">2.3.2 List Models<a class="headerlink" href="#232-list-models" title="Permanent link">&para;</a></h4>
+<pre><code class="language-yaml">paths:
+  /models:
+    get:
+      tags:
+        - Registry
+      summary: List registered models
+      description: Retrieve all models with optional filtering
+      operationId: listModels
+      parameters:
+        - name: task_type
+          in: query
+          schema:
+            $ref: '#/components/schemas/TaskType'
+          description: Filter by task type
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [registered, downloading, ready, failed]
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: List of models
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ModelResponse'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+</code></pre>
+<h4 id="233-get-model-details">2.3.3 Get Model Details<a class="headerlink" href="#233-get-model-details" title="Permanent link">&para;</a></h4>
+<pre><code class="language-yaml">paths:
+  /models/{model_id}:
+    get:
+      tags:
+        - Registry
+      summary: Get model details
+      operationId: getModel
+      parameters:
+        - name: model_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: URL-encoded model identifier
+          example: &quot;sentence-transformers%2Fall-MiniLM-L6-v2&quot;
+      responses:
+        '200':
+          description: Model details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelResponse'
+        '404':
+          description: Model not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+</code></pre>
+<h4 id="234-update-model">2.3.4 Update Model<a class="headerlink" href="#234-update-model" title="Permanent link">&para;</a></h4>
+<pre><code class="language-yaml">paths:
+  /models/{model_id}:
+    put:
+      tags:
+        - Registry
+      summary: Update model configuration
+      operationId: updateModel
+      parameters:
+        - name: model_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateModelRequest'
+      responses:
+        '200':
+          description: Model updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelResponse'
+        '404':
+          description: Model not found
+
+components:
+  schemas:
+    UpdateModelRequest:
+      type: object
+      properties:
+        display_name:
+          type: string
+        description:
+          type: string
+        config:
+          type: object
+          additionalProperties: true
+        resource_requirements:
+          $ref: '#/components/schemas/ResourceRequirements'
+</code></pre>
+<h4 id="235-delete-model">2.3.5 Delete Model<a class="headerlink" href="#235-delete-model" title="Permanent link">&para;</a></h4>
+<pre><code class="language-yaml">paths:
+  /models/{model_id}:
+    delete:
+      tags:
+        - Registry
+      summary: Delete model
+      description: Removes model from registry and deletes cached files
+      operationId: deleteModel
+      parameters:
+        - name: model_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: force
+          in: query
+          schema:
+            type: boolean
+            default: false
+          description: Force deletion even if model is loaded
+      responses:
+        '204':
+          description: Model deleted successfully
+        '404':
+          description: Model not found
+        '409':
+          description: Model is currently loaded (use force=true)
+</code></pre>
+<h4 id="236-download-model">2.3.6 Download Model<a class="headerlink" href="#236-download-model" title="Permanent link">&para;</a></h4>
+<pre><code class="language-yaml">paths:
+  /models/{model_id}/download:
+    post:
+      tags:
+        - Registry
+      summary: Download model files
+      description: Explicitly downloads model files to cache
+      operationId: downloadModel
+      parameters:
+        - name: model_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '202':
+          description: Download started
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  model_id:
+                    type: string
+                  status:
+                    type: string
+                    enum: [downloading]
+                  message:
+                    type: string
+                    example: &quot;Download started in background&quot;
+        '404':
+          description: Model not found
+</code></pre>
+<h4 id="237-generate-lock-file">2.3.7 Generate Lock File<a class="headerlink" href="#237-generate-lock-file" title="Permanent link">&para;</a></h4>
+<pre><code class="language-yaml">paths:
+  /models/lock:
+    post:
+      tags:
+        - Registry
+      summary: Generate lock file
+      description: Creates a lock file with pinned model versions
+      operationId: generateLock
+      responses:
+        '200':
+          description: Lock file content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LockFile'
+
+components:
+  schemas:
+    LockFile:
+      type: object
+      properties:
+        version:
+          type: string
+          example: &quot;1.0&quot;
+        generated_at:
+          type: string
+          format: date-time
+        models:
+          type: array
+          items:
+            type: object
+            properties:
+              model_id:
+                type: string
+              version:
+                type: string
+              source_url:
+                type: string
+              checksum:
+                type: string
+              task_type:
+                $ref: '#/components/schemas/TaskType'
+</code></pre>
+<h3 id="24-inference-api">2.4 Inference API<a class="headerlink" href="#24-inference-api" title="Permanent link">&para;</a></h3>
+<h4 id="241-synchronous-inference">2.4.1 Synchronous Inference<a class="headerlink" href="#241-synchronous-inference" title="Permanent link">&para;</a></h4>
+<p><strong>POC-Validated Queue Performance:</strong></p>
+<ul>
+<li>Priority queue latency: 0.7μs enqueue (negligible)</li>
+<li>4 priority levels: CRITICAL(1), HIGH(2), NORMAL(3), LOW(4)</li>
+<li>100% priority ordering correctness under load</li>
+<li>Capacity: 730,108 ops/sec (730x above target)</li>
+</ul>
+<pre><code class="language-yaml">paths:
+  /infer/{model_id}:
+    post:
+      tags:
+        - Inference
+      summary: Execute synchronous inference
+      description: |
+        Executes inference and waits for result. Suitable for low-latency
+        requests like embeddings. For long-running tasks, use async endpoint.
+      operationId: infer
+      parameters:
+        - name: model_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InferenceRequest'
+            examples:
+              text_embedding:
+                summary: Text embedding request
+                value:
+                  input_data:
+                    text: &quot;This is a sample sentence to embed&quot;
+                  parameters:
+                    normalize: true
+              text_generation:
+                summary: Text generation request
+                value:
+                  input_data:
+                    text: &quot;Once upon a time&quot;
+                  parameters:
+                    max_tokens: 100
+                    temperature: 0.7
+                  priority: &quot;medium&quot;
+              image_generation:
+                summary: Image generation (should use async)
+                value:
+                  input_data:
+                    text: &quot;A beautiful sunset over mountains&quot;
+                  parameters:
+                    width: 512
+                    height: 512
+                    steps: 50
+                  priority: &quot;low&quot;
+                  timeout_seconds: 300
+      responses:
+        '200':
+          description: Inference completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceResponse'
+        '400':
+          description: Invalid input
+        '404':
+          description: Model not found
+        '408':
+          description: Request timeout
+        '503':
+          description: Model loading or service unavailable
+
+components:
+  schemas:
+    InferenceRequest:
+      type: object
+      required:
+        - input_data
+      properties:
+        input_data:
+          $ref: '#/components/schemas/InputData'
+        parameters:
+          type: object
+          description: Task-specific inference parameters
+          additionalProperties: true
+        priority:
+          type: string
+          enum: [high, medium, low]
+          default: medium
+          description: |
+            - `high`: Fast tasks (embeddings, &lt;1s)
+            - `medium`: Text generation (1-10s)
+            - `low`: Image generation (&gt;10s)
+        timeout_seconds:
+          type: integer
+          minimum: 1
+          maximum: 600
+          default: 60
+
+    InputData:
+      type: object
+      description: Task-specific input data structure
+      properties:
+        text:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: string
+          example: &quot;Sample text input&quot;
+        image:
+          type: string
+          description: Base64-encoded image or URL
+          example: &quot;data:image/png;base64,iVBORw0KG...&quot;
+      additionalProperties: true
+
+    InferenceResponse:
+      type: object
+      properties:
+        model_id:
+          type: string
+        output_data:
+          $ref: '#/components/schemas/OutputData'
+        metadata:
+          type: object
+          properties:
+            inference_time_ms:
+              type: number
+              description: Model inference duration
+            total_time_ms:
+              type: number
+              description: Total request duration
+            batch_size:
+              type: integer
+            device:
+              type: string
+              enum: [cpu, cuda]
+
+    OutputData:
+      type: object
+      description: Task-specific output data structure
+      properties:
+        embedding:
+          type: array
+          items:
+            type: number
+          example: [0.123, -0.456, 0.789]
+        embeddings:
+          type: array
+          description: For batch embedding requests
+          items:
+            type: array
+            items:
+              type: number
+        text:
+          type: string
+          example: &quot;Generated text output&quot;
+        image_url:
+          type: string
+          format: uri
+          description: Presigned URL for generated image
+        image_base64:
+          type: string
+          description: Base64-encoded image (if inline)
+      additionalProperties: true
+</code></pre>
+<h4 id="242-asynchronous-inference">2.4.2 Asynchronous Inference<a class="headerlink" href="#242-asynchronous-inference" title="Permanent link">&para;</a></h4>
+<pre><code class="language-yaml">paths:
+  /infer/{model_id}/async:
+    post:
+      tags:
+        - Inference
+      summary: Execute asynchronous inference
+      description: |
+        Submits inference request and returns immediately with job ID.
+        Use `/jobs/{job_id}` endpoint to check status and retrieve result.
+      operationId: inferAsync
+      parameters:
+        - name: model_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InferenceRequest'
+      responses:
+        '202':
+          description: Request accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobReference'
+        '400':
+          description: Invalid input
+        '404':
+          description: Model not found
+
+components:
+  schemas:
+    JobReference:
+      type: object
+      properties:
+        job_id:
+          type: string
+          format: uuid
+          example: &quot;123e4567-e89b-12d3-a456-426614174000&quot;
+        status:
+          $ref: '#/components/schemas/JobStatus'
+        created_at:
+          type: string
+          format: date-time
+        status_url:
+          type: string
+          format: uri
+          example: &quot;/api/v1/jobs/123e4567-e89b-12d3-a456-426614174000&quot;
+
+    JobStatus:
+      type: string
+      enum:
+        - queued
+        - processing
+        - completed
+        - failed
+        - cancelled
+</code></pre>
+<h3 id="25-job-management-api">2.5 Job Management API<a class="headerlink" href="#25-job-management-api" title="Permanent link">&para;</a></h3>
+<h4 id="251-get-job-status">2.5.1 Get Job Status<a class="headerlink" href="#251-get-job-status" title="Permanent link">&para;</a></h4>
+<pre><code class="language-yaml">paths:
+  /jobs/{job_id}:
+    get:
+      tags:
+        - Jobs
+      summary: Get job status
+      operationId: getJobStatus
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Job status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobStatusResponse'
+        '404':
+          description: Job not found
+
+components:
+  schemas:
+    JobStatusResponse:
+      type: object
+      properties:
+        job_id:
+          type: string
+          format: uuid
+        model_id:
+          type: string
+        status:
+          $ref: '#/components/schemas/JobStatus'
+        progress:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Progress percentage (if available)
+        created_at:
+          type: string
+          format: date-time
+        started_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+        error:
+          $ref: '#/components/schemas/Error'
+</code></pre>
+<h4 id="252-get-job-result">2.5.2 Get Job Result<a class="headerlink" href="#252-get-job-result" title="Permanent link">&para;</a></h4>
+<pre><code class="language-yaml">paths:
+  /jobs/{job_id}/result:
+    get:
+      tags:
+        - Jobs
+      summary: Retrieve job result
+      operationId: getJobResult
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Job result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InferenceResponse'
+        '404':
+          description: Job not found
+        '409':
+          description: Job not completed yet
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                    example: &quot;JOB_NOT_READY&quot;
+                  message:
+                    type: string
+                  status:
+                    $ref: '#/components/schemas/JobStatus'
+</code></pre>
+<h4 id="253-cancel-job">2.5.3 Cancel Job<a class="headerlink" href="#253-cancel-job" title="Permanent link">&para;</a></h4>
+<pre><code class="language-yaml">paths:
+  /jobs/{job_id}:
+    delete:
+      tags:
+        - Jobs
+      summary: Cancel job
+      description: Attempts to cancel a queued or processing job
+      operationId: cancelJob
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Job cancelled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  job_id:
+                    type: string
+                  status:
+                    type: string
+                    example: &quot;cancelled&quot;
+        '404':
+          description: Job not found
+        '409':
+          description: Job already completed or failed
+</code></pre>
+<h3 id="26-lifecycle-management-api">2.6 Lifecycle Management API<a class="headerlink" href="#26-lifecycle-management-api" title="Permanent link">&para;</a></h3>
+<h4 id="261-load-model">2.6.1 Load Model<a class="headerlink" href="#261-load-model" title="Permanent link">&para;</a></h4>
+<pre><code class="language-yaml">paths:
+  /models/{model_id}/load:
+    post:
+      tags:
+        - Lifecycle
+      summary: Force load model
+      description: Explicitly loads model into memory (warmup)
+      operationId: loadModel
+      parameters:
+        - name: model_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Model loaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelStatusResponse'
+        '404':
+          description: Model not found
+        '507':
+          description: Insufficient memory
+
+components:
+  schemas:
+    ModelStatusResponse:
+      type: object
+      properties:
+        model_id:
+          type: string
+        state:
+          type: string
+          enum: [unloaded, loading, loaded, unhealthy]
+        memory_usage_mb:
+          type: number
+        device:
+          type: string
+          enum: [cpu, cuda]
+        loaded_at:
+          type: string
+          format: date-time
+        last_used_at:
+          type: string
+          format: date-time
+        health_status:
+          type: object
+          properties:
+            healthy:
+              type: boolean
+            last_check_at:
+              type: string
+              format: date-time
+            error_message:
+              type: string
+</code></pre>
+<h4 id="262-unload-model">2.6.2 Unload Model<a class="headerlink" href="#262-unload-model" title="Permanent link">&para;</a></h4>
+<pre><code class="language-yaml">paths:
+  /models/{model_id}/unload:
+    post:
+      tags:
+        - Lifecycle
+      summary: Unload model from memory
+      operationId: unloadModel
+      parameters:
+        - name: model_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Model unloaded
+        '404':
+          description: Model not found or not loaded
+</code></pre>
+<h4 id="263-system-status">2.6.3 System Status<a class="headerlink" href="#263-system-status" title="Permanent link">&para;</a></h4>
+<pre><code class="language-yaml">paths:
+  /status:
+    get:
+      tags:
+        - Lifecycle
+      summary: Get system status
+      description: Returns overall system status and loaded models
+      operationId: getStatus
+      responses:
+        '200':
+          description: System status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version:
+                    type: string
+                    example: &quot;1.0.0&quot;
+                  uptime_seconds:
+                    type: integer
+                  memory:
+                    type: object
+                    properties:
+                      total_mb:
+                        type: number
+                      used_mb:
+                        type: number
+                      available_mb:
+                        type: number
+                      threshold_mb:
+                        type: number
+                  gpu:
+                    type: object
+                    properties:
+                      available:
+                        type: boolean
+                      devices:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            device_id:
+                              type: integer
+                            name:
+                              type: string
+                            memory_total_mb:
+                              type: number
+                            memory_used_mb:
+                              type: number
+                  loaded_models:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ModelStatusResponse'
+                  queue_depth:
+                    type: object
+                    properties:
+                      high_priority:
+                        type: integer
+                      medium_priority:
+                        type: integer
+                      low_priority:
+                        type: integer
+</code></pre>
+<h3 id="27-health-check-api">2.7 Health Check API<a class="headerlink" href="#27-health-check-api" title="Permanent link">&para;</a></h3>
+<pre><code class="language-yaml">paths:
+  /health/live:
+    get:
+      tags:
+        - Health
+      summary: Liveness probe
+      description: Kubernetes liveness probe endpoint
+      operationId: liveness
+      responses:
+        '200':
+          description: Service is alive
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: &quot;ok&quot;
+
+  /health/ready:
+    get:
+      tags:
+        - Health
+      summary: Readiness probe
+      description: Kubernetes readiness probe endpoint
+      operationId: readiness
+      responses:
+        '200':
+          description: Service is ready
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: &quot;ready&quot;
+                  checks:
+                    type: object
+                    properties:
+                      database:
+                        type: boolean
+                      queue:
+                        type: boolean
+        '503':
+          description: Service not ready
+
+  /health/models:
+    get:
+      tags:
+        - Health
+      summary: Model health status
+      description: Health status of all loaded models
+      operationId: modelHealth
+      responses:
+        '200':
+          description: Model health status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  healthy_count:
+                    type: integer
+                  unhealthy_count:
+                    type: integer
+                  models:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        model_id:
+                          type: string
+                        healthy:
+                          type: boolean
+                        last_check_at:
+                          type: string
+                          format: date-time
+                        error:
+                          type: string
+</code></pre>
+<h3 id="28-metrics-api">2.8 Metrics API<a class="headerlink" href="#28-metrics-api" title="Permanent link">&para;</a></h3>
+<pre><code class="language-yaml">paths:
+  /metrics:
+    get:
+      tags:
+        - Metrics
+      summary: Prometheus metrics
+      description: Exposes metrics in Prometheus format
+      operationId: metrics
+      responses:
+        '200':
+          description: Prometheus metrics
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: |
+                # HELP modelmora_requests_total Total inference requests
+                # TYPE modelmora_requests_total counter
+                modelmora_requests_total{model_id=&quot;all-MiniLM-L6-v2&quot;,status=&quot;success&quot;} 1234
+
+                # HELP modelmora_inference_duration_seconds Inference duration
+                # TYPE modelmora_inference_duration_seconds histogram
+                modelmora_inference_duration_seconds_bucket{model_id=&quot;all-MiniLM-L6-v2&quot;,le=&quot;0.1&quot;} 500
+                modelmora_inference_duration_seconds_bucket{model_id=&quot;all-MiniLM-L6-v2&quot;,le=&quot;0.5&quot;} 800
+                modelmora_inference_duration_seconds_sum{model_id=&quot;all-MiniLM-L6-v2&quot;} 245.3
+
+                # HELP modelmora_queue_depth Current queue depth
+                # TYPE modelmora_queue_depth gauge
+                modelmora_queue_depth{priority=&quot;high&quot;} 2
+                modelmora_queue_depth{priority=&quot;medium&quot;} 5
+                modelmora_queue_depth{priority=&quot;low&quot;} 12
+</code></pre>
+<hr />
+<h2 id="3-grpc-service-specification-protocol-buffers">3. gRPC Service Specification (Protocol Buffers)<a class="headerlink" href="#3-grpc-service-specification-protocol-buffers" title="Permanent link">&para;</a></h2>
+<h3 id="31-package-structure">3.1 Package Structure<a class="headerlink" href="#31-package-structure" title="Permanent link">&para;</a></h3>
+<pre><code class="language-bash">protos/
+├── modelmora/
+│   └── v1/
+│       ├── common.proto
+│       ├── inference.proto
+│       ├── registry.proto
+│       └── management.proto
+</code></pre>
+<h3 id="32-common-types-commonproto">3.2 Common Types (<code>common.proto</code>)<a class="headerlink" href="#32-common-types-commonproto" title="Permanent link">&para;</a></h3>
+<pre><code class="language-protobuf">syntax = &quot;proto3&quot;;
+
+package modelmora.v1;
+
+option go_package = &quot;github.com/miraveja/modelmora/gen/go/v1&quot;;
+
+// Task types supported by ModelMora
+enum TaskType {
+  TASK_TYPE_UNSPECIFIED = 0;
+  TASK_TYPE_TXT2EMBED = 1;
+  TASK_TYPE_IMG2EMBED = 2;
+  TASK_TYPE_TXT2IMG = 3;
+  TASK_TYPE_IMG2TXT = 4;
+  TASK_TYPE_TXT2TXT = 5;
+}
+
+// Priority levels for inference requests
+enum Priority {
+  PRIORITY_UNSPECIFIED = 0;
+  PRIORITY_LOW = 1;
+  PRIORITY_MEDIUM = 2;
+  PRIORITY_HIGH = 3;
+}
+
+// Job status for async operations
+enum JobStatus {
+  JOB_STATUS_UNSPECIFIED = 0;
+  JOB_STATUS_QUEUED = 1;
+  JOB_STATUS_PROCESSING = 2;
+  JOB_STATUS_COMPLETED = 3;
+  JOB_STATUS_FAILED = 4;
+  JOB_STATUS_CANCELLED = 5;
+}
+
+// Model state in lifecycle
+enum ModelState {
+  MODEL_STATE_UNSPECIFIED = 0;
+  MODEL_STATE_UNLOADED = 1;
+  MODEL_STATE_LOADING = 2;
+  MODEL_STATE_LOADED = 3;
+  MODEL_STATE_UNHEALTHY = 4;
+}
+
+// Resource requirements for a model
+message ResourceRequirements {
+  int32 memory_mb = 1;
+  int32 gpu_vram_mb = 2;
+  int32 cpu_threads = 3;
+}
+
+// Error details with code and message
+message Error {
+  string code = 1;
+  string message = 2;
+  map&lt;string, string&gt; details = 3;
+  string trace_id = 4;
+}
+
+// Pagination metadata
+message PaginationRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+message PaginationResponse {
+  int32 total = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+  int32 total_pages = 4;
+}
+</code></pre>
+<h3 id="33-inference-service-inferenceproto">3.3 Inference Service (<code>inference.proto</code>)<a class="headerlink" href="#33-inference-service-inferenceproto" title="Permanent link">&para;</a></h3>
+<pre><code class="language-protobuf">syntax = &quot;proto3&quot;;
+
+package modelmora.v1;
+
+import &quot;modelmora/v1/common.proto&quot;;
+import &quot;google/protobuf/struct.proto&quot;;
+import &quot;google/protobuf/timestamp.proto&quot;;
+
+option go_package = &quot;github.com/miraveja/modelmora/gen/go/v1&quot;;
+
+// InferenceService handles model inference operations
+service InferenceService {
+  // Execute synchronous inference
+  rpc Infer(InferenceRequest) returns (InferenceResponse);
+
+  // Execute asynchronous inference (returns job ID)
+  rpc InferAsync(InferenceRequest) returns (JobReference);
+
+  // Stream inference (for real-time use cases)
+  rpc InferStream(stream InferenceRequest) returns (stream InferenceResponse);
+
+  // Get job status
+  rpc GetJobStatus(GetJobStatusRequest) returns (JobStatusResponse);
+
+  // Get job result
+  rpc GetJobResult(GetJobResultRequest) returns (InferenceResponse);
+
+  // Cancel job
+  rpc CancelJob(CancelJobRequest) returns (CancelJobResponse);
+}
+
+// Inference request message
+message InferenceRequest {
+  // Model identifier
+  string model_id = 1;
+
+  // Input data (task-specific)
+  InputData input_data = 2;
+
+  // Inference parameters (task-specific)
+  google.protobuf.Struct parameters = 3;
+
+  // Request priority
+  Priority priority = 4;
+
+  // Timeout in seconds
+  int32 timeout_seconds = 5;
+
+  // Client request ID (for tracing)
+  string request_id = 6;
+}
+
+// Input data structure
+message InputData {
+  oneof data {
+    string text = 1;
+    TextBatch text_batch = 2;
+    bytes image = 3;
+    ImageBatch image_batch = 4;
+  }
+
+  // Additional custom fields
+  google.protobuf.Struct custom_data = 10;
+}
+
+message TextBatch {
+  repeated string texts = 1;
+}
+
+message ImageBatch {
+  repeated bytes images = 1;
+}
+
+// Inference response message
+message InferenceResponse {
+  // Model identifier
+  string model_id = 1;
+
+  // Output data (task-specific)
+  OutputData output_data = 2;
+
+  // Inference metadata
+  InferenceMetadata metadata = 3;
+
+  // Error (if failed)
+  Error error = 4;
+}
+
+// Output data structure
+message OutputData {
+  oneof data {
+    Embedding embedding = 1;
+    EmbeddingBatch embedding_batch = 2;
+    string text = 3;
+    string image_url = 4;
+    bytes image_data = 5;
+  }
+
+  // Additional custom fields
+  google.protobuf.Struct custom_data = 10;
+}
+
+message Embedding {
+  repeated float values = 1;
+}
+
+message EmbeddingBatch {
+  repeated Embedding embeddings = 1;
+}
+
+// Inference execution metadata
+message InferenceMetadata {
+  double inference_time_ms = 1;
+  double total_time_ms = 2;
+  int32 batch_size = 3;
+  string device = 4;
+  google.protobuf.Timestamp timestamp = 5;
+}
+
+// Job reference for async operations
+message JobReference {
+  string job_id = 1;
+  JobStatus status = 2;
+  google.protobuf.Timestamp created_at = 3;
+}
+
+// Get job status request
+message GetJobStatusRequest {
+  string job_id = 1;
+}
+
+// Job status response
+message JobStatusResponse {
+  string job_id = 1;
+  string model_id = 2;
+  JobStatus status = 3;
+  float progress = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp started_at = 6;
+  google.protobuf.Timestamp completed_at = 7;
+  Error error = 8;
+}
+
+// Get job result request
+message GetJobResultRequest {
+  string job_id = 1;
+}
+
+// Cancel job request
+message CancelJobRequest {
+  string job_id = 1;
+}
+
+// Cancel job response
+message CancelJobResponse {
+  string job_id = 1;
+  JobStatus status = 2;
+}
+</code></pre>
+<h3 id="34-registry-service-registryproto">3.4 Registry Service (<code>registry.proto</code>)<a class="headerlink" href="#34-registry-service-registryproto" title="Permanent link">&para;</a></h3>
+<pre><code class="language-protobuf">syntax = &quot;proto3&quot;;
+
+package modelmora.v1;
+
+import &quot;modelmora/v1/common.proto&quot;;
+import &quot;google/protobuf/struct.proto&quot;;
+import &quot;google/protobuf/timestamp.proto&quot;;
+
+option go_package = &quot;github.com/miraveja/modelmora/gen/go/v1&quot;;
+
+// RegistryService manages model catalog
+service RegistryService {
+  // Register a new model
+  rpc RegisterModel(RegisterModelRequest) returns (Model);
+
+  // List all models
+  rpc ListModels(ListModelsRequest) returns (ListModelsResponse);
+
+  // Get model details
+  rpc GetModel(GetModelRequest) returns (Model);
+
+  // Update model configuration
+  rpc UpdateModel(UpdateModelRequest) returns (Model);
+
+  // Delete model
+  rpc DeleteModel(DeleteModelRequest) returns (DeleteModelResponse);
+
+  // Download model files
+  rpc DownloadModel(DownloadModelRequest) returns (DownloadModelResponse);
+
+  // Generate lock file
+  rpc GenerateLock(GenerateLockRequest) returns (LockFile);
+}
+
+// Register model request
+message RegisterModelRequest {
+  string model_id = 1;
+  string version = 2;
+  TaskType task_type = 3;
+  string display_name = 4;
+  string description = 5;
+  string source_url = 6;
+  ResourceRequirements resource_requirements = 7;
+  google.protobuf.Struct config = 8;
+}
+
+// Model message
+message Model {
+  string model_id = 1;
+  string version = 2;
+  TaskType task_type = 3;
+  string display_name = 4;
+  string description = 5;
+  string status = 6;
+  ResourceRequirements resource_requirements = 7;
+  google.protobuf.Struct config = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
+}
+
+// List models request
+message ListModelsRequest {
+  TaskType task_type = 1;
+  string status = 2;
+  PaginationRequest pagination = 3;
+}
+
+// List models response
+message ListModelsResponse {
+  repeated Model models = 1;
+  PaginationResponse pagination = 2;
+}
+
+// Get model request
+message GetModelRequest {
+  string model_id = 1;
+}
+
+// Update model request
+message UpdateModelRequest {
+  string model_id = 1;
+  string display_name = 2;
+  string description = 3;
+  google.protobuf.Struct config = 4;
+  ResourceRequirements resource_requirements = 5;
+}
+
+// Delete model request
+message DeleteModelRequest {
+  string model_id = 1;
+  bool force = 2;
+}
+
+// Delete model response
+message DeleteModelResponse {
+  string model_id = 1;
+  bool deleted = 2;
+}
+
+// Download model request
+message DownloadModelRequest {
+  string model_id = 1;
+}
+
+// Download model response
+message DownloadModelResponse {
+  string model_id = 1;
+  string status = 2;
+  string message = 3;
+}
+
+// Generate lock request
+message GenerateLockRequest {}
+
+// Lock file message
+message LockFile {
+  string version = 1;
+  google.protobuf.Timestamp generated_at = 2;
+  repeated LockedModel models = 3;
+}
+
+message LockedModel {
+  string model_id = 1;
+  string version = 2;
+  string source_url = 3;
+  string checksum = 4;
+  TaskType task_type = 5;
+}
+</code></pre>
+<h3 id="35-management-service-managementproto">3.5 Management Service (<code>management.proto</code>)<a class="headerlink" href="#35-management-service-managementproto" title="Permanent link">&para;</a></h3>
+<pre><code class="language-protobuf">syntax = &quot;proto3&quot;;
+
+package modelmora.v1;
+
+import &quot;modelmora/v1/common.proto&quot;;
+import &quot;google/protobuf/timestamp.proto&quot;;
+
+option go_package = &quot;github.com/miraveja/modelmora/gen/go/v1&quot;;
+
+// ManagementService handles lifecycle and system operations
+service ManagementService {
+  // Load model into memory
+  rpc LoadModel(LoadModelRequest) returns (ModelStatus);
+
+  // Unload model from memory
+  rpc UnloadModel(UnloadModelRequest) returns (UnloadModelResponse);
+
+  // Get system status
+  rpc GetSystemStatus(GetSystemStatusRequest) returns (SystemStatus);
+
+  // Get model health status
+  rpc GetModelHealth(GetModelHealthRequest) returns (ModelHealthResponse);
+
+  // Health check endpoints
+  rpc LivenessCheck(LivenessRequest) returns (LivenessResponse);
+  rpc ReadinessCheck(ReadinessRequest) returns (ReadinessResponse);
+}
+
+// Load model request
+message LoadModelRequest {
+  string model_id = 1;
+}
+
+// Model status message
+message ModelStatus {
+  string model_id = 1;
+  ModelState state = 2;
+  double memory_usage_mb = 3;
+  string device = 4;
+  google.protobuf.Timestamp loaded_at = 5;
+  google.protobuf.Timestamp last_used_at = 6;
+  HealthStatus health_status = 7;
+}
+
+message HealthStatus {
+  bool healthy = 1;
+  google.protobuf.Timestamp last_check_at = 2;
+  string error_message = 3;
+}
+
+// Unload model request
+message UnloadModelRequest {
+  string model_id = 1;
+}
+
+// Unload model response
+message UnloadModelResponse {
+  string model_id = 1;
+  bool unloaded = 2;
+}
+
+// Get system status request
+message GetSystemStatusRequest {}
+
+// System status response
+message SystemStatus {
+  string version = 1;
+  int64 uptime_seconds = 2;
+  MemoryStatus memory = 3;
+  GPUStatus gpu = 4;
+  repeated ModelStatus loaded_models = 5;
+  QueueStatus queue = 6;
+}
+
+message MemoryStatus {
+  double total_mb = 1;
+  double used_mb = 2;
+  double available_mb = 3;
+  double threshold_mb = 4;
+}
+
+message GPUStatus {
+  bool available = 1;
+  repeated GPUDevice devices = 2;
+}
+
+message GPUDevice {
+  int32 device_id = 1;
+  string name = 2;
+  double memory_total_mb = 3;
+  double memory_used_mb = 4;
+}
+
+message QueueStatus {
+  int32 high_priority = 1;
+  int32 medium_priority = 2;
+  int32 low_priority = 3;
+}
+
+// Get model health request
+message GetModelHealthRequest {}
+
+// Model health response
+message ModelHealthResponse {
+  int32 healthy_count = 1;
+  int32 unhealthy_count = 2;
+  repeated ModelStatus models = 3;
+}
+
+// Liveness check
+message LivenessRequest {}
+
+message LivenessResponse {
+  string status = 1;
+}
+
+// Readiness check
+message ReadinessRequest {}
+
+message ReadinessResponse {
+  string status = 1;
+  HealthChecks checks = 2;
+}
+
+message HealthChecks {
+  bool database = 1;
+  bool queue = 2;
+}
+</code></pre>
+<hr />
+<h2 id="4-kafka-message-schemas-future">4. Kafka Message Schemas (Future)<a class="headerlink" href="#4-kafka-message-schemas-future" title="Permanent link">&para;</a></h2>
+<h3 id="41-topic-structure">4.1 Topic Structure<a class="headerlink" href="#41-topic-structure" title="Permanent link">&para;</a></h3>
+<pre><code class="language-text">Topics:
+- modelmora.inference.requests    # Inference request submissions
+- modelmora.inference.responses   # Inference results
+- modelmora.lifecycle.events      # Model load/unload events
+- modelmora.audit.events          # Audit trail
+</code></pre>
+<h3 id="42-message-format-json-schema">4.2 Message Format (JSON Schema)<a class="headerlink" href="#42-message-format-json-schema" title="Permanent link">&para;</a></h3>
+<h4 id="421-inference-request-message">4.2.1 Inference Request Message<a class="headerlink" href="#421-inference-request-message" title="Permanent link">&para;</a></h4>
+<pre><code class="language-json">{
+  &quot;$schema&quot;: &quot;http://json-schema.org/draft-07/schema#&quot;,
+  &quot;title&quot;: &quot;InferenceRequestMessage&quot;,
+  &quot;type&quot;: &quot;object&quot;,
+  &quot;required&quot;: [&quot;message_id&quot;, &quot;model_id&quot;, &quot;input_data&quot;, &quot;timestamp&quot;],
+  &quot;properties&quot;: {
+    &quot;message_id&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;format&quot;: &quot;uuid&quot;,
+      &quot;description&quot;: &quot;Unique message identifier&quot;
+    },
+    &quot;correlation_id&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;format&quot;: &quot;uuid&quot;,
+      &quot;description&quot;: &quot;Client correlation ID for response matching&quot;
+    },
+    &quot;model_id&quot;: {
+      &quot;type&quot;: &quot;string&quot;
+    },
+    &quot;input_data&quot;: {
+      &quot;type&quot;: &quot;object&quot;
+    },
+    &quot;parameters&quot;: {
+      &quot;type&quot;: &quot;object&quot;
+    },
+    &quot;priority&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;enum&quot;: [&quot;high&quot;, &quot;medium&quot;, &quot;low&quot;]
+    },
+    &quot;timeout_seconds&quot;: {
+      &quot;type&quot;: &quot;integer&quot;
+    },
+    &quot;timestamp&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;format&quot;: &quot;date-time&quot;
+    }
+  }
+}
+</code></pre>
+<h4 id="422-inference-response-message">4.2.2 Inference Response Message<a class="headerlink" href="#422-inference-response-message" title="Permanent link">&para;</a></h4>
+<pre><code class="language-json">{
+  &quot;$schema&quot;: &quot;http://json-schema.org/draft-07/schema#&quot;,
+  &quot;title&quot;: &quot;InferenceResponseMessage&quot;,
+  &quot;type&quot;: &quot;object&quot;,
+  &quot;required&quot;: [&quot;message_id&quot;, &quot;correlation_id&quot;, &quot;status&quot;, &quot;timestamp&quot;],
+  &quot;properties&quot;: {
+    &quot;message_id&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;format&quot;: &quot;uuid&quot;
+    },
+    &quot;correlation_id&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;format&quot;: &quot;uuid&quot;,
+      &quot;description&quot;: &quot;Matches request correlation_id&quot;
+    },
+    &quot;model_id&quot;: {
+      &quot;type&quot;: &quot;string&quot;
+    },
+    &quot;status&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;enum&quot;: [&quot;success&quot;, &quot;failure&quot;]
+    },
+    &quot;output_data&quot;: {
+      &quot;type&quot;: &quot;object&quot;
+    },
+    &quot;metadata&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;properties&quot;: {
+        &quot;inference_time_ms&quot;: {&quot;type&quot;: &quot;number&quot;},
+        &quot;device&quot;: {&quot;type&quot;: &quot;string&quot;}
+      }
+    },
+    &quot;error&quot;: {
+      &quot;type&quot;: &quot;object&quot;,
+      &quot;properties&quot;: {
+        &quot;code&quot;: {&quot;type&quot;: &quot;string&quot;},
+        &quot;message&quot;: {&quot;type&quot;: &quot;string&quot;}
+      }
+    },
+    &quot;timestamp&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;format&quot;: &quot;date-time&quot;
+    }
+  }
+}
+</code></pre>
+<h4 id="423-lifecycle-event-message">4.2.3 Lifecycle Event Message<a class="headerlink" href="#423-lifecycle-event-message" title="Permanent link">&para;</a></h4>
+<pre><code class="language-json">{
+  &quot;$schema&quot;: &quot;http://json-schema.org/draft-07/schema#&quot;,
+  &quot;title&quot;: &quot;LifecycleEventMessage&quot;,
+  &quot;type&quot;: &quot;object&quot;,
+  &quot;required&quot;: [&quot;event_id&quot;, &quot;event_type&quot;, &quot;model_id&quot;, &quot;timestamp&quot;],
+  &quot;properties&quot;: {
+    &quot;event_id&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;format&quot;: &quot;uuid&quot;
+    },
+    &quot;event_type&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;enum&quot;: [
+        &quot;model_load_requested&quot;,
+        &quot;model_loaded&quot;,
+        &quot;model_load_failed&quot;,
+        &quot;model_unloaded&quot;,
+        &quot;model_evicted&quot;
+      ]
+    },
+    &quot;model_id&quot;: {
+      &quot;type&quot;: &quot;string&quot;
+    },
+    &quot;details&quot;: {
+      &quot;type&quot;: &quot;object&quot;
+    },
+    &quot;timestamp&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;format&quot;: &quot;date-time&quot;
+    }
+  }
+}
+</code></pre>
+<hr />
+<h2 id="5-error-handling">5. Error Handling<a class="headerlink" href="#5-error-handling" title="Permanent link">&para;</a></h2>
+<h3 id="51-http-status-codes">5.1 HTTP Status Codes<a class="headerlink" href="#51-http-status-codes" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>OK</td>
+<td>Successful GET/PUT/DELETE</td>
+</tr>
+<tr>
+<td>201</td>
+<td>Created</td>
+<td>Successful POST (resource created)</td>
+</tr>
+<tr>
+<td>202</td>
+<td>Accepted</td>
+<td>Async operation started</td>
+</tr>
+<tr>
+<td>204</td>
+<td>No Content</td>
+<td>Successful DELETE (no body)</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Bad Request</td>
+<td>Invalid input/validation error</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+<td>Missing/invalid authentication</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+<td>Insufficient permissions</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not Found</td>
+<td>Resource doesn't exist</td>
+</tr>
+<tr>
+<td>408</td>
+<td>Request Timeout</td>
+<td>Request exceeded timeout</td>
+</tr>
+<tr>
+<td>409</td>
+<td>Conflict</td>
+<td>Resource conflict (e.g., already exists)</td>
+</tr>
+<tr>
+<td>422</td>
+<td>Unprocessable Entity</td>
+<td>Semantic validation error</td>
+</tr>
+<tr>
+<td>429</td>
+<td>Too Many Requests</td>
+<td>Rate limit exceeded</td>
+</tr>
+<tr>
+<td>500</td>
+<td>Internal Server Error</td>
+<td>Unexpected server error</td>
+</tr>
+<tr>
+<td>503</td>
+<td>Service Unavailable</td>
+<td>Service temporarily unavailable</td>
+</tr>
+<tr>
+<td>507</td>
+<td>Insufficient Storage</td>
+<td>Not enough memory/disk</td>
+</tr>
+</tbody>
+</table>
+<h3 id="52-grpc-status-codes">5.2 gRPC Status Codes<a class="headerlink" href="#52-grpc-status-codes" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OK</td>
+<td>Success</td>
+<td>-</td>
+</tr>
+<tr>
+<td>CANCELLED</td>
+<td>Request cancelled</td>
+<td>Client cancelled request</td>
+</tr>
+<tr>
+<td>INVALID_ARGUMENT</td>
+<td>Invalid input</td>
+<td>Validation error</td>
+</tr>
+<tr>
+<td>DEADLINE_EXCEEDED</td>
+<td>Timeout</td>
+<td>Request timeout</td>
+</tr>
+<tr>
+<td>NOT_FOUND</td>
+<td>Not found</td>
+<td>Resource doesn't exist</td>
+</tr>
+<tr>
+<td>ALREADY_EXISTS</td>
+<td>Already exists</td>
+<td>Duplicate resource</td>
+</tr>
+<tr>
+<td>RESOURCE_EXHAUSTED</td>
+<td>Resource exhausted</td>
+<td>Memory/quota limits</td>
+</tr>
+<tr>
+<td>FAILED_PRECONDITION</td>
+<td>Precondition failed</td>
+<td>Invalid state</td>
+</tr>
+<tr>
+<td>UNAVAILABLE</td>
+<td>Service unavailable</td>
+<td>Temporary failure</td>
+</tr>
+<tr>
+<td>INTERNAL</td>
+<td>Internal error</td>
+<td>Unexpected error</td>
+</tr>
+</tbody>
+</table>
+<h3 id="53-error-codes">5.3 Error Codes<a class="headerlink" href="#53-error-codes" title="Permanent link">&para;</a></h3>
+<pre><code class="language-bash"># Registry Errors
+MODEL_NOT_FOUND
+MODEL_ALREADY_EXISTS
+INVALID_MODEL_ID
+INVALID_TASK_TYPE
+DOWNLOAD_FAILED
+CHECKSUM_MISMATCH
+
+# Lifecycle Errors
+MODEL_LOAD_FAILED
+MODEL_NOT_LOADED
+INSUFFICIENT_MEMORY
+UNHEALTHY_MODEL
+PROCESS_SPAWN_FAILED
+
+# Inference Errors
+INVALID_INPUT
+INFERENCE_FAILED
+INFERENCE_TIMEOUT
+JOB_NOT_FOUND
+JOB_NOT_READY
+BATCH_SIZE_EXCEEDED
+
+# System Errors
+VALIDATION_ERROR
+INTERNAL_ERROR
+SERVICE_UNAVAILABLE
+RATE_LIMIT_EXCEEDED
+</code></pre>
+<hr />
+<h2 id="6-client-sdk-examples">6. Client SDK Examples<a class="headerlink" href="#6-client-sdk-examples" title="Permanent link">&para;</a></h2>
+<h3 id="61-python-rest-client">6.1 Python REST Client<a class="headerlink" href="#61-python-rest-client" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">from modelmora_client import ModelMoraClient
+
+# Initialize client
+client = ModelMoraClient(base_url=&quot;http://localhost:8000&quot;)
+
+# Register model
+model = client.registry.register_model(
+    model_id=&quot;sentence-transformers/all-MiniLM-L6-v2&quot;,
+    task_type=&quot;txt2embed&quot;,
+    version=&quot;v2.2.2&quot;
+)
+
+# Synchronous inference
+result = client.inference.infer(
+    model_id=&quot;sentence-transformers/all-MiniLM-L6-v2&quot;,
+    input_data={&quot;text&quot;: &quot;Hello world&quot;},
+    parameters={&quot;normalize&quot;: True}
+)
+print(result.output_data.embedding)
+
+# Asynchronous inference
+job = client.inference.infer_async(
+    model_id=&quot;stabilityai/stable-diffusion-2-1&quot;,
+    input_data={&quot;text&quot;: &quot;A beautiful sunset&quot;},
+    priority=&quot;low&quot;
+)
+print(f&quot;Job ID: {job.job_id}&quot;)
+
+# Poll for result
+status = client.jobs.get_status(job.job_id)
+while status.status in [&quot;queued&quot;, &quot;processing&quot;]:
+    time.sleep(1)
+    status = client.jobs.get_status(job.job_id)
+
+result = client.jobs.get_result(job.job_id)
+print(f&quot;Image URL: {result.output_data.image_url}&quot;)
+</code></pre>
+<h3 id="62-python-grpc-client">6.2 Python gRPC Client<a class="headerlink" href="#62-python-grpc-client" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">import grpc
+from modelmora.v1 import inference_pb2, inference_pb2_grpc
+
+# Create channel
+channel = grpc.insecure_channel('localhost:50051')
+stub = inference_pb2_grpc.InferenceServiceStub(channel)
+
+# Create request
+request = inference_pb2.InferenceRequest(
+    model_id=&quot;sentence-transformers/all-MiniLM-L6-v2&quot;,
+    input_data=inference_pb2.InputData(text=&quot;Hello world&quot;),
+    priority=inference_pb2.PRIORITY_HIGH
+)
+
+# Execute inference
+response = stub.Infer(request)
+print(response.output_data.embedding.values)
+</code></pre>
+<hr />
+<h2 id="7-revision-history">7. Revision History<a class="headerlink" href="#7-revision-history" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>Date</th>
+<th>Author</th>
+<th>Changes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.0.0</td>
+<td>2025-12-04</td>
+<td>-</td>
+<td>Initial API design document</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/JomarJunior/modelmora" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+        <script src="../assets/mkdocs_puml/puml.js"></script>
+      
+        <script src="https://unpkg.com/@panzoom/panzoom@4.5.1/dist/panzoom.min.js"></script>
+      
+        <script src="../assets/mkdocs_puml/interaction.js"></script>
+      
+    
+  </body>
+</html>

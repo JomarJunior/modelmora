@@ -1,0 +1,2271 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Neural network model management and inference serving microservice for MiraVeja">
+      
+      
+        <meta name="author" content="Jomar Júnior de Souza Pereira">
+      
+      
+        <link rel="canonical" href="https://jomarjunior.github.io/modelmora/data_models/registry/model_catalog/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Model Catalog Aggregate - ModelMora Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../assets/mkdocs_puml/puml.css">
+    
+      <link rel="stylesheet" href="../../../assets/mkdocs_puml/interaction.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#model-catalog-aggregate" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="ModelMora Documentation" class="md-header__button md-logo" aria-label="ModelMora Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ModelMora Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Model Catalog Aggregate
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/JomarJunior/modelmora" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    JomarJunior/modelmora
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../getting-started/installation/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../rfc/%231%20-%20RFC%20Writting%20Patterns/" class="md-tabs__link">
+          
+  
+  
+  RFCs
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../architecture/" class="md-tabs__link">
+          
+  
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../api-reference/rest/" class="md-tabs__link">
+          
+  
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../roadmap/" class="md-tabs__link">
+          
+  
+  
+  Development
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../deployment/docker/" class="md-tabs__link">
+          
+  
+  
+  Deployment
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="ModelMora Documentation" class="md-nav__button md-logo" aria-label="ModelMora Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ModelMora Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/JomarJunior/modelmora" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    JomarJunior/modelmora
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFCs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    RFCs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../rfc/%231%20-%20RFC%20Writting%20Patterns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC Writing Patterns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../design-decisions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Decisions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api-reference/rest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REST API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api-reference/grpc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gRPC API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Development
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../requirements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Requirements
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deployment
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../deployment/docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../deployment/kubernetes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Structure
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Structure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-plantuml-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 PlantUML Diagram
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-relationships" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Relationships
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-field-specifications" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Field Specifications
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Field Specifications">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 id
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 name
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 models
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-events" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 events
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-entity-pattern-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 Entity Pattern Fields
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Constraints
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Constraints">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-aggregate-pattern-constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Aggregate Pattern Constraints
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-entity-pattern-constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Entity Pattern Constraints
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-uniqueness-constraints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Uniqueness Constraints
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-referential-integrity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Referential Integrity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#45-business-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.5 Business Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Validation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-syntax-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Syntax Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-semantic-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Semantic Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-invariant-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Invariant Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Behavior
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Behavior">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-model-registration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Model Registration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-model-unregistration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Model Unregistration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-version-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 Version Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#64-query-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.4 Query Operations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#65-event-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.5 Event Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#66-identity-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.6 Identity Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-domain-events" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Domain Events
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Domain Events">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-modelregisteredevent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.1 ModelRegisteredEvent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-modelunregisteredevent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.2 ModelUnregisteredEvent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-modelversionaddedevent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7.3 ModelVersionAddedEvent
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-serialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Serialization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Serialization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81-json-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1 JSON Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82-protocol-buffers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2 Protocol Buffers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-database-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Database Schema
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-usage-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Usage Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10. Usage Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#101-creating-catalog" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.1 Creating Catalog
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#102-registering-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.2 Registering Models
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#103-querying-catalog" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3 Querying Catalog
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#104-version-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.4 Version Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#105-transaction-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.5 Transaction Pattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-related-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Related Models
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="model-catalog-aggregate">Model Catalog Aggregate<a class="headerlink" href="#model-catalog-aggregate" title="Permanent link">&para;</a></h1>
+<p><strong>Context:</strong> Registry
+<strong>Type:</strong> Aggregate Root
+<strong>Version:</strong> 1.0.0
+<strong>Date:</strong> 2025-12-04</p>
+<hr />
+<h2 id="1-overview">1. Overview<a class="headerlink" href="#1-overview" title="Permanent link">&para;</a></h2>
+<p>The <code>ModelCatalog</code> aggregate manages the collection of registered models and enforces consistency boundaries for model registration, versioning, and catalog operations.</p>
+<hr />
+<h2 id="2-structure">2. Structure<a class="headerlink" href="#2-structure" title="Permanent link">&para;</a></h2>
+<h3 id="21-plantuml-diagram">2.1 PlantUML Diagram<a class="headerlink" href="#21-plantuml-diagram" title="Permanent link">&para;</a></h3>
+<div class='puml-container'><div class="puml light" style=""><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" data-diagram-type="CLASS" height="495px" preserveAspectRatio="xMidYMid meet" style="width:790px;height:495px;background:#FFFFFF;" version="1.1" viewBox="0 0 790 495" width="790px" zoomAndPan="magnify" class="diagram"><defs/><g><g class="entity" data-entity="ModelCatalog" data-source-line="2" data-uid="ent0002" id="entity_ModelCatalog"><rect fill="#F1F1F1" height="341.3438" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="451.8789" x="7" y="7"/><ellipse cx="180.79" cy="23" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/><path d="M183.7588,28.6406 Q183.1807,28.9375 182.54,29.0781 Q181.8994,29.2344 181.1963,29.2344 Q178.6963,29.2344 177.3682,27.5938 Q176.0557,25.9375 176.0557,22.8125 Q176.0557,19.6875 177.3682,18.0313 Q178.6963,16.375 181.1963,16.375 Q181.8994,16.375 182.54,16.5313 Q183.1963,16.6875 183.7588,16.9844 L183.7588,19.7031 Q183.1338,19.125 182.54,18.8594 Q181.9463,18.5781 181.3213,18.5781 Q179.9775,18.5781 179.29,19.6563 Q178.6025,20.7188 178.6025,22.8125 Q178.6025,24.9063 179.29,25.9844 Q179.9775,27.0469 181.3213,27.0469 Q181.9463,27.0469 182.54,26.7813 Q183.1338,26.5 183.7588,25.9219 L183.7588,28.6406 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="95.7988" x="201.29" y="27.8467">ModelCatalog</text><line style="stroke:#181818;stroke-width:0.5;" x1="8" x2="457.8789" y1="39" y2="39"/><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="52.6484" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="119.376" x="27" y="55.9951">id: UUID {MUST}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="68.9453" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="152.6807" x="27" y="72.292">name: String {MUST}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="85.2422" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="281.0732" x="27" y="88.5889">models: Map&lt;ModelId, Model&gt; {MUST}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="101.5391" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="243.4756" x="27" y="104.8857">events: Collection&lt;DomainEvent&gt;</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="117.8359" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="224.4785" x="27" y="121.1826">created_at: Timestamp {MUST}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="134.1328" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="229.0586" x="27" y="137.4795">updated_at: Timestamp {MUST}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="150.4297" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="172.833" x="27" y="153.7764">version: Integer {MUST}</text><line style="stroke:#181818;stroke-width:1;" x1="8" x2="457.8789" y1="161.0781" y2="161.0781"/><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="174.7266" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="249.4023" x="27" y="178.0732">register_model(model: Model): void</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="191.0234" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="299.9404" x="27" y="194.3701">unregister_model(model_id: ModelId): void</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="207.3203" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="263.293" x="27" y="210.667">get_model(model_id: ModelId): Model</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="223.6172" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="352.7412" x="27" y="226.9639">list_models(filter: ModelFilter): Collection&lt;Model&gt;</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="239.9141" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="425.8789" x="27" y="243.2607">add_version(model_id: ModelId, version: ModelVersion): void</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="256.2109" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="424.1084" x="27" y="259.5576">find_by_task_type(task_type: TaskType): Collection&lt;Model&gt;</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="272.5078" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="190.4082" x="27" y="275.8545">validate(): ValidationResult</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="288.8047" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="259.6494" x="27" y="292.1514">addEvent(event: DomainEvent): void</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="305.1016" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="131.6533" x="27" y="308.4482">clearEvents(): void</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="321.3984" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="265.1797" x="27" y="324.7451">equals(other: ModelCatalog): Boolean</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="337.6953" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="104.0703" x="27" y="341.042">hash(): Integer</text></g><g class="entity" data-entity="Model" data-source-line="24" data-uid="ent0003" id="entity_Model"><rect fill="#F1F1F1" height="80.5938" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="153.5859" x="156.15" y="408.35"/><ellipse cx="207.6759" cy="424.35" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/><path d="M210.6446,429.9906 Q210.0665,430.2875 209.4259,430.4281 Q208.7853,430.5844 208.0821,430.5844 Q205.5821,430.5844 204.254,428.9437 Q202.9415,427.2875 202.9415,424.1625 Q202.9415,421.0375 204.254,419.3812 Q205.5821,417.725 208.0821,417.725 Q208.7853,417.725 209.4259,417.8812 Q210.0821,418.0375 210.6446,418.3344 L210.6446,421.0531 Q210.0196,420.475 209.4259,420.2094 Q208.8321,419.9281 208.2071,419.9281 Q206.8634,419.9281 206.1759,421.0062 Q205.4884,422.0687 205.4884,424.1625 Q205.4884,426.2562 206.1759,427.3344 Q206.8634,428.3969 208.2071,428.3969 Q208.8321,428.3969 209.4259,428.1312 Q210.0196,427.85 210.6446,427.2719 L210.6446,429.9906 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="42.0342" x="228.1759" y="429.1967">Model</text><line style="stroke:#181818;stroke-width:0.5;" x1="157.15" x2="308.7359" y1="440.35" y2="440.35"/><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="167.15" cy="453.9984" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="57.3467" x="176.15" y="457.3451">id: UUID</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="167.15" cy="470.2953" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="127.5859" x="176.15" y="473.642">model_id: ModelId</text><line style="stroke:#181818;stroke-width:0.5;" x1="157.15" x2="308.7359" y1="480.9437" y2="480.9437"/></g><g class="entity" data-entity="GMN5" data-source-line="32" data-uid="ent0006" id="entity_GMN5"><path d="M494.33,149.98 L494.33,173.67 L459.33,177.67 L494.33,181.67 L494.33,205.3784 A0,0 0 0 0 494.33,205.3784 L783.5502,205.3784 A0,0 0 0 0 783.5502,205.3784 L783.5502,159.98 L773.5502,149.98 L494.33,149.98 A0,0 0 0 0 494.33,149.98" fill="#FEFFDD" style="stroke:#181818;stroke-width:0.5;"/><path d="M773.5502,149.98 L773.5502,159.98 L783.5502,159.98 L773.5502,149.98" fill="#FEFFDD" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="265.332" x="500.33" y="167.0469">Aggregate Pattern: Enforces consistency</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="268.2202" x="500.33" y="182.1797">All model operations go through this root</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="193.7178" x="500.33" y="197.3125">Maintains referential integrity</text></g><g class="link" data-entity-1="ModelCatalog" data-entity-2="Model" data-link-type="composition" data-source-line="29" data-uid="lnk4" id="link_ModelCatalog_Model"><path codeLine="29" d="M232.94,360.63 C232.94,382.6 232.94,391.2 232.94,407.86" fill="none" id="ModelCatalog-backto-Model" style="stroke:#181818;stroke-width:1;"/><polygon fill="#181818" points="232.94,348.63,228.94,354.63,232.94,360.63,236.94,354.63,232.94,348.63" style="stroke:#181818;stroke-width:1;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="23.0356" x="208.1096" y="397.2418">0..*</text></g></g></svg></div><div class="puml dark" style=""><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" data-diagram-type="CLASS" height="495px" preserveAspectRatio="xMidYMid meet" style="width:790px;height:495px;background:#1B1B1B;" version="1.1" viewBox="0 0 790 495" width="790px" zoomAndPan="magnify" class="diagram"><defs/><g><rect fill="#1B1B1B" height="495" style="stroke:none;stroke-width:1;" width="790" x="0" y="0"/><g class="entity" data-entity="ModelCatalog" data-source-line="2" data-uid="ent0002" id="entity_ModelCatalog"><rect fill="#313139" height="341.3438" rx="2.5" ry="2.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="451.8789" x="7" y="7"/><ellipse cx="180.79" cy="23" fill="#2E5233" rx="11" ry="11" style="stroke:#E7E7E7;stroke-width:1;"/><path d="M183.7588,28.6406 Q183.1807,28.9375 182.54,29.0781 Q181.8994,29.2344 181.1963,29.2344 Q178.6963,29.2344 177.3682,27.5938 Q176.0557,25.9375 176.0557,22.8125 Q176.0557,19.6875 177.3682,18.0313 Q178.6963,16.375 181.1963,16.375 Q181.8994,16.375 182.54,16.5313 Q183.1963,16.6875 183.7588,16.9844 L183.7588,19.7031 Q183.1338,19.125 182.54,18.8594 Q181.9463,18.5781 181.3213,18.5781 Q179.9775,18.5781 179.29,19.6563 Q178.6025,20.7188 178.6025,22.8125 Q178.6025,24.9063 179.29,25.9844 Q179.9775,27.0469 181.3213,27.0469 Q181.9463,27.0469 182.54,26.7813 Q183.1338,26.5 183.7588,25.9219 L183.7588,28.6406 Z " fill="#FFFFFF"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="95.7988" x="201.29" y="27.8467">ModelCatalog</text><line style="stroke:#E7E7E7;stroke-width:0.5;" x1="8" x2="457.8789" y1="39" y2="39"/><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="52.6484" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="119.376" x="27" y="55.9951">id: UUID {MUST}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="68.9453" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="152.6807" x="27" y="72.292">name: String {MUST}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="85.2422" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="281.0732" x="27" y="88.5889">models: Map&lt;ModelId, Model&gt; {MUST}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="101.5391" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="243.4756" x="27" y="104.8857">events: Collection&lt;DomainEvent&gt;</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="117.8359" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="224.4785" x="27" y="121.1826">created_at: Timestamp {MUST}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="134.1328" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="229.0586" x="27" y="137.4795">updated_at: Timestamp {MUST}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="150.4297" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="172.833" x="27" y="153.7764">version: Integer {MUST}</text><line style="stroke:#E7E7E7;stroke-width:1;" x1="8" x2="457.8789" y1="161.0781" y2="161.0781"/><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="174.7266" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="249.4023" x="27" y="178.0732">register_model(model: Model): void</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="191.0234" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="299.9404" x="27" y="194.3701">unregister_model(model_id: ModelId): void</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="207.3203" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="263.293" x="27" y="210.667">get_model(model_id: ModelId): Model</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="223.6172" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="352.7412" x="27" y="226.9639">list_models(filter: ModelFilter): Collection&lt;Model&gt;</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="239.9141" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="425.8789" x="27" y="243.2607">add_version(model_id: ModelId, version: ModelVersion): void</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="256.2109" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="424.1084" x="27" y="259.5576">find_by_task_type(task_type: TaskType): Collection&lt;Model&gt;</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="272.5078" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="190.4082" x="27" y="275.8545">validate(): ValidationResult</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="288.8047" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="259.6494" x="27" y="292.1514">addEvent(event: DomainEvent): void</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="305.1016" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="131.6533" x="27" y="308.4482">clearEvents(): void</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="321.3984" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="265.1797" x="27" y="324.7451">equals(other: ModelCatalog): Boolean</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="337.6953" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="104.0703" x="27" y="341.042">hash(): Integer</text></g><g class="entity" data-entity="Model" data-source-line="24" data-uid="ent0003" id="entity_Model"><rect fill="#313139" height="80.5938" rx="2.5" ry="2.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="153.5859" x="156.15" y="408.35"/><ellipse cx="207.6759" cy="424.35" fill="#2E5233" rx="11" ry="11" style="stroke:#E7E7E7;stroke-width:1;"/><path d="M210.6446,429.9906 Q210.0665,430.2875 209.4259,430.4281 Q208.7853,430.5844 208.0821,430.5844 Q205.5821,430.5844 204.254,428.9437 Q202.9415,427.2875 202.9415,424.1625 Q202.9415,421.0375 204.254,419.3812 Q205.5821,417.725 208.0821,417.725 Q208.7853,417.725 209.4259,417.8812 Q210.0821,418.0375 210.6446,418.3344 L210.6446,421.0531 Q210.0196,420.475 209.4259,420.2094 Q208.8321,419.9281 208.2071,419.9281 Q206.8634,419.9281 206.1759,421.0062 Q205.4884,422.0687 205.4884,424.1625 Q205.4884,426.2562 206.1759,427.3344 Q206.8634,428.3969 208.2071,428.3969 Q208.8321,428.3969 209.4259,428.1312 Q210.0196,427.85 210.6446,427.2719 L210.6446,429.9906 Z " fill="#FFFFFF"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="42.0342" x="228.1759" y="429.1967">Model</text><line style="stroke:#E7E7E7;stroke-width:0.5;" x1="157.15" x2="308.7359" y1="440.35" y2="440.35"/><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="167.15" cy="453.9984" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="57.3467" x="176.15" y="457.3451">id: UUID</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="167.15" cy="470.2953" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="127.5859" x="176.15" y="473.642">model_id: ModelId</text><line style="stroke:#E7E7E7;stroke-width:0.5;" x1="157.15" x2="308.7359" y1="480.9437" y2="480.9437"/></g><g class="entity" data-entity="GMN5" data-source-line="32" data-uid="ent0006" id="entity_GMN5"><path d="M494.33,149.98 L494.33,173.67 L459.33,177.67 L494.33,181.67 L494.33,205.3784 A0,0 0 0 0 494.33,205.3784 L783.5502,205.3784 A0,0 0 0 0 783.5502,205.3784 L783.5502,159.98 L773.5502,149.98 L494.33,149.98 A0,0 0 0 0 494.33,149.98" fill="#714137" style="stroke:#E7E7E7;stroke-width:0.5;"/><path d="M773.5502,149.98 L773.5502,159.98 L783.5502,159.98 L773.5502,149.98" fill="#714137" style="stroke:#E7E7E7;stroke-width:0.5;"/><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="265.332" x="500.33" y="167.0469">Aggregate Pattern: Enforces consistency</text><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="268.2202" x="500.33" y="182.1797">All model operations go through this root</text><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="193.7178" x="500.33" y="197.3125">Maintains referential integrity</text></g><g class="link" data-entity-1="ModelCatalog" data-entity-2="Model" data-link-type="composition" data-source-line="29" data-uid="lnk4" id="link_ModelCatalog_Model"><path codeLine="29" d="M232.94,360.63 C232.94,382.6 232.94,391.2 232.94,407.86" fill="none" id="ModelCatalog-backto-Model" style="stroke:#E7E7E7;stroke-width:1;"/><polygon fill="#E7E7E7" points="232.94,348.63,228.94,354.63,232.94,360.63,236.94,354.63,232.94,348.63" style="stroke:#E7E7E7;stroke-width:1;"/><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="23.0356" x="208.1096" y="397.2418">0..*</text></g></g></svg></div></div>
+
+<h3 id="22-relationships">2.2 Relationships<a class="headerlink" href="#22-relationships" title="Permanent link">&para;</a></h3>
+<div class='puml-container'><div class="puml light" style=""><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" data-diagram-type="CLASS" height="328px" preserveAspectRatio="xMidYMid meet" style="width:295px;height:328px;background:#FFFFFF;" version="1.1" viewBox="0 0 295 328" width="295px" zoomAndPan="magnify" class="diagram"><defs/><g><g class="entity" data-entity="ModelCatalog" data-source-line="2" data-uid="ent0002" id="entity_ModelCatalog"><rect fill="#F1F1F1" height="48" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="127.7988" x="7.62" y="7"/><ellipse cx="22.62" cy="23" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/><path d="M25.5888,28.6406 Q25.0106,28.9375 24.37,29.0781 Q23.7294,29.2344 23.0263,29.2344 Q20.5263,29.2344 19.1981,27.5938 Q17.8856,25.9375 17.8856,22.8125 Q17.8856,19.6875 19.1981,18.0313 Q20.5263,16.375 23.0263,16.375 Q23.7294,16.375 24.37,16.5313 Q25.0263,16.6875 25.5888,16.9844 L25.5888,19.7031 Q24.9638,19.125 24.37,18.8594 Q23.7763,18.5781 23.1513,18.5781 Q21.8075,18.5781 21.12,19.6563 Q20.4325,20.7188 20.4325,22.8125 Q20.4325,24.9063 21.12,25.9844 Q21.8075,27.0469 23.1513,27.0469 Q23.7763,27.0469 24.37,26.7813 Q24.9638,26.5 25.5888,25.9219 L25.5888,28.6406 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="95.7988" x="36.62" y="27.8467">ModelCatalog</text><line style="stroke:#181818;stroke-width:0.5;" x1="8.62" x2="134.4188" y1="39" y2="39"/><line style="stroke:#181818;stroke-width:0.5;" x1="8.62" x2="134.4188" y1="47" y2="47"/></g><g class="entity" data-entity="Model" data-source-line="5" data-uid="ent0003" id="entity_Model"><rect fill="#F1F1F1" height="64.2969" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="281.0488" x="7" y="132"/><ellipse cx="122.2573" cy="148" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/><path d="M125.2261,153.6406 Q124.6479,153.9375 124.0073,154.0781 Q123.3667,154.2344 122.6636,154.2344 Q120.1636,154.2344 118.8354,152.5938 Q117.5229,150.9375 117.5229,147.8125 Q117.5229,144.6875 118.8354,143.0313 Q120.1636,141.375 122.6636,141.375 Q123.3667,141.375 124.0073,141.5313 Q124.6636,141.6875 125.2261,141.9844 L125.2261,144.7031 Q124.6011,144.125 124.0073,143.8594 Q123.4136,143.5781 122.7886,143.5781 Q121.4448,143.5781 120.7573,144.6563 Q120.0698,145.7188 120.0698,147.8125 Q120.0698,149.9063 120.7573,150.9844 Q121.4448,152.0469 122.7886,152.0469 Q123.4136,152.0469 124.0073,151.7813 Q124.6011,151.5 125.2261,150.9219 L125.2261,153.6406 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="42.0342" x="142.7573" y="152.8467">Model</text><line style="stroke:#181818;stroke-width:0.5;" x1="8" x2="287.0488" y1="164" y2="164"/><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="177.6484" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="255.0488" x="27" y="180.9951">versions: Collection&lt;ModelVersion&gt;</text><line style="stroke:#181818;stroke-width:0.5;" x1="8" x2="287.0488" y1="188.2969" y2="188.2969"/></g><g class="entity" data-entity="ModelVersion" data-source-line="9" data-uid="ent0004" id="entity_ModelVersion"><rect fill="#F1F1F1" height="48" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="126.6025" x="84.22" y="273.3"/><ellipse cx="99.22" cy="289.3" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/><path d="M102.1888,294.9406 Q101.6106,295.2375 100.97,295.3781 Q100.3294,295.5344 99.6263,295.5344 Q97.1263,295.5344 95.7981,293.8938 Q94.4856,292.2375 94.4856,289.1125 Q94.4856,285.9875 95.7981,284.3313 Q97.1263,282.675 99.6263,282.675 Q100.3294,282.675 100.97,282.8313 Q101.6263,282.9875 102.1888,283.2844 L102.1888,286.0031 Q101.5638,285.425 100.97,285.1594 Q100.3763,284.8781 99.7513,284.8781 Q98.4075,284.8781 97.72,285.9563 Q97.0325,287.0188 97.0325,289.1125 Q97.0325,291.2063 97.72,292.2844 Q98.4075,293.3469 99.7513,293.3469 Q100.3763,293.3469 100.97,293.0813 Q101.5638,292.8 102.1888,292.2219 L102.1888,294.9406 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="94.6025" x="113.22" y="294.1467">ModelVersion</text><line style="stroke:#181818;stroke-width:0.5;" x1="85.22" x2="209.8225" y1="305.3" y2="305.3"/><line style="stroke:#181818;stroke-width:0.5;" x1="85.22" x2="209.8225" y1="313.3" y2="313.3"/></g><g class="entity" data-entity="ModelLock" data-source-line="12" data-uid="ent0005" id="entity_ModelLock"><rect fill="#F1F1F1" height="48" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="106.2041" x="170.42" y="7"/><ellipse cx="185.42" cy="23" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/><path d="M188.3888,28.6406 Q187.8106,28.9375 187.17,29.0781 Q186.5294,29.2344 185.8263,29.2344 Q183.3263,29.2344 181.9981,27.5938 Q180.6856,25.9375 180.6856,22.8125 Q180.6856,19.6875 181.9981,18.0313 Q183.3263,16.375 185.8263,16.375 Q186.5294,16.375 187.17,16.5313 Q187.8263,16.6875 188.3888,16.9844 L188.3888,19.7031 Q187.7638,19.125 187.17,18.8594 Q186.5763,18.5781 185.9513,18.5781 Q184.6075,18.5781 183.92,19.6563 Q183.2325,20.7188 183.2325,22.8125 Q183.2325,24.9063 183.92,25.9844 Q184.6075,27.0469 185.9513,27.0469 Q186.5763,27.0469 187.17,26.7813 Q187.7638,26.5 188.3888,25.9219 L188.3888,28.6406 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="74.2041" x="199.42" y="27.8467">ModelLock</text><line style="stroke:#181818;stroke-width:0.5;" x1="171.42" x2="275.6241" y1="39" y2="39"/><line style="stroke:#181818;stroke-width:0.5;" x1="171.42" x2="275.6241" y1="47" y2="47"/></g><g class="link" data-entity-1="ModelCatalog" data-entity-2="Model" data-link-type="composition" data-source-line="15" data-uid="lnk6" id="link_ModelCatalog_Model"><path codeLine="15" d="M91.1278,65.832 C103.4278,87.052 115.62,108.09 129.2,131.53" fill="none" id="ModelCatalog-backto-Model" style="stroke:#181818;stroke-width:1;"/><polygon fill="#181818" points="85.11,55.45,84.6583,62.6469,91.1278,65.832,91.5796,58.635,85.11,55.45" style="stroke:#181818;stroke-width:1;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="59.8584" x="113.52" y="98.0669">manages</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="23.0356" x="100.5181" y="120.962">0..*</text></g><g class="link" data-entity-1="Model" data-entity-2="ModelVersion" data-link-type="composition" data-source-line="16" data-uid="lnk7" id="link_Model_ModelVersion"><path codeLine="16" d="M147.52,208.56 C147.52,232.06 147.52,251.66 147.52,272.95" fill="none" id="Model-backto-ModelVersion" style="stroke:#181818;stroke-width:1;"/><polygon fill="#181818" points="147.52,196.56,143.52,202.56,147.52,208.56,151.52,202.56,147.52,196.56" style="stroke:#181818;stroke-width:1;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="55.0278" x="148.52" y="239.3669">contains</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="23.0356" x="121.7209" y="262.2696">1..*</text></g><g class="link" data-entity-1="ModelLock" data-entity-2="Model" data-link-type="dependency" data-source-line="17" data-uid="lnk8" id="link_ModelLock_Model"><path codeLine="17" d="M209.94,55.45 C197.64,76.67 182.4378,102.8984 168.8578,126.3384" fill="none" id="ModelLock-to-Model" style="stroke:#181818;stroke-width:1;stroke-dasharray:7,7;"/><polygon fill="#181818" points="165.85,131.53,173.8228,125.7477,168.3565,127.2036,166.9006,121.7373,165.85,131.53" style="stroke:#181818;stroke-width:1;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="69.418" x="192.52" y="98.0669">references</text></g></g></svg></div><div class="puml dark" style=""><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" data-diagram-type="CLASS" height="328px" preserveAspectRatio="xMidYMid meet" style="width:295px;height:328px;background:#1B1B1B;" version="1.1" viewBox="0 0 295 328" width="295px" zoomAndPan="magnify" class="diagram"><defs/><g><rect fill="#1B1B1B" height="328" style="stroke:none;stroke-width:1;" width="295" x="0" y="0"/><g class="entity" data-entity="ModelCatalog" data-source-line="2" data-uid="ent0002" id="entity_ModelCatalog"><rect fill="#313139" height="48" rx="2.5" ry="2.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="127.7988" x="7.62" y="7"/><ellipse cx="22.62" cy="23" fill="#2E5233" rx="11" ry="11" style="stroke:#E7E7E7;stroke-width:1;"/><path d="M25.5888,28.6406 Q25.0106,28.9375 24.37,29.0781 Q23.7294,29.2344 23.0263,29.2344 Q20.5263,29.2344 19.1981,27.5938 Q17.8856,25.9375 17.8856,22.8125 Q17.8856,19.6875 19.1981,18.0313 Q20.5263,16.375 23.0263,16.375 Q23.7294,16.375 24.37,16.5313 Q25.0263,16.6875 25.5888,16.9844 L25.5888,19.7031 Q24.9638,19.125 24.37,18.8594 Q23.7763,18.5781 23.1513,18.5781 Q21.8075,18.5781 21.12,19.6563 Q20.4325,20.7188 20.4325,22.8125 Q20.4325,24.9063 21.12,25.9844 Q21.8075,27.0469 23.1513,27.0469 Q23.7763,27.0469 24.37,26.7813 Q24.9638,26.5 25.5888,25.9219 L25.5888,28.6406 Z " fill="#FFFFFF"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="95.7988" x="36.62" y="27.8467">ModelCatalog</text><line style="stroke:#E7E7E7;stroke-width:0.5;" x1="8.62" x2="134.4188" y1="39" y2="39"/><line style="stroke:#E7E7E7;stroke-width:0.5;" x1="8.62" x2="134.4188" y1="47" y2="47"/></g><g class="entity" data-entity="Model" data-source-line="5" data-uid="ent0003" id="entity_Model"><rect fill="#313139" height="64.2969" rx="2.5" ry="2.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="281.0488" x="7" y="132"/><ellipse cx="122.2573" cy="148" fill="#2E5233" rx="11" ry="11" style="stroke:#E7E7E7;stroke-width:1;"/><path d="M125.2261,153.6406 Q124.6479,153.9375 124.0073,154.0781 Q123.3667,154.2344 122.6636,154.2344 Q120.1636,154.2344 118.8354,152.5938 Q117.5229,150.9375 117.5229,147.8125 Q117.5229,144.6875 118.8354,143.0313 Q120.1636,141.375 122.6636,141.375 Q123.3667,141.375 124.0073,141.5313 Q124.6636,141.6875 125.2261,141.9844 L125.2261,144.7031 Q124.6011,144.125 124.0073,143.8594 Q123.4136,143.5781 122.7886,143.5781 Q121.4448,143.5781 120.7573,144.6563 Q120.0698,145.7188 120.0698,147.8125 Q120.0698,149.9063 120.7573,150.9844 Q121.4448,152.0469 122.7886,152.0469 Q123.4136,152.0469 124.0073,151.7813 Q124.6011,151.5 125.2261,150.9219 L125.2261,153.6406 Z " fill="#FFFFFF"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="42.0342" x="142.7573" y="152.8467">Model</text><line style="stroke:#E7E7E7;stroke-width:0.5;" x1="8" x2="287.0488" y1="164" y2="164"/><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="177.6484" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="255.0488" x="27" y="180.9951">versions: Collection&lt;ModelVersion&gt;</text><line style="stroke:#E7E7E7;stroke-width:0.5;" x1="8" x2="287.0488" y1="188.2969" y2="188.2969"/></g><g class="entity" data-entity="ModelVersion" data-source-line="9" data-uid="ent0004" id="entity_ModelVersion"><rect fill="#313139" height="48" rx="2.5" ry="2.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="126.6025" x="84.22" y="273.3"/><ellipse cx="99.22" cy="289.3" fill="#2E5233" rx="11" ry="11" style="stroke:#E7E7E7;stroke-width:1;"/><path d="M102.1888,294.9406 Q101.6106,295.2375 100.97,295.3781 Q100.3294,295.5344 99.6263,295.5344 Q97.1263,295.5344 95.7981,293.8938 Q94.4856,292.2375 94.4856,289.1125 Q94.4856,285.9875 95.7981,284.3313 Q97.1263,282.675 99.6263,282.675 Q100.3294,282.675 100.97,282.8313 Q101.6263,282.9875 102.1888,283.2844 L102.1888,286.0031 Q101.5638,285.425 100.97,285.1594 Q100.3763,284.8781 99.7513,284.8781 Q98.4075,284.8781 97.72,285.9563 Q97.0325,287.0188 97.0325,289.1125 Q97.0325,291.2063 97.72,292.2844 Q98.4075,293.3469 99.7513,293.3469 Q100.3763,293.3469 100.97,293.0813 Q101.5638,292.8 102.1888,292.2219 L102.1888,294.9406 Z " fill="#FFFFFF"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="94.6025" x="113.22" y="294.1467">ModelVersion</text><line style="stroke:#E7E7E7;stroke-width:0.5;" x1="85.22" x2="209.8225" y1="305.3" y2="305.3"/><line style="stroke:#E7E7E7;stroke-width:0.5;" x1="85.22" x2="209.8225" y1="313.3" y2="313.3"/></g><g class="entity" data-entity="ModelLock" data-source-line="12" data-uid="ent0005" id="entity_ModelLock"><rect fill="#313139" height="48" rx="2.5" ry="2.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="106.2041" x="170.42" y="7"/><ellipse cx="185.42" cy="23" fill="#2E5233" rx="11" ry="11" style="stroke:#E7E7E7;stroke-width:1;"/><path d="M188.3888,28.6406 Q187.8106,28.9375 187.17,29.0781 Q186.5294,29.2344 185.8263,29.2344 Q183.3263,29.2344 181.9981,27.5938 Q180.6856,25.9375 180.6856,22.8125 Q180.6856,19.6875 181.9981,18.0313 Q183.3263,16.375 185.8263,16.375 Q186.5294,16.375 187.17,16.5313 Q187.8263,16.6875 188.3888,16.9844 L188.3888,19.7031 Q187.7638,19.125 187.17,18.8594 Q186.5763,18.5781 185.9513,18.5781 Q184.6075,18.5781 183.92,19.6563 Q183.2325,20.7188 183.2325,22.8125 Q183.2325,24.9063 183.92,25.9844 Q184.6075,27.0469 185.9513,27.0469 Q186.5763,27.0469 187.17,26.7813 Q187.7638,26.5 188.3888,25.9219 L188.3888,28.6406 Z " fill="#FFFFFF"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="74.2041" x="199.42" y="27.8467">ModelLock</text><line style="stroke:#E7E7E7;stroke-width:0.5;" x1="171.42" x2="275.6241" y1="39" y2="39"/><line style="stroke:#E7E7E7;stroke-width:0.5;" x1="171.42" x2="275.6241" y1="47" y2="47"/></g><g class="link" data-entity-1="ModelCatalog" data-entity-2="Model" data-link-type="composition" data-source-line="15" data-uid="lnk6" id="link_ModelCatalog_Model"><path codeLine="15" d="M91.1278,65.832 C103.4278,87.052 115.62,108.09 129.2,131.53" fill="none" id="ModelCatalog-backto-Model" style="stroke:#E7E7E7;stroke-width:1;"/><polygon fill="#E7E7E7" points="85.11,55.45,84.6583,62.6469,91.1278,65.832,91.5796,58.635,85.11,55.45" style="stroke:#E7E7E7;stroke-width:1;"/><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="59.8584" x="113.52" y="98.0669">manages</text><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="23.0356" x="100.5181" y="120.962">0..*</text></g><g class="link" data-entity-1="Model" data-entity-2="ModelVersion" data-link-type="composition" data-source-line="16" data-uid="lnk7" id="link_Model_ModelVersion"><path codeLine="16" d="M147.52,208.56 C147.52,232.06 147.52,251.66 147.52,272.95" fill="none" id="Model-backto-ModelVersion" style="stroke:#E7E7E7;stroke-width:1;"/><polygon fill="#E7E7E7" points="147.52,196.56,143.52,202.56,147.52,208.56,151.52,202.56,147.52,196.56" style="stroke:#E7E7E7;stroke-width:1;"/><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="55.0278" x="148.52" y="239.3669">contains</text><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="23.0356" x="121.7209" y="262.2696">1..*</text></g><g class="link" data-entity-1="ModelLock" data-entity-2="Model" data-link-type="dependency" data-source-line="17" data-uid="lnk8" id="link_ModelLock_Model"><path codeLine="17" d="M209.94,55.45 C197.64,76.67 182.4378,102.8984 168.8578,126.3384" fill="none" id="ModelLock-to-Model" style="stroke:#E7E7E7;stroke-width:1;stroke-dasharray:7,7;"/><polygon fill="#E7E7E7" points="165.85,131.53,173.8228,125.7477,168.3565,127.2036,166.9006,121.7373,165.85,131.53" style="stroke:#E7E7E7;stroke-width:1;"/><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="69.418" x="192.52" y="98.0669">references</text></g></g></svg></div></div>
+
+<hr />
+<h2 id="3-field-specifications">3. Field Specifications<a class="headerlink" href="#3-field-specifications" title="Permanent link">&para;</a></h2>
+<h3 id="31-id">3.1 id<a class="headerlink" href="#31-id" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Type:</strong> UUID</li>
+<li><strong>Constraint:</strong> MUST</li>
+<li><strong>Description:</strong> Unique identifier for the catalog</li>
+<li><strong>Validation:</strong></li>
+<li>MUST be valid UUID format</li>
+<li>MUST be unique across all catalogs</li>
+</ul>
+<h3 id="32-name">3.2 name<a class="headerlink" href="#32-name" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Type:</strong> String</li>
+<li><strong>Constraint:</strong> MUST</li>
+<li><strong>Description:</strong> Catalog name for identification</li>
+<li><strong>Validation:</strong></li>
+<li>Length: 1-255 characters</li>
+<li>Examples: <code>default</code>, <code>production-catalog</code>, <code>experimental</code></li>
+</ul>
+<h3 id="33-models">3.3 models<a class="headerlink" href="#33-models" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Type:</strong> Map<ModelId, Model></li>
+<li><strong>Constraint:</strong> MUST</li>
+<li><strong>Description:</strong> Collection of registered models indexed by ModelId</li>
+<li><strong>Validation:</strong></li>
+<li>Keys MUST be unique ModelId values</li>
+<li>Values MUST be valid Model entities</li>
+</ul>
+<h3 id="34-events">3.4 events<a class="headerlink" href="#34-events" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Type:</strong> Collection\<DomainEvent></li>
+<li><strong>Constraint:</strong> Internal</li>
+<li><strong>Description:</strong> Domain events generated by aggregate operations</li>
+<li><strong>Validation:</strong></li>
+<li>Used for event sourcing and notifications</li>
+<li>Cleared after event dispatch</li>
+</ul>
+<h3 id="35-entity-pattern-fields">3.5 Entity Pattern Fields<a class="headerlink" href="#35-entity-pattern-fields" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>created_at:</strong> Timestamp when catalog was created (immutable)</li>
+<li><strong>updated_at:</strong> Timestamp of last modification (auto-update)</li>
+<li><strong>version:</strong> Integer for optimistic locking (auto-increment)</li>
+</ul>
+<hr />
+<h2 id="4-constraints">4. Constraints<a class="headerlink" href="#4-constraints" title="Permanent link">&para;</a></h2>
+<h3 id="41-aggregate-pattern-constraints">4.1 Aggregate Pattern Constraints<a class="headerlink" href="#41-aggregate-pattern-constraints" title="Permanent link">&para;</a></h3>
+<ul>
+<li>External code MUST NOT directly modify Model entities</li>
+<li>All model changes MUST go through ModelCatalog methods</li>
+<li>Aggregate MUST maintain invariants across all operations</li>
+<li>Events MUST be generated for all state changes</li>
+</ul>
+<h3 id="42-entity-pattern-constraints">4.2 Entity Pattern Constraints<a class="headerlink" href="#42-entity-pattern-constraints" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>id</code> MUST be unique across all ModelCatalog entities</li>
+<li><code>created_at</code> MUST NOT be modified after creation</li>
+<li><code>updated_at</code> MUST be updated on every modification</li>
+<li><code>version</code> MUST increment on every modification</li>
+</ul>
+<h3 id="43-uniqueness-constraints">4.3 Uniqueness Constraints<a class="headerlink" href="#43-uniqueness-constraints" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Each ModelId MUST appear at most once in <code>models</code> map</li>
+<li>Catalog <code>name</code> SHOULD be unique for easier identification</li>
+</ul>
+<h3 id="44-referential-integrity">4.4 Referential Integrity<a class="headerlink" href="#44-referential-integrity" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Cannot delete catalog if models are referenced by active locks</li>
+<li>Deleting catalog cascades to all contained models and versions</li>
+</ul>
+<h3 id="45-business-rules">4.5 Business Rules<a class="headerlink" href="#45-business-rules" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Cannot register model with duplicate ModelId</li>
+<li>Cannot add version to non-existent model</li>
+<li>Model MUST have at least one version after registration</li>
+<li>ModelId format MUST be validated before registration</li>
+</ul>
+<hr />
+<h2 id="5-validation">5. Validation<a class="headerlink" href="#5-validation" title="Permanent link">&para;</a></h2>
+<h3 id="51-syntax-validation">5.1 Syntax Validation<a class="headerlink" href="#51-syntax-validation" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def validate_syntax(catalog: ModelCatalog) -&gt; ValidationResult:
+    errors = []
+
+    # Required fields
+    if not catalog.id:
+        errors.append(&quot;id is required&quot;)
+    if not catalog.name:
+        errors.append(&quot;name is required&quot;)
+    if catalog.models is None:
+        errors.append(&quot;models collection is required&quot;)
+
+    # Validate each model
+    for model_id, model in catalog.models.items():
+        model_errors = validate_model_syntax(model)
+        errors.extend([f&quot;Model {model_id}: {e}&quot; for e in model_errors])
+
+    return ValidationResult(valid=len(errors) == 0, errors=errors)
+</code></pre>
+<h3 id="52-semantic-validation">5.2 Semantic Validation<a class="headerlink" href="#52-semantic-validation" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def validate_semantic(catalog: ModelCatalog) -&gt; ValidationResult:
+    errors = []
+
+    # Check model consistency
+    for model_id, model in catalog.models.items():
+        if model.model_id != model_id:
+            errors.append(f&quot;Model key {model_id} doesn't match model.model_id {model.model_id}&quot;)
+
+        # Each model must have versions
+        if not model.versions or len(model.versions) == 0:
+            errors.append(f&quot;Model {model_id} has no versions&quot;)
+
+    return ValidationResult(valid=len(errors) == 0, errors=errors)
+</code></pre>
+<h3 id="53-invariant-validation">5.3 Invariant Validation<a class="headerlink" href="#53-invariant-validation" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def validate(self) -&gt; ValidationResult:
+    &quot;&quot;&quot;Validate aggregate invariants&quot;&quot;&quot;
+    errors = []
+
+    # All models must be valid
+    for model in self.models.values():
+        result = model.validate()
+        if not result.valid:
+            errors.extend(result.errors)
+
+    # Referential integrity
+    for model in self.models.values():
+        for version in model.versions:
+            if version.model_id != model.model_id:
+                errors.append(
+                    f&quot;Version {version.id} references wrong model {version.model_id}&quot;
+                )
+
+    return ValidationResult(valid=len(errors) == 0, errors=errors)
+</code></pre>
+<hr />
+<h2 id="6-behavior">6. Behavior<a class="headerlink" href="#6-behavior" title="Permanent link">&para;</a></h2>
+<h3 id="61-model-registration">6.1 Model Registration<a class="headerlink" href="#61-model-registration" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def register_model(self, model: Model) -&gt; None:
+    &quot;&quot;&quot;Register a new model in the catalog&quot;&quot;&quot;
+    # Validate model doesn't exist
+    if model.model_id in self.models:
+        raise ValueError(f&quot;Model {model.model_id} already registered&quot;)
+
+    # Validate model has at least one version
+    if not model.versions or len(model.versions) == 0:
+        raise ValueError(&quot;Model must have at least one version&quot;)
+
+    # Add to catalog
+    self.models[model.model_id] = model
+    self.updated_at = current_timestamp()
+    self.version += 1
+
+    # Generate event
+    self.addEvent(ModelRegisteredEvent(
+        catalog_id=self.id,
+        model_id=model.model_id,
+        timestamp=current_timestamp()
+    ))
+</code></pre>
+<h3 id="62-model-unregistration">6.2 Model Unregistration<a class="headerlink" href="#62-model-unregistration" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def unregister_model(self, model_id: ModelId) -&gt; None:
+    &quot;&quot;&quot;Remove a model from the catalog&quot;&quot;&quot;
+    if model_id not in self.models:
+        raise ValueError(f&quot;Model {model_id} not found&quot;)
+
+    model = self.models[model_id]
+    del self.models[model_id]
+    self.updated_at = current_timestamp()
+    self.version += 1
+
+    # Generate event
+    self.addEvent(ModelUnregisteredEvent(
+        catalog_id=self.id,
+        model_id=model_id,
+        timestamp=current_timestamp()
+    ))
+</code></pre>
+<h3 id="63-version-management">6.3 Version Management<a class="headerlink" href="#63-version-management" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def add_version(self, model_id: ModelId, version: ModelVersion) -&gt; None:
+    &quot;&quot;&quot;Add a new version to an existing model&quot;&quot;&quot;
+    if model_id not in self.models:
+        raise ValueError(f&quot;Model {model_id} not found&quot;)
+
+    model = self.models[model_id]
+
+    # Delegate to model entity
+    model.add_version(version)
+
+    self.updated_at = current_timestamp()
+    self.version += 1
+
+    # Generate event
+    self.addEvent(ModelVersionAddedEvent(
+        catalog_id=self.id,
+        model_id=model_id,
+        version=version.version,
+        timestamp=current_timestamp()
+    ))
+</code></pre>
+<h3 id="64-query-operations">6.4 Query Operations<a class="headerlink" href="#64-query-operations" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def get_model(self, model_id: ModelId) -&gt; Model:
+    &quot;&quot;&quot;Retrieve a model by ID&quot;&quot;&quot;
+    if model_id not in self.models:
+        raise ValueError(f&quot;Model {model_id} not found&quot;)
+    return self.models[model_id]
+
+def list_models(self, filter: ModelFilter = None) -&gt; Collection[Model]:
+    &quot;&quot;&quot;List models with optional filtering&quot;&quot;&quot;
+    models = list(self.models.values())
+
+    if filter:
+        if filter.task_type:
+            models = [m for m in models if m.task_type == filter.task_type]
+        if filter.search_text:
+            models = [m for m in models if filter.search_text in str(m.model_id)]
+
+    return models
+
+def find_by_task_type(self, task_type: TaskType) -&gt; Collection[Model]:
+    &quot;&quot;&quot;Find all models supporting a task type&quot;&quot;&quot;
+    return [m for m in self.models.values() if m.task_type == task_type]
+</code></pre>
+<h3 id="65-event-management">6.5 Event Management<a class="headerlink" href="#65-event-management" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def addEvent(self, event: DomainEvent) -&gt; None:
+    &quot;&quot;&quot;Add a domain event&quot;&quot;&quot;
+    self.events.append(event)
+
+def clearEvents(self) -&gt; None:
+    &quot;&quot;&quot;Clear all pending events&quot;&quot;&quot;
+    self.events.clear()
+</code></pre>
+<h3 id="66-identity-methods">6.6 Identity Methods<a class="headerlink" href="#66-identity-methods" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def equals(self, other: ModelCatalog) -&gt; bool:
+    &quot;&quot;&quot;Identity-based equality&quot;&quot;&quot;
+    return self.id == other.id
+
+def hash(self) -&gt; int:
+    &quot;&quot;&quot;Hash based on identity&quot;&quot;&quot;
+    return hash(self.id)
+</code></pre>
+<hr />
+<h2 id="7-domain-events">7. Domain Events<a class="headerlink" href="#7-domain-events" title="Permanent link">&para;</a></h2>
+<h3 id="71-modelregisteredevent">7.1 ModelRegisteredEvent<a class="headerlink" href="#71-modelregisteredevent" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">class ModelRegisteredEvent:
+    catalog_id: UUID
+    model_id: ModelId
+    task_type: TaskType
+    timestamp: Timestamp
+</code></pre>
+<h3 id="72-modelunregisteredevent">7.2 ModelUnregisteredEvent<a class="headerlink" href="#72-modelunregisteredevent" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">class ModelUnregisteredEvent:
+    catalog_id: UUID
+    model_id: ModelId
+    timestamp: Timestamp
+</code></pre>
+<h3 id="73-modelversionaddedevent">7.3 ModelVersionAddedEvent<a class="headerlink" href="#73-modelversionaddedevent" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">class ModelVersionAddedEvent:
+    catalog_id: UUID
+    model_id: ModelId
+    version: String
+    timestamp: Timestamp
+</code></pre>
+<hr />
+<h2 id="8-serialization">8. Serialization<a class="headerlink" href="#8-serialization" title="Permanent link">&para;</a></h2>
+<h3 id="81-json-example">8.1 JSON Example<a class="headerlink" href="#81-json-example" title="Permanent link">&para;</a></h3>
+<pre><code class="language-json">{
+  &quot;id&quot;: &quot;770e8400-e29b-41d4-a716-446655440003&quot;,
+  &quot;name&quot;: &quot;default&quot;,
+  &quot;models&quot;: {
+    &quot;sentence-transformers/all-MiniLM-L6-v2&quot;: {
+      &quot;id&quot;: &quot;880e8400-e29b-41d4-a716-446655440004&quot;,
+      &quot;model_id&quot;: &quot;sentence-transformers/all-MiniLM-L6-v2&quot;,
+      &quot;task_type&quot;: &quot;txt2embed&quot;,
+      &quot;versions&quot;: [
+        {
+          &quot;id&quot;: &quot;990e8400-e29b-41d4-a716-446655440005&quot;,
+          &quot;version&quot;: &quot;v2.2.2&quot;,
+          &quot;checksum&quot;: &quot;sha256:abc123...&quot;
+        }
+      ]
+    }
+  },
+  &quot;created_at&quot;: &quot;2025-12-04T10:30:00Z&quot;,
+  &quot;updated_at&quot;: &quot;2025-12-04T10:30:00Z&quot;,
+  &quot;version&quot;: 1
+}
+</code></pre>
+<h3 id="82-protocol-buffers">8.2 Protocol Buffers<a class="headerlink" href="#82-protocol-buffers" title="Permanent link">&para;</a></h3>
+<pre><code class="language-protobuf">message ModelCatalog {
+  string id = 1;
+  string name = 2;
+  map&lt;string, Model&gt; models = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+  int32 version_number = 6;
+}
+</code></pre>
+<hr />
+<h2 id="9-database-schema">9. Database Schema<a class="headerlink" href="#9-database-schema" title="Permanent link">&para;</a></h2>
+<pre><code class="language-sql">CREATE TABLE model_catalog (
+    id UUID PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    version_number INTEGER NOT NULL DEFAULT 1
+);
+
+-- Models belong to catalog
+CREATE TABLE model (
+    id UUID PRIMARY KEY,
+    catalog_id UUID NOT NULL REFERENCES model_catalog(id) ON DELETE CASCADE,
+    model_id VARCHAR(255) NOT NULL,
+    task_type task_type_enum NOT NULL,
+    ...
+    UNIQUE (catalog_id, model_id)
+);
+
+CREATE INDEX idx_model_catalog_id ON model(catalog_id);
+
+-- Trigger to auto-update updated_at and version
+CREATE TRIGGER update_model_catalog_timestamp
+BEFORE UPDATE ON model_catalog
+FOR EACH ROW
+EXECUTE FUNCTION update_timestamp_and_version();
+</code></pre>
+<hr />
+<h2 id="10-usage-examples">10. Usage Examples<a class="headerlink" href="#10-usage-examples" title="Permanent link">&para;</a></h2>
+<h3 id="101-creating-catalog">10.1 Creating Catalog<a class="headerlink" href="#101-creating-catalog" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python"># Create new catalog
+catalog = ModelCatalog(
+    id=generate_uuid(),
+    name=&quot;production-catalog&quot;,
+    models={},
+    events=[],
+    created_at=current_timestamp(),
+    updated_at=current_timestamp(),
+    version=1
+)
+</code></pre>
+<h3 id="102-registering-models">10.2 Registering Models<a class="headerlink" href="#102-registering-models" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python"># Register a model
+model = Model(
+    id=generate_uuid(),
+    model_id=&quot;sentence-transformers/all-MiniLM-L6-v2&quot;,
+    task_type=TaskType.from_string(&quot;txt2embed&quot;),
+    versions=[version1]
+)
+
+catalog.register_model(model)
+
+# Events are generated
+for event in catalog.events:
+    event_bus.publish(event)
+catalog.clearEvents()
+</code></pre>
+<h3 id="103-querying-catalog">10.3 Querying Catalog<a class="headerlink" href="#103-querying-catalog" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python"># Get specific model
+model = catalog.get_model(&quot;sentence-transformers/all-MiniLM-L6-v2&quot;)
+
+# Find models by task type
+embedding_models = catalog.find_by_task_type(TaskType.from_string(&quot;txt2embed&quot;))
+
+# List with filter
+filter = ModelFilter(task_type=TaskType.from_string(&quot;txt2txt&quot;))
+text_models = catalog.list_models(filter)
+</code></pre>
+<h3 id="104-version-management">10.4 Version Management<a class="headerlink" href="#104-version-management" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python"># Add new version to existing model
+new_version = ModelVersion(
+    id=generate_uuid(),
+    model_id=&quot;sentence-transformers/all-MiniLM-L6-v2&quot;,
+    version=&quot;v2.3.0&quot;,
+    checksum=&quot;sha256:new123...&quot;,
+    artifact_uri=&quot;https://...&quot;,
+    resource_requirements=ResourceRequirements(...)
+)
+
+catalog.add_version(
+    model_id=&quot;sentence-transformers/all-MiniLM-L6-v2&quot;,
+    version=new_version
+)
+</code></pre>
+<h3 id="105-transaction-pattern">10.5 Transaction Pattern<a class="headerlink" href="#105-transaction-pattern" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def register_model_transaction(catalog: ModelCatalog, model: Model):
+    &quot;&quot;&quot;Register model with transactional event publishing&quot;&quot;&quot;
+    try:
+        # Validate
+        result = catalog.validate()
+        if not result.valid:
+            raise ValidationError(result.errors)
+
+        # Register
+        catalog.register_model(model)
+
+        # Persist
+        repository.save(catalog)
+
+        # Publish events
+        for event in catalog.events:
+            event_bus.publish(event)
+        catalog.clearEvents()
+
+        # Commit transaction
+        transaction.commit()
+    except Exception as e:
+        transaction.rollback()
+        raise
+</code></pre>
+<hr />
+<h2 id="11-related-models">11. Related Models<a class="headerlink" href="#11-related-models" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="./model_entity.md">Model Entity</a> - Child entity managed by aggregate</li>
+<li><a href="../model_version/">Model Version</a> - Grandchild entity</li>
+<li><a href="../model_lock/">Model Lock</a> - References models in catalog</li>
+<li><a href="../../events/domain_events/">Domain Events</a> - Events generated by catalog operations</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/JomarJunior/modelmora" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+        <script src="../../../assets/mkdocs_puml/puml.js"></script>
+      
+        <script src="https://unpkg.com/@panzoom/panzoom@4.5.1/dist/panzoom.min.js"></script>
+      
+        <script src="../../../assets/mkdocs_puml/interaction.js"></script>
+      
+    
+  </body>
+</html>

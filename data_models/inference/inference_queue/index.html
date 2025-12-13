@@ -1,0 +1,1851 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Neural network model management and inference serving microservice for MiraVeja">
+      
+      
+        <meta name="author" content="Jomar Júnior de Souza Pereira">
+      
+      
+        <link rel="canonical" href="https://jomarjunior.github.io/modelmora/data_models/inference/inference_queue/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Inference Queue Aggregate - ModelMora Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../assets/mkdocs_puml/puml.css">
+    
+      <link rel="stylesheet" href="../../../assets/mkdocs_puml/interaction.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#inference-queue-aggregate" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="ModelMora Documentation" class="md-header__button md-logo" aria-label="ModelMora Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ModelMora Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Inference Queue Aggregate
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/JomarJunior/modelmora" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    JomarJunior/modelmora
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../getting-started/installation/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../rfc/%231%20-%20RFC%20Writting%20Patterns/" class="md-tabs__link">
+          
+  
+  
+  RFCs
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../architecture/" class="md-tabs__link">
+          
+  
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../api-reference/rest/" class="md-tabs__link">
+          
+  
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../roadmap/" class="md-tabs__link">
+          
+  
+  
+  Development
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../deployment/docker/" class="md-tabs__link">
+          
+  
+  
+  Deployment
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="ModelMora Documentation" class="md-nav__button md-logo" aria-label="ModelMora Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ModelMora Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/JomarJunior/modelmora" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    JomarJunior/modelmora
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFCs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    RFCs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../rfc/%231%20-%20RFC%20Writting%20Patterns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC Writing Patterns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../design-decisions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Decisions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api-reference/rest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REST API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api-reference/grpc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gRPC API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Development
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../requirements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Requirements
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deployment
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../deployment/docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../deployment/kubernetes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Structure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-field-specifications" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Field Specifications
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Field Specifications">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 id
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-jobs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 jobs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-batches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 batches
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-max_queue_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 max_queue_size
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-events" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 events
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Behavior
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Behavior">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-request-submission" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Request Submission
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-job-retrieval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Job Retrieval
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-batch-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Batch Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-job-cancellation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Job Cancellation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-domain-events" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Domain Events
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Domain Events">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-jobsubmittedevent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 JobSubmittedEvent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-jobcompletedevent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 JobCompletedEvent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-jobcancelledevent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 JobCancelledEvent
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-serialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Serialization
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-database-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Database Schema
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-usage-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Usage Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Usage Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81-submitting-request" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1 Submitting Request
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82-processing-loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2 Processing Loop
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-related-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Related Models
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="inference-queue-aggregate">Inference Queue Aggregate<a class="headerlink" href="#inference-queue-aggregate" title="Permanent link">&para;</a></h1>
+<p><strong>Context:</strong> Inference
+<strong>Type:</strong> Aggregate Root
+<strong>Version:</strong> 1.0.0
+<strong>Date:</strong> 2025-12-04</p>
+<hr />
+<h2 id="1-overview">1. Overview<a class="headerlink" href="#1-overview" title="Permanent link">&para;</a></h2>
+<p>The <code>InferenceQueue</code> aggregate manages the lifecycle of inference jobs, including queuing, prioritization, batching, and execution coordination.</p>
+<hr />
+<h2 id="2-structure">2. Structure<a class="headerlink" href="#2-structure" title="Permanent link">&para;</a></h2>
+<div class='puml-container'><div class="puml light" style=""><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" data-diagram-type="CLASS" height="447px" preserveAspectRatio="xMidYMid meet" style="width:680px;height:447px;background:#FFFFFF;" version="1.1" viewBox="0 0 680 447" width="680px" zoomAndPan="magnify" class="diagram"><defs/><g><g class="entity" data-entity="InferenceQueue" data-source-line="2" data-uid="ent0002" id="entity_InferenceQueue"><rect fill="#F1F1F1" height="325.0469" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="428.6504" x="7" y="7"/><ellipse cx="161.0308" cy="23" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/><path d="M163.9995,28.6406 Q163.4214,28.9375 162.7808,29.0781 Q162.1401,29.2344 161.437,29.2344 Q158.937,29.2344 157.6089,27.5938 Q156.2964,25.9375 156.2964,22.8125 Q156.2964,19.6875 157.6089,18.0313 Q158.937,16.375 161.437,16.375 Q162.1401,16.375 162.7808,16.5313 Q163.437,16.6875 163.9995,16.9844 L163.9995,19.7031 Q163.3745,19.125 162.7808,18.8594 Q162.187,18.5781 161.562,18.5781 Q160.2183,18.5781 159.5308,19.6563 Q158.8433,20.7188 158.8433,22.8125 Q158.8433,24.9063 159.5308,25.9844 Q160.2183,27.0469 161.562,27.0469 Q162.187,27.0469 162.7808,26.7813 Q163.3745,26.5 163.9995,25.9219 L163.9995,28.6406 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="112.0889" x="181.5308" y="27.8467">InferenceQueue</text><line style="stroke:#181818;stroke-width:0.5;" x1="8" x2="434.6504" y1="39" y2="39"/><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="52.6484" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="119.376" x="27" y="55.9951">id: UUID {MUST}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="68.9453" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="307.0361" x="27" y="72.292">jobs: PriorityQueue&lt;InferenceJob&gt; {MUST}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="85.2422" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="283.8281" x="27" y="88.5889">batches: Map&lt;ModelId, Batch&gt; {MUST}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="101.5391" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="237.0635" x="27" y="104.8857">max_queue_size: Integer {MUST}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="117.8359" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="243.4756" x="27" y="121.1826">events: Collection&lt;DomainEvent&gt;</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="134.1328" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="224.4785" x="27" y="137.4795">created_at: Timestamp {MUST}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="150.4297" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="229.0586" x="27" y="153.7764">updated_at: Timestamp {MUST}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="166.7266" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="172.833" x="27" y="170.0732">version: Integer {MUST}</text><line style="stroke:#181818;stroke-width:1;" x1="8" x2="434.6504" y1="177.375" y2="177.375"/><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="191.0234" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="402.6504" x="27" y="194.3701">submit_request(request: InferenceRequest): InferenceJob</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="207.3203" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="244.7881" x="27" y="210.667">get_job(job_id: UUID): InferenceJob</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="223.6172" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="209.0977" x="27" y="226.9639">cancel_job(job_id: UUID): void</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="239.9141" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="197.3604" x="27" y="243.2607">get_next_job(): InferenceJob</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="256.2109" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="304.5547" x="27" y="259.5576">get_ready_batch(model_id: ModelId): Batch</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="272.5078" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="390.373" x="27" y="275.8545">update_job_status(job_id: UUID, status: JobStatus): void</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="288.8047" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="190.4082" x="27" y="292.1514">validate(): ValidationResult</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="305.1016" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="259.6494" x="27" y="308.4482">addEvent(event: DomainEvent): void</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="321.3984" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="131.6533" x="27" y="324.7451">clearEvents(): void</text></g><g class="entity" data-entity="InferenceJob" data-source-line="23" data-uid="ent0003" id="entity_InferenceJob"><rect fill="#F1F1F1" height="48" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="119.6777" x="96.49" y="392.05"/><ellipse cx="111.49" cy="408.05" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/><path d="M114.4588,413.6906 Q113.8806,413.9875 113.24,414.1281 Q112.5994,414.2844 111.8963,414.2844 Q109.3963,414.2844 108.0681,412.6438 Q106.7556,410.9875 106.7556,407.8625 Q106.7556,404.7375 108.0681,403.0813 Q109.3963,401.425 111.8963,401.425 Q112.5994,401.425 113.24,401.5813 Q113.8963,401.7375 114.4588,402.0344 L114.4588,404.7531 Q113.8338,404.175 113.24,403.9094 Q112.6463,403.6281 112.0213,403.6281 Q110.6775,403.6281 109.99,404.7063 Q109.3025,405.7688 109.3025,407.8625 Q109.3025,409.9563 109.99,411.0344 Q110.6775,412.0969 112.0213,412.0969 Q112.6463,412.0969 113.24,411.8313 Q113.8338,411.55 114.4588,410.9719 L114.4588,413.6906 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="87.6777" x="125.49" y="412.8967">InferenceJob</text><line style="stroke:#181818;stroke-width:0.5;" x1="97.49" x2="215.1677" y1="424.05" y2="424.05"/><line style="stroke:#181818;stroke-width:0.5;" x1="97.49" x2="215.1677" y1="432.05" y2="432.05"/></g><g class="entity" data-entity="Batch" data-source-line="26" data-uid="ent0004" id="entity_Batch"><rect fill="#F1F1F1" height="48" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="72.2432" x="251.2" y="392.05"/><ellipse cx="266.2" cy="408.05" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/><path d="M269.1688,413.6906 Q268.5906,413.9875 267.95,414.1281 Q267.3094,414.2844 266.6063,414.2844 Q264.1063,414.2844 262.7781,412.6438 Q261.4656,410.9875 261.4656,407.8625 Q261.4656,404.7375 262.7781,403.0813 Q264.1063,401.425 266.6063,401.425 Q267.3094,401.425 267.95,401.5813 Q268.6063,401.7375 269.1688,402.0344 L269.1688,404.7531 Q268.5438,404.175 267.95,403.9094 Q267.3563,403.6281 266.7313,403.6281 Q265.3875,403.6281 264.7,404.7063 Q264.0125,405.7688 264.0125,407.8625 Q264.0125,409.9563 264.7,411.0344 Q265.3875,412.0969 266.7313,412.0969 Q267.3563,412.0969 267.95,411.8313 Q268.5438,411.55 269.1688,410.9719 L269.1688,413.6906 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="40.2432" x="280.2" y="412.8967">Batch</text><line style="stroke:#181818;stroke-width:0.5;" x1="252.2" x2="322.4432" y1="424.05" y2="424.05"/><line style="stroke:#181818;stroke-width:0.5;" x1="252.2" x2="322.4432" y1="432.05" y2="432.05"/></g><g class="entity" data-entity="GMN7" data-source-line="33" data-uid="ent0008" id="entity_GMN7"><path d="M470.87,141.83 L470.87,165.53 L435.9,169.53 L470.87,173.53 L470.87,197.2284 A0,0 0 0 0 470.87,197.2284 L673.7811,197.2284 A0,0 0 0 0 673.7811,197.2284 L673.7811,151.83 L663.7811,141.83 L470.87,141.83 A0,0 0 0 0 470.87,141.83" fill="#FEFFDD" style="stroke:#181818;stroke-width:0.5;"/><path d="M663.7811,141.83 L663.7811,151.83 L673.7811,151.83 L663.7811,141.83" fill="#FEFFDD" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="119.7676" x="476.87" y="158.8969">Aggregate Pattern</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="181.9111" x="476.87" y="174.0297">Enforces queue consistency</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="139.8896" x="476.87" y="189.1625">Manages job lifecycle</text></g><g class="link" data-entity-1="InferenceQueue" data-entity-2="InferenceJob" data-link-type="composition" data-source-line="29" data-uid="lnk5" id="link_InferenceQueue_InferenceJob"><path codeLine="29" d="M175.2486,343.8676 C169.0686,367.1276 166.53,376.67 162.52,391.76" fill="none" id="InferenceQueue-backto-InferenceJob" style="stroke:#181818;stroke-width:1;"/><polygon fill="#181818" points="178.33,332.27,172.9234,337.0417,175.2486,343.8676,180.6552,339.0959,178.33,332.27" style="stroke:#181818;stroke-width:1;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="23.0356" x="138.2303" y="381.0943">0..*</text></g><g class="link" data-entity-1="InferenceQueue" data-entity-2="Batch" data-link-type="composition" data-source-line="30" data-uid="lnk6" id="link_InferenceQueue_Batch"><path codeLine="30" d="M268.1079,343.8552 C274.3879,367.1152 276.97,376.67 281.04,391.76" fill="none" id="InferenceQueue-backto-Batch" style="stroke:#181818;stroke-width:1;"/><polygon fill="#181818" points="264.98,332.27,262.6822,339.1052,268.1079,343.8552,270.4057,337.02,264.98,332.27" style="stroke:#181818;stroke-width:1;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="23.0356" x="253.7101" y="381.0943">0..*</text></g></g></svg></div><div class="puml dark" style=""><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" data-diagram-type="CLASS" height="447px" preserveAspectRatio="xMidYMid meet" style="width:680px;height:447px;background:#1B1B1B;" version="1.1" viewBox="0 0 680 447" width="680px" zoomAndPan="magnify" class="diagram"><defs/><g><rect fill="#1B1B1B" height="447" style="stroke:none;stroke-width:1;" width="680" x="0" y="0"/><g class="entity" data-entity="InferenceQueue" data-source-line="2" data-uid="ent0002" id="entity_InferenceQueue"><rect fill="#313139" height="325.0469" rx="2.5" ry="2.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="428.6504" x="7" y="7"/><ellipse cx="161.0308" cy="23" fill="#2E5233" rx="11" ry="11" style="stroke:#E7E7E7;stroke-width:1;"/><path d="M163.9995,28.6406 Q163.4214,28.9375 162.7808,29.0781 Q162.1401,29.2344 161.437,29.2344 Q158.937,29.2344 157.6089,27.5938 Q156.2964,25.9375 156.2964,22.8125 Q156.2964,19.6875 157.6089,18.0313 Q158.937,16.375 161.437,16.375 Q162.1401,16.375 162.7808,16.5313 Q163.437,16.6875 163.9995,16.9844 L163.9995,19.7031 Q163.3745,19.125 162.7808,18.8594 Q162.187,18.5781 161.562,18.5781 Q160.2183,18.5781 159.5308,19.6563 Q158.8433,20.7188 158.8433,22.8125 Q158.8433,24.9063 159.5308,25.9844 Q160.2183,27.0469 161.562,27.0469 Q162.187,27.0469 162.7808,26.7813 Q163.3745,26.5 163.9995,25.9219 L163.9995,28.6406 Z " fill="#FFFFFF"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="112.0889" x="181.5308" y="27.8467">InferenceQueue</text><line style="stroke:#E7E7E7;stroke-width:0.5;" x1="8" x2="434.6504" y1="39" y2="39"/><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="52.6484" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="119.376" x="27" y="55.9951">id: UUID {MUST}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="68.9453" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="307.0361" x="27" y="72.292">jobs: PriorityQueue&lt;InferenceJob&gt; {MUST}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="85.2422" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="283.8281" x="27" y="88.5889">batches: Map&lt;ModelId, Batch&gt; {MUST}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="101.5391" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="237.0635" x="27" y="104.8857">max_queue_size: Integer {MUST}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="117.8359" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="243.4756" x="27" y="121.1826">events: Collection&lt;DomainEvent&gt;</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="134.1328" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="224.4785" x="27" y="137.4795">created_at: Timestamp {MUST}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="150.4297" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="229.0586" x="27" y="153.7764">updated_at: Timestamp {MUST}</text><g data-visibility-modifier="PUBLIC_FIELD"><ellipse cx="18" cy="166.7266" fill="none" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="172.833" x="27" y="170.0732">version: Integer {MUST}</text><line style="stroke:#E7E7E7;stroke-width:1;" x1="8" x2="434.6504" y1="177.375" y2="177.375"/><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="191.0234" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="402.6504" x="27" y="194.3701">submit_request(request: InferenceRequest): InferenceJob</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="207.3203" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="244.7881" x="27" y="210.667">get_job(job_id: UUID): InferenceJob</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="223.6172" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="209.0977" x="27" y="226.9639">cancel_job(job_id: UUID): void</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="239.9141" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="197.3604" x="27" y="243.2607">get_next_job(): InferenceJob</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="256.2109" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="304.5547" x="27" y="259.5576">get_ready_batch(model_id: ModelId): Batch</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="272.5078" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="390.373" x="27" y="275.8545">update_job_status(job_id: UUID, status: JobStatus): void</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="288.8047" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="190.4082" x="27" y="292.1514">validate(): ValidationResult</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="305.1016" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="259.6494" x="27" y="308.4482">addEvent(event: DomainEvent): void</text><g data-visibility-modifier="PUBLIC_METHOD"><ellipse cx="18" cy="321.3984" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/></g><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="131.6533" x="27" y="324.7451">clearEvents(): void</text></g><g class="entity" data-entity="InferenceJob" data-source-line="23" data-uid="ent0003" id="entity_InferenceJob"><rect fill="#313139" height="48" rx="2.5" ry="2.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="119.6777" x="96.49" y="392.05"/><ellipse cx="111.49" cy="408.05" fill="#2E5233" rx="11" ry="11" style="stroke:#E7E7E7;stroke-width:1;"/><path d="M114.4588,413.6906 Q113.8806,413.9875 113.24,414.1281 Q112.5994,414.2844 111.8963,414.2844 Q109.3963,414.2844 108.0681,412.6438 Q106.7556,410.9875 106.7556,407.8625 Q106.7556,404.7375 108.0681,403.0813 Q109.3963,401.425 111.8963,401.425 Q112.5994,401.425 113.24,401.5813 Q113.8963,401.7375 114.4588,402.0344 L114.4588,404.7531 Q113.8338,404.175 113.24,403.9094 Q112.6463,403.6281 112.0213,403.6281 Q110.6775,403.6281 109.99,404.7063 Q109.3025,405.7688 109.3025,407.8625 Q109.3025,409.9563 109.99,411.0344 Q110.6775,412.0969 112.0213,412.0969 Q112.6463,412.0969 113.24,411.8313 Q113.8338,411.55 114.4588,410.9719 L114.4588,413.6906 Z " fill="#FFFFFF"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="87.6777" x="125.49" y="412.8967">InferenceJob</text><line style="stroke:#E7E7E7;stroke-width:0.5;" x1="97.49" x2="215.1677" y1="424.05" y2="424.05"/><line style="stroke:#E7E7E7;stroke-width:0.5;" x1="97.49" x2="215.1677" y1="432.05" y2="432.05"/></g><g class="entity" data-entity="Batch" data-source-line="26" data-uid="ent0004" id="entity_Batch"><rect fill="#313139" height="48" rx="2.5" ry="2.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="72.2432" x="251.2" y="392.05"/><ellipse cx="266.2" cy="408.05" fill="#2E5233" rx="11" ry="11" style="stroke:#E7E7E7;stroke-width:1;"/><path d="M269.1688,413.6906 Q268.5906,413.9875 267.95,414.1281 Q267.3094,414.2844 266.6063,414.2844 Q264.1063,414.2844 262.7781,412.6438 Q261.4656,410.9875 261.4656,407.8625 Q261.4656,404.7375 262.7781,403.0813 Q264.1063,401.425 266.6063,401.425 Q267.3094,401.425 267.95,401.5813 Q268.6063,401.7375 269.1688,402.0344 L269.1688,404.7531 Q268.5438,404.175 267.95,403.9094 Q267.3563,403.6281 266.7313,403.6281 Q265.3875,403.6281 264.7,404.7063 Q264.0125,405.7688 264.0125,407.8625 Q264.0125,409.9563 264.7,411.0344 Q265.3875,412.0969 266.7313,412.0969 Q267.3563,412.0969 267.95,411.8313 Q268.5438,411.55 269.1688,410.9719 L269.1688,413.6906 Z " fill="#FFFFFF"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="40.2432" x="280.2" y="412.8967">Batch</text><line style="stroke:#E7E7E7;stroke-width:0.5;" x1="252.2" x2="322.4432" y1="424.05" y2="424.05"/><line style="stroke:#E7E7E7;stroke-width:0.5;" x1="252.2" x2="322.4432" y1="432.05" y2="432.05"/></g><g class="entity" data-entity="GMN7" data-source-line="33" data-uid="ent0008" id="entity_GMN7"><path d="M470.87,141.83 L470.87,165.53 L435.9,169.53 L470.87,173.53 L470.87,197.2284 A0,0 0 0 0 470.87,197.2284 L673.7811,197.2284 A0,0 0 0 0 673.7811,197.2284 L673.7811,151.83 L663.7811,141.83 L470.87,141.83 A0,0 0 0 0 470.87,141.83" fill="#714137" style="stroke:#E7E7E7;stroke-width:0.5;"/><path d="M663.7811,141.83 L663.7811,151.83 L673.7811,151.83 L663.7811,141.83" fill="#714137" style="stroke:#E7E7E7;stroke-width:0.5;"/><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="119.7676" x="476.87" y="158.8969">Aggregate Pattern</text><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="181.9111" x="476.87" y="174.0297">Enforces queue consistency</text><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="139.8896" x="476.87" y="189.1625">Manages job lifecycle</text></g><g class="link" data-entity-1="InferenceQueue" data-entity-2="InferenceJob" data-link-type="composition" data-source-line="29" data-uid="lnk5" id="link_InferenceQueue_InferenceJob"><path codeLine="29" d="M175.2486,343.8676 C169.0686,367.1276 166.53,376.67 162.52,391.76" fill="none" id="InferenceQueue-backto-InferenceJob" style="stroke:#E7E7E7;stroke-width:1;"/><polygon fill="#E7E7E7" points="178.33,332.27,172.9234,337.0417,175.2486,343.8676,180.6552,339.0959,178.33,332.27" style="stroke:#E7E7E7;stroke-width:1;"/><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="23.0356" x="138.2303" y="381.0943">0..*</text></g><g class="link" data-entity-1="InferenceQueue" data-entity-2="Batch" data-link-type="composition" data-source-line="30" data-uid="lnk6" id="link_InferenceQueue_Batch"><path codeLine="30" d="M268.1079,343.8552 C274.3879,367.1152 276.97,376.67 281.04,391.76" fill="none" id="InferenceQueue-backto-Batch" style="stroke:#E7E7E7;stroke-width:1;"/><polygon fill="#E7E7E7" points="264.98,332.27,262.6822,339.1052,268.1079,343.8552,270.4057,337.02,264.98,332.27" style="stroke:#E7E7E7;stroke-width:1;"/><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="23.0356" x="253.7101" y="381.0943">0..*</text></g></g></svg></div></div>
+
+<hr />
+<h2 id="3-field-specifications">3. Field Specifications<a class="headerlink" href="#3-field-specifications" title="Permanent link">&para;</a></h2>
+<h3 id="31-id">3.1 id<a class="headerlink" href="#31-id" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Type:</strong> UUID</li>
+<li><strong>Constraint:</strong> MUST</li>
+<li><strong>Description:</strong> Unique queue identifier</li>
+</ul>
+<h3 id="32-jobs">3.2 jobs<a class="headerlink" href="#32-jobs" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Type:</strong> PriorityQueue\<InferenceJob></li>
+<li><strong>Constraint:</strong> MUST</li>
+<li><strong>Description:</strong> Jobs prioritized by request priority</li>
+</ul>
+<h3 id="33-batches">3.3 batches<a class="headerlink" href="#33-batches" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Type:</strong> Map<ModelId, Batch></li>
+<li><strong>Constraint:</strong> MUST</li>
+<li><strong>Description:</strong> Active batches per model</li>
+</ul>
+<h3 id="34-max_queue_size">3.4 max_queue_size<a class="headerlink" href="#34-max_queue_size" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Type:</strong> Integer</li>
+<li><strong>Constraint:</strong> MUST</li>
+<li><strong>Default:</strong> 1000</li>
+<li><strong>Description:</strong> Maximum jobs in queue</li>
+</ul>
+<h3 id="35-events">3.5 events<a class="headerlink" href="#35-events" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Type:</strong> Collection\<DomainEvent></li>
+<li><strong>Description:</strong> Domain events</li>
+</ul>
+<hr />
+<h2 id="4-behavior">4. Behavior<a class="headerlink" href="#4-behavior" title="Permanent link">&para;</a></h2>
+<h3 id="41-request-submission">4.1 Request Submission<a class="headerlink" href="#41-request-submission" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def submit_request(self, request: InferenceRequest) -&gt; InferenceJob:
+    &quot;&quot;&quot;Submit inference request and create job&quot;&quot;&quot;
+    # Check queue capacity
+    if len(self.jobs) &gt;= self.max_queue_size:
+        raise QueueFullError(&quot;Queue at capacity&quot;)
+
+    # Create job
+    job = InferenceJob(
+        id=generate_uuid(),
+        request=request,
+        status=JobStatus(status=JobStatusEnum.PENDING),
+        created_at=now(),
+        updated_at=now(),
+        version=1
+    )
+
+    # Add to priority queue
+    self.jobs.put((job.request.priority.score, job))
+
+    # Update job status
+    job.update_status(JobStatus(status=JobStatusEnum.QUEUED))
+
+    self.updated_at = now()
+    self.version += 1
+
+    # Generate event
+    self.addEvent(JobSubmittedEvent(
+        queue_id=self.id,
+        job_id=job.id,
+        timestamp=now()
+    ))
+
+    return job
+</code></pre>
+<h3 id="42-job-retrieval">4.2 Job Retrieval<a class="headerlink" href="#42-job-retrieval" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def get_next_job(self) -&gt; InferenceJob:
+    &quot;&quot;&quot;Get highest priority job from queue&quot;&quot;&quot;
+    if self.jobs.empty():
+        return None
+
+    _, job = self.jobs.get()
+    job.update_status(JobStatus(status=JobStatusEnum.PROCESSING))
+
+    return job
+</code></pre>
+<h3 id="43-batch-management">4.3 Batch Management<a class="headerlink" href="#43-batch-management" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def get_ready_batch(self, model_id: ModelId) -&gt; Batch:
+    &quot;&quot;&quot;Get or create batch for model&quot;&quot;&quot;
+    # Get existing batch
+    if model_id in self.batches:
+        batch = self.batches[model_id]
+        if batch.is_ready():
+            del self.batches[model_id]
+            return batch
+        return None
+
+    # Create new batch
+    batch = Batch(
+        id=generate_uuid(),
+        model_id=model_id,
+        requests=[],
+        max_batch_size=32,
+        max_wait_ms=100,
+        created_at=now(),
+        updated_at=now(),
+        version=1
+    )
+
+    self.batches[model_id] = batch
+    return None
+</code></pre>
+<h3 id="44-job-cancellation">4.4 Job Cancellation<a class="headerlink" href="#44-job-cancellation" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">def cancel_job(self, job_id: UUID) -&gt; void:
+    &quot;&quot;&quot;Cancel a pending or queued job&quot;&quot;&quot;
+    job = self.get_job(job_id)
+
+    if not job.status.can_cancel():
+        raise InvalidOperationError(&quot;Job cannot be cancelled&quot;)
+
+    job.update_status(JobStatus(status=JobStatusEnum.CANCELLED))
+
+    self.updated_at = now()
+    self.version += 1
+
+    # Generate event
+    self.addEvent(JobCancelledEvent(
+        queue_id=self.id,
+        job_id=job_id,
+        timestamp=now()
+    ))
+</code></pre>
+<hr />
+<h2 id="5-domain-events">5. Domain Events<a class="headerlink" href="#5-domain-events" title="Permanent link">&para;</a></h2>
+<h3 id="51-jobsubmittedevent">5.1 JobSubmittedEvent<a class="headerlink" href="#51-jobsubmittedevent" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">class JobSubmittedEvent:
+    queue_id: UUID
+    job_id: UUID
+    model_id: ModelId
+    priority: Priority
+    timestamp: Timestamp
+</code></pre>
+<h3 id="52-jobcompletedevent">5.2 JobCompletedEvent<a class="headerlink" href="#52-jobcompletedevent" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">class JobCompletedEvent:
+    queue_id: UUID
+    job_id: UUID
+    processing_time_ms: Float
+    timestamp: Timestamp
+</code></pre>
+<h3 id="53-jobcancelledevent">5.3 JobCancelledEvent<a class="headerlink" href="#53-jobcancelledevent" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">class JobCancelledEvent:
+    queue_id: UUID
+    job_id: UUID
+    timestamp: Timestamp
+</code></pre>
+<hr />
+<h2 id="6-serialization">6. Serialization<a class="headerlink" href="#6-serialization" title="Permanent link">&para;</a></h2>
+<pre><code class="language-json">{
+  &quot;id&quot;: &quot;11000000-e29b-41d4-a716-446655440013&quot;,
+  &quot;max_queue_size&quot;: 1000,
+  &quot;jobs&quot;: [
+    {
+      &quot;id&quot;: &quot;ee0e8400-e29b-41d4-a716-446655440010&quot;,
+      &quot;status&quot;: &quot;queued&quot;
+    }
+  ],
+  &quot;batches&quot;: {
+    &quot;sentence-transformers/all-MiniLM-L6-v2&quot;: {
+      &quot;id&quot;: &quot;ff0e8400-e29b-41d4-a716-446655440011&quot;,
+      &quot;size&quot;: 5
+    }
+  },
+  &quot;created_at&quot;: &quot;2025-12-04T10:00:00Z&quot;,
+  &quot;updated_at&quot;: &quot;2025-12-04T10:30:15Z&quot;,
+  &quot;version&quot;: 42
+}
+</code></pre>
+<hr />
+<h2 id="7-database-schema">7. Database Schema<a class="headerlink" href="#7-database-schema" title="Permanent link">&para;</a></h2>
+<pre><code class="language-sql">CREATE TABLE inference_queue (
+    id UUID PRIMARY KEY,
+    max_queue_size INTEGER NOT NULL DEFAULT 1000,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    version_number INTEGER NOT NULL DEFAULT 1
+);
+
+-- inference_job and batch tables reference queue
+ALTER TABLE inference_job ADD COLUMN queue_id UUID REFERENCES inference_queue(id);
+ALTER TABLE batch ADD COLUMN queue_id UUID REFERENCES inference_queue(id);
+
+CREATE TRIGGER update_inference_queue_timestamp
+BEFORE UPDATE ON inference_queue
+FOR EACH ROW
+EXECUTE FUNCTION update_timestamp_and_version();
+</code></pre>
+<hr />
+<h2 id="8-usage-examples">8. Usage Examples<a class="headerlink" href="#8-usage-examples" title="Permanent link">&para;</a></h2>
+<h3 id="81-submitting-request">8.1 Submitting Request<a class="headerlink" href="#81-submitting-request" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python"># Submit request
+request = InferenceRequest(...)
+job = queue.submit_request(request)
+
+# Poll for result
+while not job.is_complete():
+    time.sleep(0.1)
+    job = queue.get_job(job.id)
+
+result = job.result
+</code></pre>
+<h3 id="82-processing-loop">8.2 Processing Loop<a class="headerlink" href="#82-processing-loop" title="Permanent link">&para;</a></h3>
+<pre><code class="language-python">while True:
+    # Get next job
+    job = queue.get_next_job()
+    if not job:
+        time.sleep(0.1)
+        continue
+
+    try:
+        # Process
+        result = model.infer(job.request.input_data)
+        job.set_result(result)
+    except Exception as e:
+        job.set_error(str(e))
+
+    # Publish events
+    for event in queue.events:
+        event_bus.publish(event)
+    queue.clearEvents()
+</code></pre>
+<hr />
+<h2 id="9-related-models">9. Related Models<a class="headerlink" href="#9-related-models" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../inference_job/">Inference Job</a> - Managed by queue</li>
+<li><a href="../inference_request/">Inference Request</a> - Job input</li>
+<li><a href="../batch/">Batch</a> - Batching optimization</li>
+<li><a href="../job_status/">Job Status</a> - Job state</li>
+<li><a href="../priority/">Priority</a> - Queue ordering</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/JomarJunior/modelmora" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+        <script src="../../../assets/mkdocs_puml/puml.js"></script>
+      
+        <script src="https://unpkg.com/@panzoom/panzoom@4.5.1/dist/panzoom.min.js"></script>
+      
+        <script src="../../../assets/mkdocs_puml/interaction.js"></script>
+      
+    
+  </body>
+</html>

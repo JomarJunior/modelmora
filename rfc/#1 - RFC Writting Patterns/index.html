@@ -1,0 +1,3317 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Neural network model management and inference serving microservice for MiraVeja">
+      
+      
+        <meta name="author" content="Jomar Júnior de Souza Pereira">
+      
+      
+        <link rel="canonical" href="https://jomarjunior.github.io/modelmora/rfc/%231%20-%20RFC%20Writting%20Patterns/">
+      
+      
+        <link rel="prev" href="../../getting-started/configuration/">
+      
+      
+        <link rel="next" href="../../architecture/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>RFC Writing Patterns - ModelMora Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../assets/mkdocs_puml/puml.css">
+    
+      <link rel="stylesheet" href="../../assets/mkdocs_puml/interaction.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#1-rfc-writting-patterns" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ModelMora Documentation" class="md-header__button md-logo" aria-label="ModelMora Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ModelMora Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              RFC Writing Patterns
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/JomarJunior/modelmora" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    JomarJunior/modelmora
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/installation/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
+          
+  
+  
+  RFCs
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../architecture/" class="md-tabs__link">
+          
+  
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../api-reference/rest/" class="md-tabs__link">
+          
+  
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../roadmap/" class="md-tabs__link">
+          
+  
+  
+  Development
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../deployment/docker/" class="md-tabs__link">
+          
+  
+  
+  Deployment
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ModelMora Documentation" class="md-nav__button md-logo" aria-label="ModelMora Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ModelMora Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/JomarJunior/modelmora" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    JomarJunior/modelmora
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFCs
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    RFCs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC Writing Patterns
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC Writing Patterns
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📝 Table of contents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#overview-and-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🌎 Overview and context
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🌎 Overview and context">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#glossary-and-terms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📑 Glossary and terms
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#customer-business-impact" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💼 Customer / Business impact
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#goals-and-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 Goals and requirements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 Goals and requirements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#out-of-scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚫 Out of scope
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#timeline-and-milestones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗓️ Timeline and milestones
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#proposal-solution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✅ Proposal solution
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="✅ Proposal solution">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rfc-document-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RFC Document Structure
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RFC Document Structure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-header-section" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Header Section
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-table-of-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Table of Contents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-overview-and-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Overview and Context
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-goals-and-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Goals and Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-timeline-and-milestones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Timeline and Milestones
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-proposal-solution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Proposal Solution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-alternative-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Alternative Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-frequently-asked-questions-faq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Frequently Asked Questions (FAQ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#9-appendix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Appendix
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#10-references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. References
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writing-style-guidelines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Writing Style Guidelines
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Writing Style Guidelines">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#language-and-tone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Language and Tone
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#formatting-standards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Formatting Standards
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#technical-content" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Technical Content
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#review-and-approval-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Review and Approval Process
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Review and Approval Process">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#review-stages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Review Stages
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#review-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Review Checklist
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#feedback-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Feedback Process
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#versioning-and-updates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Versioning and Updates
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Versioning and Updates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#version-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version Control
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#amendment-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Amendment Process
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ieee-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IEEE Compliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#alternative-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🟠 Alternative options
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🟠 Alternative options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-lightweight-markdown-documents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1: Lightweight Markdown Documents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-adopt-ietf-rfc-format-strictly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 2: Adopt IETF RFC Format Strictly
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-3-use-architecture-decision-records-adrs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 3: Use Architecture Decision Records (ADRs)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions-faq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❓ Frequently asked questions (FAQ)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="❓ Frequently asked questions (FAQ)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#q1-when-should-i-write-an-rfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q1: When should I write an RFC?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q2-how-long-should-an-rfc-be" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q2: How long should an RFC be?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q3-who-should-review-my-rfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q3: Who should review my RFC?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q4-can-i-update-an-approved-rfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q4: Can I update an approved RFC?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q5-what-if-my-rfc-is-rejected" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q5: What if my RFC is rejected?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q6-should-i-include-code-in-rfcs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q6: Should I include code in RFCs?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q7-how-do-i-handle-confidential-information" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q7: How do I handle confidential information?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q8-whats-the-difference-between-rfc-and-design-documents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q8: What's the difference between RFC and design documents?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#apendix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📎 Apendix
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📎 Apendix">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-complete-rfc-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. Complete RFC Template
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-example-diagrams" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. Example Diagrams
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="B. Example Diagrams">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-1-architecture-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 1: Architecture Diagram
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-2-sequence-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 2: Sequence Diagram
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-3-flowchart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 3: Flowchart
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-status-transition-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. Status Transition Matrix
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-checklist-for-authors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. Checklist for Authors
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#e-common-pitfalls-to-avoid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        E. Common Pitfalls to Avoid
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 References
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../design-decisions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design Decisions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api-reference/rest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    REST API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api-reference/grpc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gRPC API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Development
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../requirements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Requirements
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deployment
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deployment/docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deployment/kubernetes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📝 Table of contents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#overview-and-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🌎 Overview and context
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🌎 Overview and context">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#glossary-and-terms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📑 Glossary and terms
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#customer-business-impact" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        💼 Customer / Business impact
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#goals-and-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 Goals and requirements
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🎯 Goals and requirements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#out-of-scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚫 Out of scope
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#timeline-and-milestones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗓️ Timeline and milestones
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#proposal-solution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✅ Proposal solution
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="✅ Proposal solution">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#rfc-document-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RFC Document Structure
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RFC Document Structure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-header-section" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Header Section
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-table-of-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Table of Contents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-overview-and-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Overview and Context
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-goals-and-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Goals and Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-timeline-and-milestones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Timeline and Milestones
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-proposal-solution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Proposal Solution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-alternative-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Alternative Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-frequently-asked-questions-faq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Frequently Asked Questions (FAQ)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#9-appendix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Appendix
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#10-references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. References
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writing-style-guidelines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Writing Style Guidelines
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Writing Style Guidelines">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#language-and-tone" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Language and Tone
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#formatting-standards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Formatting Standards
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#technical-content" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Technical Content
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#review-and-approval-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Review and Approval Process
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Review and Approval Process">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#review-stages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Review Stages
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#review-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Review Checklist
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#feedback-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Feedback Process
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#versioning-and-updates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Versioning and Updates
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Versioning and Updates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#version-control" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version Control
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#amendment-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Amendment Process
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ieee-compliance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IEEE Compliance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#alternative-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🟠 Alternative options
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🟠 Alternative options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-lightweight-markdown-documents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1: Lightweight Markdown Documents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-adopt-ietf-rfc-format-strictly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 2: Adopt IETF RFC Format Strictly
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-3-use-architecture-decision-records-adrs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 3: Use Architecture Decision Records (ADRs)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frequently-asked-questions-faq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❓ Frequently asked questions (FAQ)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="❓ Frequently asked questions (FAQ)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#q1-when-should-i-write-an-rfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q1: When should I write an RFC?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q2-how-long-should-an-rfc-be" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q2: How long should an RFC be?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q3-who-should-review-my-rfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q3: Who should review my RFC?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q4-can-i-update-an-approved-rfc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q4: Can I update an approved RFC?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q5-what-if-my-rfc-is-rejected" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q5: What if my RFC is rejected?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q6-should-i-include-code-in-rfcs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q6: Should I include code in RFCs?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q7-how-do-i-handle-confidential-information" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q7: How do I handle confidential information?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q8-whats-the-difference-between-rfc-and-design-documents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q8: What's the difference between RFC and design documents?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#apendix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📎 Apendix
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📎 Apendix">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-complete-rfc-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A. Complete RFC Template
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-example-diagrams" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        B. Example Diagrams
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="B. Example Diagrams">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-1-architecture-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 1: Architecture Diagram
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-2-sequence-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 2: Sequence Diagram
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-3-flowchart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 3: Flowchart
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-status-transition-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C. Status Transition Matrix
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d-checklist-for-authors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        D. Checklist for Authors
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#e-common-pitfalls-to-avoid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        E. Common Pitfalls to Avoid
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📚 References
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="1-rfc-writting-patterns">#1 - RFC Writting Patterns<a class="headerlink" href="#1-rfc-writting-patterns" title="Permanent link">&para;</a></h1>
+<p>Date published: 2025-12-11 \
+Status: <strong>Approved</strong></p>
+<table>
+<thead>
+<tr>
+<th>Author</th>
+<th>Jomar Júnior de Souza Pereira</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="table-of-contents">📝 Table of contents<a class="headerlink" href="#table-of-contents" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="#overview-and-context">🌎 Overview and context</a></li>
+<li><a href="#goals-and-requirements">🎯 Goals and requirements</a></li>
+<li><a href="#timeline-and-milestones">🗓️ Timeline and milestones</a></li>
+<li><a href="#proposal-solution">✅ Proposal solution</a></li>
+<li><a href="#alternative-options">🟠 Alternative options</a></li>
+<li><a href="#frequently-asked-questions-faq">❓ Frequently asked questions (FAQ)</a></li>
+<li><a href="#apendix">📎 Apendix</a></li>
+<li><a href="#references">📚 References</a></li>
+</ul>
+<h2 id="overview-and-context">🌎 Overview and context<a class="headerlink" href="#overview-and-context" title="Permanent link">&para;</a></h2>
+<p>This document describes the patterns and best practices for writing <strong>RFC</strong>s (<em>Request for Comments</em>) within our organization. The goal is to ensure <em>clarity</em>, <em>consistency</em>, and <em>effectiveness</em> in our RFC documentation process.</p>
+<h3 id="glossary-and-terms">📑 Glossary and terms<a class="headerlink" href="#glossary-and-terms" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>RFC</strong>: Request for Comments, a formal document used to propose changes or new features.</li>
+<li><strong>Author</strong>: The individual who writes and submits the RFC.</li>
+<li><strong>Reviewer</strong>: The individual(s) who review the RFC for clarity, completeness, and feasibility.</li>
+<li><strong>Stakeholder</strong>: Any individual or group affected by the RFC.</li>
+</ul>
+<h3 id="customer-business-impact">💼 Customer / Business impact<a class="headerlink" href="#customer-business-impact" title="Permanent link">&para;</a></h3>
+<p>Clearly defined RFCs lead to better communication, reduced misunderstandings, and more efficient implementation of changes, ultimately benefiting the business and its customers.</p>
+<h2 id="goals-and-requirements">🎯 Goals and requirements<a class="headerlink" href="#goals-and-requirements" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th><strong>Goal</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Clarity</td>
+<td>Ensure that RFCs are easy to understand.</td>
+</tr>
+<tr>
+<td>Consistency</td>
+<td>Maintain a uniform structure across all RFCs.</td>
+</tr>
+<tr>
+<td>Effectiveness</td>
+<td>Facilitate the review and approval process.</td>
+</tr>
+<tr>
+<td>Accessibility</td>
+<td>Make RFCs easily accessible to all stakeholders.</td>
+</tr>
+<tr>
+<td>Traceability</td>
+<td>Ensure that changes can be tracked back to their RFCs.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="out-of-scope">🚫 Out of scope<a class="headerlink" href="#out-of-scope" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Technical implementation details.</li>
+<li>Post-approval processes.</li>
+</ul>
+<h2 id="timeline-and-milestones">🗓️ Timeline and milestones<a class="headerlink" href="#timeline-and-milestones" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th><strong>Milestone</strong></th>
+<th><strong>Date</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Draft Completion</td>
+<td>2025-12-11</td>
+</tr>
+<tr>
+<td>Review Period</td>
+<td>2025-12-11</td>
+</tr>
+<tr>
+<td>Final Approval</td>
+<td>2025-12-11</td>
+</tr>
+<tr>
+<td>Publication</td>
+<td>2025-12-11</td>
+</tr>
+</tbody>
+</table>
+<h2 id="proposal-solution">✅ Proposal solution<a class="headerlink" href="#proposal-solution" title="Permanent link">&para;</a></h2>
+<h3 id="rfc-document-structure">RFC Document Structure<a class="headerlink" href="#rfc-document-structure" title="Permanent link">&para;</a></h3>
+<p>All RFCs in the ModelMora project shall follow this standardized template:</p>
+<h4 id="1-header-section">1. Header Section<a class="headerlink" href="#1-header-section" title="Permanent link">&para;</a></h4>
+<pre><code class="language-markdown"># #&lt;number&gt; - &lt;Title&gt;
+
+Date published: YYYY-MM-DD
+Status: **Draft | Under Review | Approved | Rejected | Completed**
+
+|Author|&lt;Full Name&gt;|
+|---|---|
+</code></pre>
+<p><strong>Status definitions:</strong></p>
+<ul>
+<li><strong>Draft</strong>: Initial version, not yet ready for review</li>
+<li><strong>Under Review</strong>: Currently being reviewed by stakeholders</li>
+<li><strong>Approved</strong>: Accepted and ready for implementation</li>
+<li><strong>Rejected</strong>: Not accepted, includes reasoning</li>
+<li><strong>Completed</strong>: Implementation finished and verified</li>
+</ul>
+<h4 id="2-table-of-contents">2. Table of Contents<a class="headerlink" href="#2-table-of-contents" title="Permanent link">&para;</a></h4>
+<p>Must include all major sections with anchors for easy navigation.</p>
+<h4 id="3-overview-and-context">3. Overview and Context<a class="headerlink" href="#3-overview-and-context" title="Permanent link">&para;</a></h4>
+<p><strong>Purpose</strong>: Provide background information and explain why the RFC is needed.</p>
+<p><strong>Required subsections:</strong></p>
+<ul>
+<li><strong>Glossary and terms</strong>: Define domain-specific terminology</li>
+<li><strong>Customer / Business impact</strong>: Describe the value proposition</li>
+</ul>
+<p><strong>Guidelines:</strong></p>
+<ul>
+<li>Keep it concise (200-400 words)</li>
+<li>Avoid technical jargon in this section</li>
+<li>Focus on the "why" rather than the "how"</li>
+</ul>
+<h4 id="4-goals-and-requirements">4. Goals and Requirements<a class="headerlink" href="#4-goals-and-requirements" title="Permanent link">&para;</a></h4>
+<p><strong>Purpose</strong>: Define clear, measurable objectives and constraints.</p>
+<p><strong>Required content:</strong></p>
+<ul>
+<li>Goals table with descriptions</li>
+<li>Out of scope section (explicitly state what is NOT covered)</li>
+</ul>
+<p><strong>Guidelines:</strong></p>
+<ul>
+<li>Use SMART criteria (Specific, Measurable, Achievable, Relevant, Time-bound)</li>
+<li>Maximum 5-7 primary goals</li>
+<li>Be explicit about boundaries and limitations</li>
+</ul>
+<h4 id="5-timeline-and-milestones">5. Timeline and Milestones<a class="headerlink" href="#5-timeline-and-milestones" title="Permanent link">&para;</a></h4>
+<p><strong>Purpose</strong>: Establish a project schedule with key dates.</p>
+<p><strong>Required format:</strong></p>
+<pre><code class="language-markdown">| Milestone | Date |
+|---|---|
+| Draft Completion | YYYY-MM-DD |
+| Review Period | YYYY-MM-DD |
+| Final Approval | YYYY-MM-DD |
+| Implementation Start | YYYY-MM-DD |
+| Implementation Complete | YYYY-MM-DD |
+</code></pre>
+<p><strong>Guidelines:</strong></p>
+<ul>
+<li>Include realistic timelines</li>
+<li>Account for review cycles</li>
+<li>Add buffer time for unexpected delays</li>
+</ul>
+<h4 id="6-proposal-solution">6. Proposal Solution<a class="headerlink" href="#6-proposal-solution" title="Permanent link">&para;</a></h4>
+<p><strong>Purpose</strong>: Present the recommended approach in detail.</p>
+<p><strong>Required content:</strong></p>
+<ul>
+<li>Technical design overview</li>
+<li>Architecture diagrams (when applicable)</li>
+<li>Implementation strategy</li>
+<li>Success metrics</li>
+<li>Risk assessment and mitigation</li>
+</ul>
+<p><strong>Guidelines:</strong></p>
+<ul>
+<li>Use diagrams, flowcharts, and code samples</li>
+<li>Break down complex solutions into subsections</li>
+<li>Include concrete examples</li>
+<li>Reference industry standards (IEEE, IETF, W3C, etc.)</li>
+</ul>
+<h4 id="7-alternative-options">7. Alternative Options<a class="headerlink" href="#7-alternative-options" title="Permanent link">&para;</a></h4>
+<p><strong>Purpose</strong>: Document other considered approaches and why they were not chosen.</p>
+<p><strong>Required format:</strong></p>
+<pre><code class="language-markdown">### Option 1: &lt;Name&gt;
+**Description**: ...
+**Pros**: ...
+**Cons**: ...
+**Reason for rejection**: ...
+</code></pre>
+<p><strong>Guidelines:</strong></p>
+<ul>
+<li>Present at least 2-3 alternatives</li>
+<li>Be objective in evaluation</li>
+<li>Explain trade-offs clearly</li>
+</ul>
+<h4 id="8-frequently-asked-questions-faq">8. Frequently Asked Questions (FAQ)<a class="headerlink" href="#8-frequently-asked-questions-faq" title="Permanent link">&para;</a></h4>
+<p><strong>Purpose</strong>: Address common questions and concerns proactively.</p>
+<p><strong>Guidelines:</strong></p>
+<ul>
+<li>Include questions raised during drafting</li>
+<li>Add technical clarifications</li>
+<li>Address implementation concerns</li>
+</ul>
+<h4 id="9-appendix">9. Appendix<a class="headerlink" href="#9-appendix" title="Permanent link">&para;</a></h4>
+<p><strong>Purpose</strong>: Provide supplementary information.</p>
+<p><strong>Common items:</strong></p>
+<ul>
+<li>Detailed technical specifications</li>
+<li>Code examples</li>
+<li>Performance benchmarks</li>
+<li>Security considerations</li>
+<li>Compatibility matrices</li>
+</ul>
+<h4 id="10-references">10. References<a class="headerlink" href="#10-references" title="Permanent link">&para;</a></h4>
+<p><strong>Purpose</strong>: Cite all external sources and standards.</p>
+<p><strong>Required format:</strong></p>
+<pre><code class="language-markdown">[1] Author. &quot;Title.&quot; Publication, Year. URL
+[2] IEEE Standard XXX-YYYY, &quot;Title,&quot; Year.
+</code></pre>
+<h3 id="writing-style-guidelines">Writing Style Guidelines<a class="headerlink" href="#writing-style-guidelines" title="Permanent link">&para;</a></h3>
+<h4 id="language-and-tone">Language and Tone<a class="headerlink" href="#language-and-tone" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Clarity</strong>: Use simple, direct language</li>
+<li><strong>Conciseness</strong>: Eliminate redundant words</li>
+<li><strong>Consistency</strong>: Maintain uniform terminology</li>
+<li><strong>Objectivity</strong>: Present facts without bias</li>
+<li><strong>Precision</strong>: Be specific and unambiguous</li>
+</ul>
+<h4 id="formatting-standards">Formatting Standards<a class="headerlink" href="#formatting-standards" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Headings</strong>: Use hierarchical markdown headings (H1 → H6)</li>
+<li><strong>Lists</strong>: Use bullet points for unordered items, numbers for sequences</li>
+<li><strong>Tables</strong>: Align columns and use consistent spacing</li>
+<li><strong>Code blocks</strong>: Always specify the language for syntax highlighting</li>
+<li><strong>Emphasis</strong>: Use <strong>bold</strong> for key terms, <em>italics</em> for emphasis</li>
+</ul>
+<h4 id="technical-content">Technical Content<a class="headerlink" href="#technical-content" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Diagrams</strong>: Use PlantUML on most cases, ASCII art only when necessary</li>
+<li><strong>Code samples</strong>: Include complete, runnable examples</li>
+<li><strong>Metrics</strong>: Quantify impacts with concrete numbers</li>
+<li><strong>Standards</strong>: Reference specific IEEE, ISO, or IETF standards</li>
+</ul>
+<h3 id="review-and-approval-process">Review and Approval Process<a class="headerlink" href="#review-and-approval-process" title="Permanent link">&para;</a></h3>
+<h4 id="review-stages">Review Stages<a class="headerlink" href="#review-stages" title="Permanent link">&para;</a></h4>
+<ol>
+<li><strong>Self-review</strong>: Author reviews own RFC for completeness</li>
+<li><strong>Peer review</strong>: Technical peers review for accuracy</li>
+<li><strong>Stakeholder review</strong>: Business stakeholders review impact</li>
+<li><strong>Final approval</strong>: Designated approver(s) sign off</li>
+</ol>
+<h4 id="review-checklist">Review Checklist<a class="headerlink" href="#review-checklist" title="Permanent link">&para;</a></h4>
+<ul>
+<li>[ ] All required sections are present</li>
+<li>[ ] Goals are clear and measurable</li>
+<li>[ ] Timeline is realistic</li>
+<li>[ ] Technical solution is detailed</li>
+<li>[ ] Alternatives are considered</li>
+<li>[ ] Risks are identified and mitigated</li>
+<li>[ ] References are complete and accurate</li>
+<li>[ ] Diagrams are clear and accurate</li>
+<li>[ ] Code examples compile/run</li>
+<li>[ ] Grammar and spelling are correct</li>
+</ul>
+<h4 id="feedback-process">Feedback Process<a class="headerlink" href="#feedback-process" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Use GitHub Pull Requests for RFC submissions</li>
+<li>Address feedback inline with threaded comments</li>
+<li>Track decisions in the PR description</li>
+<li>Update RFC status based on review outcomes</li>
+</ul>
+<h3 id="versioning-and-updates">Versioning and Updates<a class="headerlink" href="#versioning-and-updates" title="Permanent link">&para;</a></h3>
+<h4 id="version-control">Version Control<a class="headerlink" href="#version-control" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Store RFCs in <code>/docs/rfc/</code> directory</li>
+<li>Use sequential numbering: <code>#1</code>, <code>#2</code>, <code>#3</code>, etc.</li>
+<li>Include date in filename for major revisions: <code>#1 - RFC Writting Patterns [2025-12-11].md</code></li>
+</ul>
+<h4 id="amendment-process">Amendment Process<a class="headerlink" href="#amendment-process" title="Permanent link">&para;</a></h4>
+<p>For approved RFCs requiring changes:</p>
+<ol>
+<li>Create new section: "## 📝 Amendments"</li>
+<li>Document change with date and rationale</li>
+<li>Update status if needed</li>
+<li>Notify stakeholders of changes</li>
+</ol>
+<p><strong>Amendment format:</strong></p>
+<pre><code class="language-markdown">### Amendment 1 - 2025-MM-DD
+**Change**: &lt;description&gt;
+**Rationale**: &lt;reason&gt;
+**Impact**: &lt;scope of change&gt;
+</code></pre>
+<h3 id="ieee-compliance">IEEE Compliance<a class="headerlink" href="#ieee-compliance" title="Permanent link">&para;</a></h3>
+<p>This RFC template aligns with IEEE standards, specifically:</p>
+<ul>
+<li><strong>IEEE 830-1998</strong>: Software Requirements Specifications</li>
+<li><strong>IEEE 1063-2001</strong>: Software User Documentation</li>
+<li><strong>IEEE 2001-2002</strong>: Recommended Practice for Internet Practices</li>
+</ul>
+<p><strong>Key IEEE principles applied:</strong></p>
+<ol>
+<li><strong>Completeness</strong>: All necessary information is included</li>
+<li><strong>Consistency</strong>: Uniform terminology and structure</li>
+<li><strong>Correctness</strong>: Accurate technical content</li>
+<li><strong>Modifiability</strong>: Clear versioning and amendment process</li>
+<li><strong>Traceability</strong>: References and decision documentation</li>
+<li><strong>Verifiability</strong>: Measurable goals and success criteria</li>
+</ol>
+<h2 id="alternative-options">🟠 Alternative options<a class="headerlink" href="#alternative-options" title="Permanent link">&para;</a></h2>
+<h3 id="option-1-lightweight-markdown-documents">Option 1: Lightweight Markdown Documents<a class="headerlink" href="#option-1-lightweight-markdown-documents" title="Permanent link">&para;</a></h3>
+<p><strong>Description</strong>: Use simple markdown files without strict structure or templates.</p>
+<p><strong>Pros</strong>:</p>
+<ul>
+<li>Faster to write</li>
+<li>Less overhead</li>
+<li>More flexibility</li>
+</ul>
+<p><strong>Cons</strong>:</p>
+<ul>
+<li>Inconsistent documentation</li>
+<li>Missing critical information</li>
+<li>Difficult to review systematically</li>
+<li>Poor traceability</li>
+</ul>
+<p><strong>Reason for rejection</strong>: Lack of structure leads to incomplete proposals and miscommunication, especially in complex technical decisions.</p>
+<h3 id="option-2-adopt-ietf-rfc-format-strictly">Option 2: Adopt IETF RFC Format Strictly<a class="headerlink" href="#option-2-adopt-ietf-rfc-format-strictly" title="Permanent link">&para;</a></h3>
+<p><strong>Description</strong>: Follow the exact IETF RFC format (RFC 7322) with ASCII text files.</p>
+<p><strong>Pros</strong>:</p>
+<ul>
+<li>Industry-standard format</li>
+<li>Well-documented process</li>
+<li>Proven track record</li>
+</ul>
+<p><strong>Cons</strong>:</p>
+<ul>
+<li>Too formal for internal use</li>
+<li>Limited formatting options</li>
+<li>Steep learning curve</li>
+<li>Not optimized for diagrams/code</li>
+</ul>
+<p><strong>Reason for rejection</strong>: While excellent for internet standards, IETF format is overly formal for internal software project RFCs and lacks modern markdown features.</p>
+<h3 id="option-3-use-architecture-decision-records-adrs">Option 3: Use Architecture Decision Records (ADRs)<a class="headerlink" href="#option-3-use-architecture-decision-records-adrs" title="Permanent link">&para;</a></h3>
+<p><strong>Description</strong>: Implement lightweight ADR format (MADR template).</p>
+<p><strong>Pros</strong>:</p>
+<ul>
+<li>Simple and focused</li>
+<li>Quick to write</li>
+<li>Good for small decisions</li>
+</ul>
+<p><strong>Cons</strong>:</p>
+<ul>
+<li>Too brief for complex proposals</li>
+<li>Lacks business context</li>
+<li>No timeline tracking</li>
+<li>Limited structure for large changes</li>
+</ul>
+<p><strong>Reason for rejection</strong>: ADRs are complementary but insufficient for comprehensive project proposals requiring business impact analysis and detailed timelines.</p>
+<h2 id="frequently-asked-questions-faq">❓ Frequently asked questions (FAQ)<a class="headerlink" href="#frequently-asked-questions-faq" title="Permanent link">&para;</a></h2>
+<h3 id="q1-when-should-i-write-an-rfc">Q1: When should I write an RFC?<a class="headerlink" href="#q1-when-should-i-write-an-rfc" title="Permanent link">&para;</a></h3>
+<p><strong>A</strong>: Write an RFC for:</p>
+<ul>
+<li>Major architectural changes</li>
+<li>New features affecting multiple components</li>
+<li>Changes to public APIs or interfaces</li>
+<li>Process or workflow modifications</li>
+<li>Decisions with long-term impact</li>
+</ul>
+<p>Do NOT write an RFC for:</p>
+<ul>
+<li>Bug fixes</li>
+<li>Minor refactoring</li>
+<li>Documentation updates</li>
+<li>Routine maintenance</li>
+</ul>
+<h3 id="q2-how-long-should-an-rfc-be">Q2: How long should an RFC be?<a class="headerlink" href="#q2-how-long-should-an-rfc-be" title="Permanent link">&para;</a></h3>
+<p><strong>A</strong>: Typical length ranges:</p>
+<ul>
+<li><strong>Simple proposals</strong>: 2-4 pages</li>
+<li><strong>Standard proposals</strong>: 5-10 pages</li>
+<li><strong>Complex proposals</strong>: 10-20 pages</li>
+</ul>
+<p>Focus on clarity over length. Include enough detail for informed decision-making.</p>
+<h3 id="q3-who-should-review-my-rfc">Q3: Who should review my RFC?<a class="headerlink" href="#q3-who-should-review-my-rfc" title="Permanent link">&para;</a></h3>
+<p><strong>A</strong>: Required reviewers:</p>
+<ul>
+<li>Technical lead for the affected component</li>
+<li>At least 2 peers with relevant expertise</li>
+<li>Product owner or business stakeholder</li>
+<li>Security/compliance team (for security-related changes)</li>
+</ul>
+<h3 id="q4-can-i-update-an-approved-rfc">Q4: Can I update an approved RFC?<a class="headerlink" href="#q4-can-i-update-an-approved-rfc" title="Permanent link">&para;</a></h3>
+<p><strong>A</strong>: Yes, through the amendment process:</p>
+<ol>
+<li>Add amendment section with date and details</li>
+<li>Submit as PR for review</li>
+<li>Get approval from original approvers</li>
+<li>Update RFC status if scope changes significantly</li>
+</ol>
+<h3 id="q5-what-if-my-rfc-is-rejected">Q5: What if my RFC is rejected?<a class="headerlink" href="#q5-what-if-my-rfc-is-rejected" title="Permanent link">&para;</a></h3>
+<p><strong>A</strong>: Document the rejection:</p>
+<ol>
+<li>Update status to "Rejected"</li>
+<li>Add rejection rationale</li>
+<li>Keep the RFC for historical reference</li>
+<li>Consider alternative approaches or resubmit with modifications</li>
+</ol>
+<h3 id="q6-should-i-include-code-in-rfcs">Q6: Should I include code in RFCs?<a class="headerlink" href="#q6-should-i-include-code-in-rfcs" title="Permanent link">&para;</a></h3>
+<p><strong>A</strong>: Yes, when it helps clarify the proposal:</p>
+<ul>
+<li>Use code snippets for API designs</li>
+<li>Show before/after examples</li>
+<li>Include pseudocode for algorithms</li>
+<li>Keep examples concise and relevant</li>
+</ul>
+<h3 id="q7-how-do-i-handle-confidential-information">Q7: How do I handle confidential information?<a class="headerlink" href="#q7-how-do-i-handle-confidential-information" title="Permanent link">&para;</a></h3>
+<p><strong>A</strong>:</p>
+<ul>
+<li>Mark RFC as "Confidential" in header</li>
+<li>Store in private repository if needed</li>
+<li>Redact sensitive details in public versions</li>
+<li>Follow company security policies</li>
+</ul>
+<h3 id="q8-whats-the-difference-between-rfc-and-design-documents">Q8: What's the difference between RFC and design documents?<a class="headerlink" href="#q8-whats-the-difference-between-rfc-and-design-documents" title="Permanent link">&para;</a></h3>
+<p><strong>A</strong>:</p>
+<ul>
+<li><strong>RFC</strong>: Proposes changes, seeks approval, includes alternatives</li>
+<li><strong>Design doc</strong>: Details implementation of approved RFC</li>
+<li>RFCs answer "what and why", design docs answer "how"</li>
+</ul>
+<h2 id="apendix">📎 Apendix<a class="headerlink" href="#apendix" title="Permanent link">&para;</a></h2>
+<h3 id="a-complete-rfc-template">A. Complete RFC Template<a class="headerlink" href="#a-complete-rfc-template" title="Permanent link">&para;</a></h3>
+<pre><code class="language-markdown"># #&lt;number&gt; - &lt;Title&gt;
+
+Date published: YYYY-MM-DD
+Status: **Draft**
+
+|Author|&lt;Full Name&gt;|
+|---|---|
+
+## 📝 Table of contents
+
+- [🌎 Overview and context](#🌎-overview-and-context)
+- [🎯 Goals and requirements](#🎯-goals-and-requirements)
+- [🗓️ Timeline and milestones](#🗓️-timeline-and-milestones)
+- [✅ Proposal solution](#✅-proposal-solution)
+- [🟠 Alternative options](#🟠-alternative-options)
+- [❓ Frequently asked questions (FAQ)](#❓-frequently-asked-questions-faq)
+- [📎 Apendix](#📎-apendix)
+- [📚 References](#📚-references)
+
+## 🌎 Overview and context
+
+[Provide background and motivation]
+
+### 📑 Glossary and terms
+
+- **Term 1**: Definition
+- **Term 2**: Definition
+
+### 💼 Customer / Business impact
+
+[Describe value and impact]
+
+## 🎯 Goals and requirements
+
+| **Goal** | **Description** |
+|---|---|
+| Goal 1 | Description |
+
+### 🚫 Out of scope
+
+- Item 1
+- Item 2
+
+## 🗓️ Timeline and milestones
+
+| **Milestone** | **Date** |
+|---|---|
+| Draft Completion | YYYY-MM-DD |
+
+## ✅ Proposal solution
+
+[Detailed proposal]
+
+## 🟠 Alternative options
+
+### Option 1: [Name]
+**Description**: ...
+**Pros**: ...
+**Cons**: ...
+**Reason for rejection**: ...
+
+## ❓ Frequently asked questions (FAQ)
+
+### Q: Question?
+**A**: Answer
+
+## 📎 Apendix
+
+[Supplementary information]
+
+## 📚 References
+
+[1] Citation
+</code></pre>
+<h3 id="b-example-diagrams">B. Example Diagrams<a class="headerlink" href="#b-example-diagrams" title="Permanent link">&para;</a></h3>
+<h4 id="example-1-architecture-diagram">Example 1: Architecture Diagram<a class="headerlink" href="#example-1-architecture-diagram" title="Permanent link">&para;</a></h4>
+<div class='puml-container'><div class="puml light" style=""><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" data-diagram-type="DESCRIPTION" height="286px" preserveAspectRatio="xMidYMid meet" style="width:825px;height:286px;background:#FFFFFF;" version="1.1" viewBox="0 0 825 286" width="825px" zoomAndPan="magnify" class="diagram"><defs/><g><g class="cluster" data-entity="Component A" data-source-line="2" data-uid="ent0002" id="cluster_Component A"><rect fill="none" height="273.09" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:1;" width="381" x="7" y="7"/><rect fill="none" height="10" style="stroke:#181818;stroke-width:1;" width="15" x="368" y="12"/><rect fill="none" height="2" style="stroke:#181818;stroke-width:1;" width="4" x="366" y="14"/><rect fill="none" height="2" style="stroke:#181818;stroke-width:1;" width="4" x="366" y="18"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="105.9502" x="144.5249" y="32.9951">Component A</text></g><g class="cluster" data-entity="Component B" data-source-line="7" data-uid="ent0006" id="cluster_Component B"><rect fill="none" height="113.3" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:1;" width="388" x="428" y="167.29"/><rect fill="none" height="10" style="stroke:#181818;stroke-width:1;" width="15" x="796" y="172.29"/><rect fill="none" height="2" style="stroke:#181818;stroke-width:1;" width="4" x="794" y="174.29"/><rect fill="none" height="2" style="stroke:#181818;stroke-width:1;" width="4" x="794" y="178.29"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="105.7861" x="569.1069" y="193.2851">Component B</text></g><g class="entity" data-entity="Service Layer" data-source-line="3" data-uid="ent0003" id="entity_Service Layer"><rect fill="#F1F1F1" height="46.2969" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="135.2246" x="31.39" y="50"/><rect fill="#F1F1F1" height="10" style="stroke:#181818;stroke-width:0.5;" width="15" x="146.6146" y="55"/><rect fill="#F1F1F1" height="2" style="stroke:#181818;stroke-width:0.5;" width="4" x="144.6146" y="57"/><rect fill="#F1F1F1" height="2" style="stroke:#181818;stroke-width:0.5;" width="4" x="144.6146" y="61"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="95.2246" x="46.39" y="82.9951">Service Layer</text></g><g class="entity" data-entity="Business Logic" data-source-line="4" data-uid="ent0004" id="entity_Business Logic"><rect fill="#F1F1F1" height="46.2969" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="143.0244" x="201.49" y="50"/><rect fill="#F1F1F1" height="10" style="stroke:#181818;stroke-width:0.5;" width="15" x="324.5144" y="55"/><rect fill="#F1F1F1" height="2" style="stroke:#181818;stroke-width:0.5;" width="4" x="322.5144" y="57"/><rect fill="#F1F1F1" height="2" style="stroke:#181818;stroke-width:0.5;" width="4" x="322.5144" y="61"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="103.0244" x="216.49" y="82.9951">Business Logic</text></g><g class="entity" data-entity="Data Store" data-source-line="5" data-uid="ent0005" id="entity_Data Store"><path d="M51.41,220.79 C51.41,210.79 99.0042,210.79 99.0042,210.79 C99.0042,210.79 146.5985,210.79 146.5985,220.79 L146.5985,246.0869 C146.5985,256.0869 99.0042,256.0869 99.0042,256.0869 C99.0042,256.0869 51.41,256.0869 51.41,246.0869 L51.41,220.79" fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><path d="M51.41,220.79 C51.41,230.79 99.0042,230.79 99.0042,230.79 C99.0042,230.79 146.5985,230.79 146.5985,220.79" fill="none" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="75.1885" x="61.41" y="247.7851">Data Store</text></g><g class="entity" data-entity="API Gateway" data-source-line="8" data-uid="ent0007" id="entity_API Gateway"><rect fill="#F1F1F1" height="46.2969" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="128.4434" x="451.78" y="210.29"/><rect fill="#F1F1F1" height="10" style="stroke:#181818;stroke-width:0.5;" width="15" x="560.2234" y="215.29"/><rect fill="#F1F1F1" height="2" style="stroke:#181818;stroke-width:0.5;" width="4" x="558.2234" y="217.29"/><rect fill="#F1F1F1" height="2" style="stroke:#181818;stroke-width:0.5;" width="4" x="558.2234" y="221.29"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="88.4434" x="466.78" y="243.2851">API Gateway</text></g><g class="entity" data-entity="Request Handler" data-source-line="9" data-uid="ent0008" id="entity_Request Handler"><rect fill="#F1F1F1" height="46.2969" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="157.0723" x="615.46" y="210.29"/><rect fill="#F1F1F1" height="10" style="stroke:#181818;stroke-width:0.5;" width="15" x="752.5323" y="215.29"/><rect fill="#F1F1F1" height="2" style="stroke:#181818;stroke-width:0.5;" width="4" x="750.5323" y="217.29"/><rect fill="#F1F1F1" height="2" style="stroke:#181818;stroke-width:0.5;" width="4" x="750.5323" y="221.29"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="117.0723" x="630.46" y="243.2851">Request Handler</text></g><g class="link" data-entity-1="Component A" data-entity-2="Component B" data-link-type="dependency" data-source-line="11" data-uid="lnk9" id="link_Component A_Component B"><path d="M388.3388,75.655 C389.3189,75.8324 390.3799,76.0245 391.5186,76.2307 C393.796,76.6431 396.3845,77.1121 399.2601,77.6333 C410.7625,79.7184 426.8585,82.6402 446.0114,86.1272 C484.3172,93.1012 534.8506,102.3362 585.3188,111.66 C686.255,130.3075 786.93,149.31 789,151.29 C792.24,154.3925 794.9739,157.9336 797.2768,161.7616 C797.8525,162.7186 798.4013,163.6935 798.9243,164.684 C799.1858,165.1792 799.4409,165.6783 799.6896,166.1811 C799.814,166.4324 797.3447,161.2735 797.4659,161.5266" fill="none" id="Component A-to-Component B" style="stroke:#181818;stroke-width:1;"/><polygon fill="#181818" points="800.0581,166.9378,799.7773,157.0929,797.8979,162.4285,792.5624,160.5492,800.0581,166.9378" style="stroke:#181818;stroke-width:1;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="64.8477" x="753" y="139.3569">Data Flow</text></g></g></svg></div><div class="puml dark" style=""><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" data-diagram-type="DESCRIPTION" height="286px" preserveAspectRatio="xMidYMid meet" style="width:825px;height:286px;background:#1B1B1B;" version="1.1" viewBox="0 0 825 286" width="825px" zoomAndPan="magnify" class="diagram"><defs/><g><rect fill="#1B1B1B" height="286" style="stroke:none;stroke-width:1;" width="825" x="0" y="0"/><g class="cluster" data-entity="Component A" data-source-line="2" data-uid="ent0002" id="cluster_Component A"><rect fill="none" height="273.09" rx="2.5" ry="2.5" style="stroke:#E7E7E7;stroke-width:1;" width="381" x="7" y="7"/><rect fill="none" height="10" style="stroke:#E7E7E7;stroke-width:1;" width="15" x="368" y="12"/><rect fill="none" height="2" style="stroke:#E7E7E7;stroke-width:1;" width="4" x="366" y="14"/><rect fill="none" height="2" style="stroke:#E7E7E7;stroke-width:1;" width="4" x="366" y="18"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="105.9502" x="144.5249" y="32.9951">Component A</text></g><g class="cluster" data-entity="Component B" data-source-line="7" data-uid="ent0006" id="cluster_Component B"><rect fill="none" height="113.3" rx="2.5" ry="2.5" style="stroke:#E7E7E7;stroke-width:1;" width="388" x="428" y="167.29"/><rect fill="none" height="10" style="stroke:#E7E7E7;stroke-width:1;" width="15" x="796" y="172.29"/><rect fill="none" height="2" style="stroke:#E7E7E7;stroke-width:1;" width="4" x="794" y="174.29"/><rect fill="none" height="2" style="stroke:#E7E7E7;stroke-width:1;" width="4" x="794" y="178.29"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="105.7861" x="569.1069" y="193.2851">Component B</text></g><g class="entity" data-entity="Service Layer" data-source-line="3" data-uid="ent0003" id="entity_Service Layer"><rect fill="#313139" height="46.2969" rx="2.5" ry="2.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="135.2246" x="31.39" y="50"/><rect fill="#313139" height="10" style="stroke:#E7E7E7;stroke-width:0.5;" width="15" x="146.6146" y="55"/><rect fill="#313139" height="2" style="stroke:#E7E7E7;stroke-width:0.5;" width="4" x="144.6146" y="57"/><rect fill="#313139" height="2" style="stroke:#E7E7E7;stroke-width:0.5;" width="4" x="144.6146" y="61"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="95.2246" x="46.39" y="82.9951">Service Layer</text></g><g class="entity" data-entity="Business Logic" data-source-line="4" data-uid="ent0004" id="entity_Business Logic"><rect fill="#313139" height="46.2969" rx="2.5" ry="2.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="143.0244" x="201.49" y="50"/><rect fill="#313139" height="10" style="stroke:#E7E7E7;stroke-width:0.5;" width="15" x="324.5144" y="55"/><rect fill="#313139" height="2" style="stroke:#E7E7E7;stroke-width:0.5;" width="4" x="322.5144" y="57"/><rect fill="#313139" height="2" style="stroke:#E7E7E7;stroke-width:0.5;" width="4" x="322.5144" y="61"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="103.0244" x="216.49" y="82.9951">Business Logic</text></g><g class="entity" data-entity="Data Store" data-source-line="5" data-uid="ent0005" id="entity_Data Store"><path d="M51.41,220.79 C51.41,210.79 99.0042,210.79 99.0042,210.79 C99.0042,210.79 146.5985,210.79 146.5985,220.79 L146.5985,246.0869 C146.5985,256.0869 99.0042,256.0869 99.0042,256.0869 C99.0042,256.0869 51.41,256.0869 51.41,246.0869 L51.41,220.79" fill="#313139" style="stroke:#E7E7E7;stroke-width:0.5;"/><path d="M51.41,220.79 C51.41,230.79 99.0042,230.79 99.0042,230.79 C99.0042,230.79 146.5985,230.79 146.5985,220.79" fill="none" style="stroke:#E7E7E7;stroke-width:0.5;"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="75.1885" x="61.41" y="247.7851">Data Store</text></g><g class="entity" data-entity="API Gateway" data-source-line="8" data-uid="ent0007" id="entity_API Gateway"><rect fill="#313139" height="46.2969" rx="2.5" ry="2.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="128.4434" x="451.78" y="210.29"/><rect fill="#313139" height="10" style="stroke:#E7E7E7;stroke-width:0.5;" width="15" x="560.2234" y="215.29"/><rect fill="#313139" height="2" style="stroke:#E7E7E7;stroke-width:0.5;" width="4" x="558.2234" y="217.29"/><rect fill="#313139" height="2" style="stroke:#E7E7E7;stroke-width:0.5;" width="4" x="558.2234" y="221.29"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="88.4434" x="466.78" y="243.2851">API Gateway</text></g><g class="entity" data-entity="Request Handler" data-source-line="9" data-uid="ent0008" id="entity_Request Handler"><rect fill="#313139" height="46.2969" rx="2.5" ry="2.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="157.0723" x="615.46" y="210.29"/><rect fill="#313139" height="10" style="stroke:#E7E7E7;stroke-width:0.5;" width="15" x="752.5323" y="215.29"/><rect fill="#313139" height="2" style="stroke:#E7E7E7;stroke-width:0.5;" width="4" x="750.5323" y="217.29"/><rect fill="#313139" height="2" style="stroke:#E7E7E7;stroke-width:0.5;" width="4" x="750.5323" y="221.29"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="117.0723" x="630.46" y="243.2851">Request Handler</text></g><g class="link" data-entity-1="Component A" data-entity-2="Component B" data-link-type="dependency" data-source-line="11" data-uid="lnk9" id="link_Component A_Component B"><path d="M388.3388,75.655 C389.3189,75.8324 390.3799,76.0245 391.5186,76.2307 C393.796,76.6431 396.3845,77.1121 399.2601,77.6333 C410.7625,79.7184 426.8585,82.6402 446.0114,86.1272 C484.3172,93.1012 534.8506,102.3362 585.3188,111.66 C686.255,130.3075 786.93,149.31 789,151.29 C792.24,154.3925 794.9739,157.9336 797.2768,161.7616 C797.8525,162.7186 798.4013,163.6935 798.9243,164.684 C799.1858,165.1792 799.4409,165.6783 799.6896,166.1811 C799.814,166.4324 797.3447,161.2735 797.4659,161.5266" fill="none" id="Component A-to-Component B" style="stroke:#E7E7E7;stroke-width:1;"/><polygon fill="#E7E7E7" points="800.0581,166.9378,799.7773,157.0929,797.8979,162.4285,792.5624,160.5492,800.0581,166.9378" style="stroke:#E7E7E7;stroke-width:1;"/><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="64.8477" x="753" y="139.3569">Data Flow</text></g></g></svg></div></div>
+
+<h4 id="example-2-sequence-diagram">Example 2: Sequence Diagram<a class="headerlink" href="#example-2-sequence-diagram" title="Permanent link">&para;</a></h4>
+<div class='puml-container'><div class="puml light" style=""><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" data-diagram-type="SEQUENCE" height="240px" preserveAspectRatio="xMidYMid meet" style="width:150px;height:240px;background:#FFFFFF;" version="1.1" viewBox="0 0 150 240" width="150px" zoomAndPan="magnify" class="diagram"><defs/><g><g><title>User</title><rect fill="#000000" fill-opacity="0.00000" height="78.2656" width="8" x="19.9551" y="81.2969"/><line style="stroke:#181818;stroke-width:0.5;stroke-dasharray:5,5;" x1="23" x2="23" y1="81.2969" y2="159.5625"/></g><g><title>System</title><rect fill="#000000" fill-opacity="0.00000" height="78.2656" width="8" x="106.9746" y="81.2969"/><line style="stroke:#181818;stroke-width:0.5;stroke-dasharray:5,5;" x1="110.8716" x2="110.8716" y1="81.2969" y2="159.5625"/></g><g class="participant participant-head" data-participant="User"><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="31.9102" x="5" y="77.9951">User</text><ellipse cx="23.9551" cy="13.5" fill="#E2E2F0" rx="8" ry="8" style="stroke:#181818;stroke-width:0.5;"/><path d="M23.9551,21.5 L23.9551,48.5 M10.9551,29.5 L36.9551,29.5 M23.9551,48.5 L10.9551,63.5 M23.9551,48.5 L36.9551,63.5" fill="none" style="stroke:#181818;stroke-width:0.5;"/></g><g class="participant participant-tail" data-participant="User"><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="31.9102" x="5" y="171.5576">User</text><ellipse cx="23.9551" cy="183.3594" fill="#E2E2F0" rx="8" ry="8" style="stroke:#181818;stroke-width:0.5;"/><path d="M23.9551,191.3594 L23.9551,218.3594 M10.9551,199.3594 L36.9551,199.3594 M23.9551,218.3594 L10.9551,233.3594 M23.9551,218.3594 L36.9551,233.3594" fill="none" style="stroke:#181818;stroke-width:0.5;"/></g><g class="participant participant-head" data-participant="System"><rect fill="#E2E2F0" height="30.2969" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="66.2061" x="77.8716" y="50"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="52.2061" x="84.8716" y="69.9951">System</text></g><g class="participant participant-tail" data-participant="System"><rect fill="#E2E2F0" height="30.2969" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="66.2061" x="77.8716" y="158.5625"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="52.2061" x="84.8716" y="178.5576">System</text></g><g class="message" data-participant-1="User" data-participant-2="System"><polygon fill="#181818" points="98.9746,108.4297,108.9746,112.4297,98.9746,116.4297,102.9746,112.4297" style="stroke:#181818;stroke-width:1;"/><line style="stroke:#181818;stroke-width:1;" x1="23.9551" x2="104.9746" y1="112.4297" y2="112.4297"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="53.3901" x="30.9551" y="107.3638">Request</text></g><g class="message" data-participant-1="System" data-participant-2="User"><polygon fill="#181818" points="34.9551,137.5625,24.9551,141.5625,34.9551,145.5625,30.9551,141.5625" style="stroke:#181818;stroke-width:1;"/><line style="stroke:#181818;stroke-width:1;stroke-dasharray:2,2;" x1="28.9551" x2="109.9746" y1="141.5625" y2="141.5625"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="63.0195" x="40.9551" y="136.4966">Response</text></g></g></svg></div><div class="puml dark" style=""><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" data-diagram-type="SEQUENCE" height="240px" preserveAspectRatio="xMidYMid meet" style="width:150px;height:240px;background:#1B1B1B;" version="1.1" viewBox="0 0 150 240" width="150px" zoomAndPan="magnify" class="diagram"><defs/><g><rect fill="#1B1B1B" height="240" style="stroke:none;stroke-width:1;" width="150" x="0" y="0"/><g><title>User</title><rect fill="#000000" fill-opacity="0.00000" height="78.2656" width="8" x="19.9551" y="81.2969"/><line style="stroke:#E7E7E7;stroke-width:0.5;stroke-dasharray:5,5;" x1="23" x2="23" y1="81.2969" y2="159.5625"/></g><g><title>System</title><rect fill="#000000" fill-opacity="0.00000" height="78.2656" width="8" x="106.9746" y="81.2969"/><line style="stroke:#E7E7E7;stroke-width:0.5;stroke-dasharray:5,5;" x1="110.8716" x2="110.8716" y1="81.2969" y2="159.5625"/></g><g class="participant participant-head" data-participant="User"><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="31.9102" x="5" y="77.9951">User</text><ellipse cx="23.9551" cy="13.5" fill="#222222" rx="8" ry="8" style="stroke:#E7E7E7;stroke-width:0.5;"/><path d="M23.9551,21.5 L23.9551,48.5 M10.9551,29.5 L36.9551,29.5 M23.9551,48.5 L10.9551,63.5 M23.9551,48.5 L36.9551,63.5" fill="none" style="stroke:#E7E7E7;stroke-width:0.5;"/></g><g class="participant participant-tail" data-participant="User"><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="31.9102" x="5" y="171.5576">User</text><ellipse cx="23.9551" cy="183.3594" fill="#222222" rx="8" ry="8" style="stroke:#E7E7E7;stroke-width:0.5;"/><path d="M23.9551,191.3594 L23.9551,218.3594 M10.9551,199.3594 L36.9551,199.3594 M23.9551,218.3594 L10.9551,233.3594 M23.9551,218.3594 L36.9551,233.3594" fill="none" style="stroke:#E7E7E7;stroke-width:0.5;"/></g><g class="participant participant-head" data-participant="System"><rect fill="#222222" height="30.2969" rx="2.5" ry="2.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="66.2061" x="77.8716" y="50"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="52.2061" x="84.8716" y="69.9951">System</text></g><g class="participant participant-tail" data-participant="System"><rect fill="#222222" height="30.2969" rx="2.5" ry="2.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="66.2061" x="77.8716" y="158.5625"/><text fill="#FFFFFF" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="52.2061" x="84.8716" y="178.5576">System</text></g><g class="message" data-participant-1="User" data-participant-2="System"><polygon fill="#E7E7E7" points="98.9746,108.4297,108.9746,112.4297,98.9746,116.4297,102.9746,112.4297" style="stroke:#E7E7E7;stroke-width:1;"/><line style="stroke:#E7E7E7;stroke-width:1;" x1="23.9551" x2="104.9746" y1="112.4297" y2="112.4297"/><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="53.3901" x="30.9551" y="107.3638">Request</text></g><g class="message" data-participant-1="System" data-participant-2="User"><polygon fill="#E7E7E7" points="34.9551,137.5625,24.9551,141.5625,34.9551,145.5625,30.9551,141.5625" style="stroke:#E7E7E7;stroke-width:1;"/><line style="stroke:#E7E7E7;stroke-width:1;stroke-dasharray:2,2;" x1="28.9551" x2="109.9746" y1="141.5625" y2="141.5625"/><text fill="#FFFFFF" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="63.0195" x="40.9551" y="136.4966">Response</text></g></g></svg></div></div>
+
+<h4 id="example-3-flowchart">Example 3: Flowchart<a class="headerlink" href="#example-3-flowchart" title="Permanent link">&para;</a></h4>
+<div class='puml-container'><div class="puml light" style=""><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" data-diagram-type="ACTIVITY" height="254px" preserveAspectRatio="xMidYMid meet" style="width:183px;height:254px;background:#FFFFFF;" version="1.1" viewBox="0 0 183 254" width="183px" zoomAndPan="magnify" class="diagram"><defs/><g><ellipse cx="91.5508" cy="20" fill="#222222" rx="10" ry="10" style="stroke:#222222;stroke-width:0.5;"/><rect fill="#F1F1F1" height="33.9688" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="58.7715" x="62.165" y="50"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="38.7715" x="72.165" y="71.1387">Step 1</text><polygon fill="#F1F1F1" points="62.3857,103.9688,120.7158,103.9688,132.7158,115.9688,120.7158,127.9688,62.3857,127.9688,50.3857,115.9688,62.3857,103.9688" style="stroke:#181818;stroke-width:0.5;"/><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacing" textLength="58.3301" x="62.3857" y="119.7769">Condition?</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacing" textLength="19.0083" x="31.3774" y="113.3745">yes</text><text fill="#000000" font-family="sans-serif" font-size="11" lengthAdjust="spacing" textLength="13.7017" x="132.7158" y="113.3745">no</text><rect fill="#F1F1F1" height="33.9688" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="58.7715" x="11" y="137.9688"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="38.7715" x="21" y="159.1074">Step 2</text><rect fill="#F1F1F1" height="33.9688" rx="12.5" ry="12.5" style="stroke:#181818;stroke-width:0.5;" width="58.7715" x="113.3301" y="137.9688"/><text fill="#000000" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="38.7715" x="123.3301" y="159.1074">Step 3</text><polygon fill="#F1F1F1" points="91.5508,177.9375,103.5508,189.9375,91.5508,201.9375,79.5508,189.9375,91.5508,177.9375" style="stroke:#181818;stroke-width:0.5;"/><ellipse cx="91.5508" cy="232.9375" fill="none" rx="11" ry="11" style="stroke:#222222;stroke-width:0.5;"/><ellipse cx="91.5508" cy="232.9375" fill="#222222" rx="6" ry="6" style="stroke:#222222;stroke-width:1;"/><line style="stroke:#181818;stroke-width:1;" x1="91.5508" x2="91.5508" y1="30" y2="50"/><polygon fill="#181818" points="87.5508,40,91.5508,50,95.5508,40,91.5508,44" style="stroke:#181818;stroke-width:1;"/><line style="stroke:#181818;stroke-width:1;" x1="50.3857" x2="40.3857" y1="115.9688" y2="115.9688"/><line style="stroke:#181818;stroke-width:1;" x1="40.3857" x2="40.3857" y1="115.9688" y2="137.9688"/><polygon fill="#181818" points="36.3857,127.9688,40.3857,137.9688,44.3857,127.9688,40.3857,131.9688" style="stroke:#181818;stroke-width:1;"/><line style="stroke:#181818;stroke-width:1;" x1="132.7158" x2="142.7158" y1="115.9688" y2="115.9688"/><line style="stroke:#181818;stroke-width:1;" x1="142.7158" x2="142.7158" y1="115.9688" y2="137.9688"/><polygon fill="#181818" points="138.7158,127.9688,142.7158,137.9688,146.7158,127.9688,142.7158,131.9688" style="stroke:#181818;stroke-width:1;"/><line style="stroke:#181818;stroke-width:1;" x1="40.3857" x2="40.3857" y1="171.9375" y2="189.9375"/><line style="stroke:#181818;stroke-width:1;" x1="40.3857" x2="79.5508" y1="189.9375" y2="189.9375"/><polygon fill="#181818" points="69.5508,185.9375,79.5508,189.9375,69.5508,193.9375,73.5508,189.9375" style="stroke:#181818;stroke-width:1;"/><line style="stroke:#181818;stroke-width:1;" x1="142.7158" x2="142.7158" y1="171.9375" y2="189.9375"/><line style="stroke:#181818;stroke-width:1;" x1="142.7158" x2="103.5508" y1="189.9375" y2="189.9375"/><polygon fill="#181818" points="113.5508,185.9375,103.5508,189.9375,113.5508,193.9375,109.5508,189.9375" style="stroke:#181818;stroke-width:1;"/><line style="stroke:#181818;stroke-width:1;" x1="91.5508" x2="91.5508" y1="83.9688" y2="103.9688"/><polygon fill="#181818" points="87.5508,93.9688,91.5508,103.9688,95.5508,93.9688,91.5508,97.9688" style="stroke:#181818;stroke-width:1;"/><line style="stroke:#181818;stroke-width:1;" x1="91.5508" x2="91.5508" y1="201.9375" y2="221.9375"/><polygon fill="#181818" points="87.5508,211.9375,91.5508,221.9375,95.5508,211.9375,91.5508,215.9375" style="stroke:#181818;stroke-width:1;"/></g></svg></div><div class="puml dark" style=""><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" data-diagram-type="ACTIVITY" height="254px" preserveAspectRatio="xMidYMid meet" style="width:183px;height:254px;background:#1B1B1B;" version="1.1" viewBox="0 0 183 254" width="183px" zoomAndPan="magnify" class="diagram"><defs/><g><rect fill="#1B1B1B" height="254" style="stroke:none;stroke-width:1;" width="183" x="0" y="0"/><ellipse cx="91.5508" cy="20" fill="#DDDDDD" rx="10" ry="10" style="stroke:#DDDDDD;stroke-width:0.5;"/><rect fill="#313139" height="33.9688" rx="12.5" ry="12.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="58.7715" x="62.165" y="50"/><text fill="#FFFFFF" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="38.7715" x="72.165" y="71.1387">Step 1</text><polygon fill="#313139" points="62.3857,103.9688,120.7158,103.9688,132.7158,115.9688,120.7158,127.9688,62.3857,127.9688,50.3857,115.9688,62.3857,103.9688" style="stroke:#E7E7E7;stroke-width:0.5;"/><text fill="#FFFFFF" font-family="sans-serif" font-size="11" lengthAdjust="spacing" textLength="58.3301" x="62.3857" y="119.7769">Condition?</text><text fill="#FFFFFF" font-family="sans-serif" font-size="11" lengthAdjust="spacing" textLength="19.0083" x="31.3774" y="113.3745">yes</text><text fill="#FFFFFF" font-family="sans-serif" font-size="11" lengthAdjust="spacing" textLength="13.7017" x="132.7158" y="113.3745">no</text><rect fill="#313139" height="33.9688" rx="12.5" ry="12.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="58.7715" x="11" y="137.9688"/><text fill="#FFFFFF" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="38.7715" x="21" y="159.1074">Step 2</text><rect fill="#313139" height="33.9688" rx="12.5" ry="12.5" style="stroke:#E7E7E7;stroke-width:0.5;" width="58.7715" x="113.3301" y="137.9688"/><text fill="#FFFFFF" font-family="sans-serif" font-size="12" lengthAdjust="spacing" textLength="38.7715" x="123.3301" y="159.1074">Step 3</text><polygon fill="#313139" points="91.5508,177.9375,103.5508,189.9375,91.5508,201.9375,79.5508,189.9375,91.5508,177.9375" style="stroke:#E7E7E7;stroke-width:0.5;"/><ellipse cx="91.5508" cy="232.9375" fill="none" rx="11" ry="11" style="stroke:#DDDDDD;stroke-width:0.5;"/><ellipse cx="91.5508" cy="232.9375" fill="#DDDDDD" rx="6" ry="6" style="stroke:#DDDDDD;stroke-width:1;"/><line style="stroke:#E7E7E7;stroke-width:1;" x1="91.5508" x2="91.5508" y1="30" y2="50"/><polygon fill="#E7E7E7" points="87.5508,40,91.5508,50,95.5508,40,91.5508,44" style="stroke:#E7E7E7;stroke-width:1;"/><line style="stroke:#E7E7E7;stroke-width:1;" x1="50.3857" x2="40.3857" y1="115.9688" y2="115.9688"/><line style="stroke:#E7E7E7;stroke-width:1;" x1="40.3857" x2="40.3857" y1="115.9688" y2="137.9688"/><polygon fill="#E7E7E7" points="36.3857,127.9688,40.3857,137.9688,44.3857,127.9688,40.3857,131.9688" style="stroke:#E7E7E7;stroke-width:1;"/><line style="stroke:#E7E7E7;stroke-width:1;" x1="132.7158" x2="142.7158" y1="115.9688" y2="115.9688"/><line style="stroke:#E7E7E7;stroke-width:1;" x1="142.7158" x2="142.7158" y1="115.9688" y2="137.9688"/><polygon fill="#E7E7E7" points="138.7158,127.9688,142.7158,137.9688,146.7158,127.9688,142.7158,131.9688" style="stroke:#E7E7E7;stroke-width:1;"/><line style="stroke:#E7E7E7;stroke-width:1;" x1="40.3857" x2="40.3857" y1="171.9375" y2="189.9375"/><line style="stroke:#E7E7E7;stroke-width:1;" x1="40.3857" x2="79.5508" y1="189.9375" y2="189.9375"/><polygon fill="#E7E7E7" points="69.5508,185.9375,79.5508,189.9375,69.5508,193.9375,73.5508,189.9375" style="stroke:#E7E7E7;stroke-width:1;"/><line style="stroke:#E7E7E7;stroke-width:1;" x1="142.7158" x2="142.7158" y1="171.9375" y2="189.9375"/><line style="stroke:#E7E7E7;stroke-width:1;" x1="142.7158" x2="103.5508" y1="189.9375" y2="189.9375"/><polygon fill="#E7E7E7" points="113.5508,185.9375,103.5508,189.9375,113.5508,193.9375,109.5508,189.9375" style="stroke:#E7E7E7;stroke-width:1;"/><line style="stroke:#E7E7E7;stroke-width:1;" x1="91.5508" x2="91.5508" y1="83.9688" y2="103.9688"/><polygon fill="#E7E7E7" points="87.5508,93.9688,91.5508,103.9688,95.5508,93.9688,91.5508,97.9688" style="stroke:#E7E7E7;stroke-width:1;"/><line style="stroke:#E7E7E7;stroke-width:1;" x1="91.5508" x2="91.5508" y1="201.9375" y2="221.9375"/><polygon fill="#E7E7E7" points="87.5508,211.9375,91.5508,221.9375,95.5508,211.9375,91.5508,215.9375" style="stroke:#E7E7E7;stroke-width:1;"/></g></svg></div></div>
+
+<h3 id="c-status-transition-matrix">C. Status Transition Matrix<a class="headerlink" href="#c-status-transition-matrix" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>From → To</th>
+<th>Valid</th>
+<th>Requires</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Draft → Under Review</td>
+<td>✅</td>
+<td>Complete all sections</td>
+</tr>
+<tr>
+<td>Under Review → Draft</td>
+<td>✅</td>
+<td>Major revision needed</td>
+</tr>
+<tr>
+<td>Under Review → Approved</td>
+<td>✅</td>
+<td>All reviewers approve</td>
+</tr>
+<tr>
+<td>Under Review → Rejected</td>
+<td>✅</td>
+<td>Document rationale</td>
+</tr>
+<tr>
+<td>Approved → Completed</td>
+<td>✅</td>
+<td>Implementation verified</td>
+</tr>
+<tr>
+<td>Approved → Under Review</td>
+<td>⚠️</td>
+<td>Significant changes only</td>
+</tr>
+<tr>
+<td>Rejected → Draft</td>
+<td>✅</td>
+<td>Substantial rework</td>
+</tr>
+</tbody>
+</table>
+<h3 id="d-checklist-for-authors">D. Checklist for Authors<a class="headerlink" href="#d-checklist-for-authors" title="Permanent link">&para;</a></h3>
+<p><strong>Before Submission:</strong></p>
+<ul>
+<li>[x] RFC number assigned sequentially</li>
+<li>[x] All sections completed</li>
+<li>[x] Spell-check and grammar review</li>
+<li>[x] Technical accuracy verified</li>
+<li>[x] Code examples tested</li>
+<li>[x] Diagrams are clear</li>
+<li>[x] References cited properly</li>
+<li>[x] Out of scope explicitly stated</li>
+</ul>
+<p><strong>During Review:</strong></p>
+<ul>
+<li>[x] Respond to all comments</li>
+<li>[x] Update RFC based on feedback</li>
+<li>[x] Maintain change log</li>
+<li>[x] Address stakeholder concerns</li>
+</ul>
+<p><strong>After Approval:</strong></p>
+<ul>
+<li>[x] Update status to "Approved"</li>
+<li>[x] Create implementation tickets</li>
+<li>[x] Notify relevant teams</li>
+<li>[x] Archive in documentation</li>
+</ul>
+<h3 id="e-common-pitfalls-to-avoid">E. Common Pitfalls to Avoid<a class="headerlink" href="#e-common-pitfalls-to-avoid" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Vague goals</strong>: Use measurable, specific objectives</li>
+<li><strong>Missing alternatives</strong>: Always consider other approaches</li>
+<li><strong>No timeline</strong>: Include realistic dates and milestones</li>
+<li><strong>Scope creep</strong>: Clearly define what's out of scope</li>
+<li><strong>Insufficient detail</strong>: Provide enough information for implementation</li>
+<li><strong>Ignoring feedback</strong>: Address all review comments</li>
+<li><strong>No success metrics</strong>: Define how to measure success</li>
+<li><strong>Missing risks</strong>: Identify and plan for potential issues</li>
+</ol>
+<h2 id="references">📚 References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
+<p>[1] IEEE Computer Society. "IEEE Standard for Software Requirements Specifications," IEEE Std 830-1998, 1998.</p>
+<p>[2] IEEE Computer Society. "IEEE Standard for Software User Documentation," IEEE Std 1063-2001, 2001.</p>
+<p>[3] Internet Engineering Task Force. "RFC 7322: RFC Style Guide," IETF, September 2014. <a href="https://www.rfc-editor.org/rfc/rfc7322">https://www.rfc-editor.org/rfc/rfc7322</a></p>
+<p>[4] Nygard, M. "Documenting Architecture Decisions," 2011. <a href="https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions">https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions</a></p>
+<p>[5] IEEE Computer Society. "IEEE Recommended Practice for Internet Practices—Web Page Engineering—Intranet/Extranet Applications," IEEE Std 2001-2002, 2002.</p>
+<p>[6] The Linux Foundation. "CONTRIBUTING.md Guide," Best Practices for Open Source Projects, 2023.</p>
+<p>[7] GitLab. "RFC Process," GitLab Handbook. <a href="https://about.gitlab.com/handbook/engineering/architecture/workflow/">https://about.gitlab.com/handbook/engineering/architecture/workflow/</a></p>
+<p>[8] Atlassian. "Decision Records," Agile at Scale Documentation, 2024.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/JomarJunior/modelmora" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+        <script src="../../assets/mkdocs_puml/puml.js"></script>
+      
+        <script src="https://unpkg.com/@panzoom/panzoom@4.5.1/dist/panzoom.min.js"></script>
+      
+        <script src="../../assets/mkdocs_puml/interaction.js"></script>
+      
+    
+  </body>
+</html>
