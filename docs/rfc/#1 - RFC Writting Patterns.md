@@ -8,14 +8,14 @@ Status: **Approved**
 
 ## 📝 Table of contents
 
-- [🌎 Overview and context](#🌎-overview-and-context)
-- [🎯 Goals and requirements](#🎯-goals-and-requirements)
-- [🗓️ Timeline and milestones](#🗓️-timeline-and-milestones)
-- [✅ Proposal solution](#✅-proposal-solution)
-- [🟠 Alternative options](#🟠-alternative-options)
-- [❓ Frequently asked questions (FAQ)](#❓-frequently-asked-questions-faq)
-- [📎 Apendix](#📎-apendix)
-- [📚 References](#📚-references)
+- [🌎 Overview and context](#overview-and-context)
+- [🎯 Goals and requirements](#goals-and-requirements)
+- [🗓️ Timeline and milestones](#timeline-and-milestones)
+- [✅ Proposal solution](#proposal-solution)
+- [🟠 Alternative options](#alternative-options)
+- [❓ Frequently asked questions (FAQ)](#frequently-asked-questions-faq)
+- [📎 Apendix](#apendix)
+- [📚 References](#references)
 
 ## 🌎 Overview and context
 

@@ -51,15 +51,13 @@ plugins:
             show_root_heading: true
             show_root_full_path: false
             heading_level: 2
+  - plantuml:
+      puml_url: https://www.plantuml.com/plantuml/
+      puml_keyword: plantuml
 
 markdown_extensions:
   - admonition
   - pymdownx.details
-  - pymdownx.superfences:
-      custom_fences:
-        - name: plantuml
-          class: uml-diagram
-          format: !!python/name:plantuml_markdown.PlantUMLMarkdownExtension.formatUML
   - pymdownx.tabbed:
       alternate_style: true
   - pymdownx.highlight:

@@ -53,6 +53,7 @@ jobs:
       - name: Install MkDocs and dependencies
         run: |
           poetry install --no-interaction --only docs || poetry install --no-interaction
+          poetry run pip install mkdocs_puml
 
       - name: Configure Git
         run: |
