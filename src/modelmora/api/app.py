@@ -10,9 +10,11 @@ from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass, field
+from functools import partial
 from typing import Any
 
 from starlette.applications import Starlette
+from starlette.concurrency import run_in_threadpool
 from starlette.middleware import Middleware
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
@@ -106,13 +108,20 @@ async def submit_request(request: Request) -> Response:
         except Exception as exc:  # pydantic ValidationError, kept out of caller content
             return _refused(400, "invalid_request", detail=type(exc).__name__)
         try:
-            accepted = requests_api.submit_text_request(
-                store=state.store,
-                registry=state.registry,
-                runners=state.runners,
-                holding_seconds=state.config.holding_seconds,
-                caller=caller,
-                request=text_request,
+            # Off the event loop: generation is synchronous until the queue arrives
+            # (Phase 5), and running it inline would stall every other caller's status
+            # and availability call for the whole generation, breaking FR-010's
+            # immediate first answer for everyone but the submitter.
+            accepted = await run_in_threadpool(
+                partial(
+                    requests_api.submit_text_request,
+                    store=state.store,
+                    registry=state.registry,
+                    runners=state.runners,
+                    holding_seconds=state.config.holding_seconds,
+                    caller=caller,
+                    request=text_request,
+                )
             )
         except ModelMoraRefusal as refusal:
             return _refused(
@@ -125,9 +134,14 @@ async def submit_request(request: Request) -> Response:
             ImageRequest.model_validate(payload)
         except Exception as exc:
             return _refused(400, "invalid_request", detail=type(exc).__name__)
-        # Image generation lands in Phase 4 (T022-T026); refuse honestly rather than
-        # pretend to serve a kind the skeleton cannot yet.
-        return _refused(404, "model_unavailable", detail="no image model on record")
+        # Image generation lands in Phase 4 (T022-T026). Say that, rather than blame an
+        # empty registry: an image model may well be on record, and a refusal that
+        # misstates its reason is one a caller cannot act on (FR-011).
+        return _refused(
+            404,
+            "model_unavailable",
+            detail="image generation is not served yet (spec 002 Phase 4)",
+        )
 
     return _refused(400, "invalid_request", detail="kind must be 'text' or 'image'")
 

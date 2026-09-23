@@ -44,7 +44,12 @@ class RequestRecord:
 
 
 class RequestStore:
-    """Every accepted request, scoped by caller (FR-017)."""
+    """Every accepted request, scoped by caller (FR-017).
+
+    A finished result is held for its caller and then discarded (FR-032). Generated text
+    is persona output, so it must not outlive its holding time in memory any more than it
+    may reach a log (FR-030): every read drops what has expired.
+    """
 
     def __init__(self) -> None:
         self._lock = threading.Lock()
@@ -54,8 +59,17 @@ class RequestStore:
         with self._lock:
             self._records[record.request_id] = record
 
+    def _discard_expired(self, now: datetime | None = None) -> None:
+        """Drop the content of every result past its holding time. Caller holds the lock."""
+        moment = now or datetime.now(UTC)
+        for record in self._records.values():
+            held_until = record.result.heldUntil if record.result else None
+            if held_until is not None and held_until <= moment:
+                record.result = None
+
     def get(self, caller: str, request_id: uuid.UUID) -> RequestRecord | None:
         with self._lock:
+            self._discard_expired()
             record = self._records.get(request_id)
         if record is None or record.caller != caller:
             return None
