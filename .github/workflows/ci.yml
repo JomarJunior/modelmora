@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  guard:
+    name: Public repository guard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/guard_public_repo.py
+
+  lint:
+    name: Lint, format and type check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.12"
+      - run: uv sync --all-groups
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run mypy
+
+  test:
+    name: Tests (GPU-free, test mode)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the component
+        uses: actions/checkout@v4
+        with:
+          path: modelmora
+      # Pinned, not `main`: the hub is the contract's source of truth, so a hub commit
+      # must never turn this repository's CI red on its own. Bump this SHA deliberately,
+      # in the same change that adopts a new contract version.
+      - name: Check out the hub (pinned contract source of truth)
+        uses: actions/checkout@v4
+        with:
+          repository: JomarJunior/miraveja-ecosystem
+          ref: 987ccfc9dae473793724e884e2b887ea9becfaeb
+          path: miraveja-ecosystem
+      - name: Lay out components/ as it is on a real machine
+        run: |
+          mkdir -p miraveja-ecosystem/components
+          rm -rf miraveja-ecosystem/components/modelmora
+          mv modelmora miraveja-ecosystem/components/modelmora
+      - uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.12"
+      - name: Install (no GPU extras)
+        working-directory: miraveja-ecosystem/components/modelmora
+        run: uv sync --all-groups
+      - name: Run the test suite in test mode (FR-033, FR-034)
+        working-directory: miraveja-ecosystem/components/modelmora
+        run: uv run pytest -v
