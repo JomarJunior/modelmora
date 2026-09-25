@@ -17,7 +17,8 @@ DEFAULT_OVERTAKING_SECONDS = 120
 DEFAULT_HOLDING_SECONDS = 3600
 DEFAULT_IDLE_UNLOAD_SECONDS = 600
 DEFAULT_PORT = 8431
-DEFAULT_DB_PATH = "modelmora.db"
+# Matches the runtime-state pattern .gitignore already carves out for the registry.
+DEFAULT_DB_PATH = ".modelmora/registry.sqlite3"
 
 # SC-002's burst is 20 requests; a lower line limit would make "busy" refusals the
 # reason SC-002 passes rather than actual results, which defeats the criterion.

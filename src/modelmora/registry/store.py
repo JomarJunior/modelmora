@@ -89,6 +89,8 @@ class Store:
 
     def __init__(self, path: str | Path = ":memory:") -> None:
         self._lock = threading.RLock()  # reentrant: get_default calls get_by_id
+        if path != ":memory:":
+            Path(path).parent.mkdir(parents=True, exist_ok=True)
         self._connection = sqlite3.connect(str(path), check_same_thread=False)
         self._connection.execute("PRAGMA foreign_keys = ON")
         self._connection.executescript(_SCHEMA)
