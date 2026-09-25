@@ -24,6 +24,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
+from modelmora.api.lifecycle import LIFECYCLE_RETRY_AFTER_SECONDS
 from modelmora.api.validate import model_ref, resolve_image_runner, resolve_text_model
 from modelmora.messages import (
     Accepted,
@@ -104,6 +105,32 @@ class RequestStore:
                 setattr(record, key, value)
             self._condition.notify_all()
 
+    def mark_terminal_if_open(
+        self,
+        request_id: uuid.UUID,
+        *,
+        state: RequestState,
+        result: Result | None = None,
+        failure: Refusal | None = None,
+    ) -> bool:
+        """Sets a terminal state only if the request has not already reached one.
+
+        Needed once shutdown (T046) can mark a `running` request
+        `stopped_before_completion` while the worker thread is still mid-generation:
+        that thread's own eventual `record_success`/`record_failure` call must not
+        overwrite the answer the caller was already given (FR-014 -- exactly one
+        outcome). Whichever write lands first wins; the other becomes a no-op.
+        """
+        with self._condition:
+            record = self._records.get(request_id)
+            if record is None or record.state not in ("waiting", "running"):
+                return False
+            record.state = state
+            record.result = result
+            record.failure = failure
+            self._condition.notify_all()
+            return True
+
     def wait_for_change(
         self, caller: str, request_id: uuid.UUID, *, timeout: float
     ) -> RequestRecord | None:
@@ -141,6 +168,9 @@ def _enqueue(
     generate: Generate,
 ) -> Accepted:
     assert state.line is not None  # set in AppState.__post_init__
+    lifecycle_reason = state.lifecycle.refusal_reason()
+    if lifecycle_reason is not None:
+        raise ModelMoraRefusal(lifecycle_reason, retry_after_seconds=LIFECYCLE_RETRY_AFTER_SECONDS)
     request_id = uuid.uuid4()
     submitted_at = datetime.now(UTC)
     queued = QueuedRequest(
@@ -252,7 +282,7 @@ def record_success(
         )
         assert result.heldUntil is not None  # image_result always sets it
         state.holding.put(request.request_id, generated.png_bytes, held_until=result.heldUntil)
-    state.store.update(request.request_id, state="done", result=result)
+    state.store.mark_terminal_if_open(request.request_id, state="done", result=result)
 
 
 def record_failure(state: AppState, request: QueuedRequest, error: BaseException) -> None:
@@ -260,7 +290,7 @@ def record_failure(state: AppState, request: QueuedRequest, error: BaseException
         failure = error.to_message()
     else:  # the model backend failed unexpectedly (spec Edge Cases)
         failure = Refusal(reason="failed_during_generation", detail=type(error).__name__)
-    state.store.update(request.request_id, state="failed", failure=failure)
+    state.store.mark_terminal_if_open(request.request_id, state="failed", failure=failure)
 
 
 def request_status(

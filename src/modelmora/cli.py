@@ -125,9 +125,15 @@ def _run_serve(args: argparse.Namespace) -> int:
     if args.test_mode:
         registry, runners = _test_mode_registry()
     else:
-        # No real runner exists yet (the diffusers/transformers loader is T023, GPU
-        # only); models added with `modelmora model add` are already visible here and
-        # to `listModels`, but nothing can be generated from them until that lands.
+        # `runners/text.py` and `runners/image.py` exist (T016, T023), but nothing in
+        # the registry schema records which local weights path or device a real
+        # runner should be built from, only a licence trail (data-model.md). Models
+        # added with `modelmora model add` are visible here and to `listModels`, but
+        # `serve` still has no runner to attach to them -- a caller gets
+        # `model_unavailable`, never a crash. Deliberate seam, left for a task that
+        # decides how a team member points a registry record at a loadable runner;
+        # tasks.md names none yet. `checks/studio_smoke.py` builds real runners
+        # directly, the same way `_test_mode_registry` does for stand-ins, until then.
         registry, runners = ModelRegistry(config.db_path), {}
 
     state = AppState(config=config, registry=registry, runners=runners)  # type: ignore[arg-type]

@@ -29,14 +29,14 @@ from starlette.responses import JSONResponse, Response
 from starlette.routing import Route
 
 from modelmora.api import requests as requests_api
+from modelmora.api.availability import build_availability
+from modelmora.api.lifecycle import shutdown as shutdown_lifecycle
 from modelmora.api.models import build_models_list
 from modelmora.api.state import AppState
 from modelmora.config import BIND_HOST, Config
 from modelmora.messages import (
-    Availability,
     ImageRequest,
     Refusal,
-    Servable,
     TextRequest,
 )
 from modelmora.queue.line import QueuedRequest
@@ -210,18 +210,7 @@ async def list_models(request: Request) -> Response:
 
 async def availability(request: Request) -> Response:
     state: AppState = request.app.state.modelmora
-    # `state` (starting/stopping) and draining the line on shutdown are T046's job
-    # (Phase 7); the line's length is real as of T030, and every caller sees the same
-    # number, never anything about who else is in it (FR-017).
-    queue_length = len(state.line) if state.line is not None else 0
-    body = Availability(
-        state="running",
-        queueLength=queue_length,
-        servable=Servable(
-            text=len(state.registry.list_servable("text")),
-            image=len(state.registry.list_servable("image")),
-        ),
-    )
+    body = build_availability(state)
     return JSONResponse(body.model_dump(mode="json"))
 
 
@@ -253,18 +242,16 @@ def _build_worker(state: AppState) -> Worker:
 
 
 def _lifespan(state: AppState) -> Any:
-    """Nothing outlives the process: the worker stops, then held images are wiped
-    (T026, R-7). Graceful draining of open requests into `stopped_before_completion`
-    is T046's job (Phase 7); this only stops the thread cleanly."""
+    """Nothing outlives the process: `shutdown` (T046) stops admitting work, answers
+    every open request `stopped_before_completion`, stops the worker and wipes held
+    images (FR-029, R-7)."""
 
     @asynccontextmanager
     async def lifespan(_: Starlette) -> AsyncIterator[None]:
         try:
             yield
         finally:
-            if state.worker is not None:
-                state.worker.stop()
-            state.holding.wipe()
+            shutdown_lifecycle(state)
 
     return lifespan
 
@@ -273,6 +260,9 @@ def create_app(state: AppState) -> Starlette:
     if state.worker is None:
         state.worker = _build_worker(state)
         state.worker.start()
+        # Nothing here waits on a model to load before serving: the queue and
+        # residency are ready the moment the worker thread is (T046, US5 scenario 1).
+        state.lifecycle.mark_ready()
 
     app = Starlette(
         routes=[

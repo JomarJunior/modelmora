@@ -123,6 +123,22 @@ class Line:
             self._running = None
             self._condition.notify_all()
 
+    def drain_waiting(self) -> list[uuid.UUID]:
+        """Empties every still-waiting request (FR-029, T046): returns their ids for
+        the caller to answer `stopped_before_completion`. Whatever is `_running` is
+        left alone here -- the worker will finish it, or its own shutdown will not
+        wait for it; either way the caller marks that id separately
+        (`running_request_id`)."""
+        with self._condition:
+            ids = [request.request_id for request in self._waiting]
+            self._waiting.clear()
+            self._condition.notify_all()
+            return ids
+
+    def running_request_id(self) -> uuid.UUID | None:
+        with self._condition:
+            return self._running.request_id if self._running is not None else None
+
     def __len__(self) -> int:
         with self._condition:
             return len(self._waiting)

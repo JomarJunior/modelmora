@@ -14,6 +14,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
+from modelmora.api.lifecycle import Lifecycle
 from modelmora.api.requests import RequestStore
 from modelmora.config import Config
 from modelmora.queue.estimates import Estimator
@@ -36,6 +37,7 @@ class AppState:
     residency: Residency = field(default_factory=Residency)
     holding: ImageHoldingStore = field(default_factory=ImageHoldingStore)
     estimator: Estimator = field(default_factory=Estimator)
+    lifecycle: Lifecycle = field(default_factory=Lifecycle)
     line: Line | None = None
     worker: Worker | None = None
 
