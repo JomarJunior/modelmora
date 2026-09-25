@@ -9,6 +9,8 @@ exercised with no GPU (FR-033, FR-034).
 from __future__ import annotations
 
 import uuid
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
 from functools import partial
 from typing import Any
@@ -36,6 +38,8 @@ from modelmora.messages import (
 from modelmora.refusals import ModelMoraRefusal
 from modelmora.registry.defaults import ModelRegistry
 from modelmora.runners.base import Runner
+from modelmora.worker.holding import ImageHoldingStore
+from modelmora.worker.residency import Residency
 
 
 class InvalidBindHost(RuntimeError):
@@ -53,6 +57,8 @@ class AppState:
     registry: ModelRegistry
     runners: dict[tuple[str, str], Runner] = field(default_factory=dict)
     store: requests_api.RequestStore = field(default_factory=requests_api.RequestStore)
+    residency: Residency = field(default_factory=Residency)
+    holding: ImageHoldingStore = field(default_factory=ImageHoldingStore)
 
 
 def _refused(
@@ -118,6 +124,7 @@ async def submit_request(request: Request) -> Response:
                     store=state.store,
                     registry=state.registry,
                     runners=state.runners,
+                    residency=state.residency,
                     holding_seconds=state.config.holding_seconds,
                     caller=caller,
                     request=text_request,
@@ -131,17 +138,29 @@ async def submit_request(request: Request) -> Response:
 
     if kind == "image":
         try:
-            ImageRequest.model_validate(payload)
+            image_request = ImageRequest.model_validate(payload)
         except Exception as exc:
             return _refused(400, "invalid_request", detail=type(exc).__name__)
-        # Image generation lands in Phase 4 (T022-T026). Say that, rather than blame an
-        # empty registry: an image model may well be on record, and a refusal that
-        # misstates its reason is one a caller cannot act on (FR-011).
-        return _refused(
-            404,
-            "model_unavailable",
-            detail="image generation is not served yet (spec 002 Phase 4)",
-        )
+        try:
+            # Off the event loop, same reasoning as the text path above (FR-010, SC-003).
+            accepted = await run_in_threadpool(
+                partial(
+                    requests_api.submit_image_request,
+                    store=state.store,
+                    registry=state.registry,
+                    runners=state.runners,
+                    residency=state.residency,
+                    holding=state.holding,
+                    holding_seconds=state.config.holding_seconds,
+                    caller=caller,
+                    request=image_request,
+                )
+            )
+        except ModelMoraRefusal as refusal:
+            return _refused(
+                refusal.http_status, refusal.reason, refusal.detail, refusal.retry_after_seconds
+            )
+        return JSONResponse(accepted.model_dump(mode="json"), status_code=202)
 
     return _refused(400, "invalid_request", detail="kind must be 'text' or 'image'")
 
@@ -179,8 +198,10 @@ async def fetch_result_image(request: Request) -> Response:
     record = state.store.get(caller, request_id)
     if record is None or record.result is None or not record.result.imageAvailable:
         return _refused(404, "invalid_request", detail="no such image")
-    # The holding store for image bytes lands with Phase 4 (T026, worker/holding.py).
-    return _refused(404, "model_unavailable", detail="image holding not yet implemented")
+    png_bytes = state.holding.get(request_id)  # None once past heldUntil (FR-032)
+    if png_bytes is None:
+        return _refused(404, "invalid_request", detail="image no longer held")
+    return Response(png_bytes, media_type="image/png")
 
 
 async def list_models(request: Request) -> Response:
@@ -222,6 +243,19 @@ async def availability(request: Request) -> Response:
     return JSONResponse(body.model_dump(mode="json"))
 
 
+def _wipe_held_images_on_shutdown(state: AppState) -> Any:
+    """Nothing a caller collected outlives the process (T026, R-7)."""
+
+    @asynccontextmanager
+    async def lifespan(_: Starlette) -> AsyncIterator[None]:
+        try:
+            yield
+        finally:
+            state.holding.wipe()
+
+    return lifespan
+
+
 def create_app(state: AppState) -> Starlette:
     app = Starlette(
         routes=[
@@ -237,6 +271,7 @@ def create_app(state: AppState) -> Starlette:
             Route("/modelmora/v1/availability", availability, methods=["GET"]),
         ],
         middleware=[Middleware(RequireCallerTokenMiddleware)],
+        lifespan=_wipe_held_images_on_shutdown(state),
     )
     app.state.modelmora = state
     return app

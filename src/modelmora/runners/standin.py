@@ -89,6 +89,8 @@ class StandInImageRunner(Runner):
         fake_load_seconds: float = 0.0,
         fake_footprint_bytes: int = 512 * 1024 * 1024,
         filter_note: str | None = None,
+        max_width: int | None = None,
+        max_height: int | None = None,
     ) -> None:
         self.name = name
         self.version = version
@@ -96,6 +98,8 @@ class StandInImageRunner(Runner):
         self._fake_load_seconds = fake_load_seconds
         self._fake_footprint_bytes = fake_footprint_bytes
         self._filter_note = filter_note
+        self._max_width = max_width
+        self._max_height = max_height
         self._loaded = False
 
     def declared_footprint_bytes(self) -> int:
@@ -113,6 +117,11 @@ class StandInImageRunner(Runner):
 
     def is_loaded(self) -> bool:
         return self._loaded
+
+    def max_image_dimensions(self) -> tuple[int, int] | None:
+        if self._max_width is None or self._max_height is None:
+            return None
+        return (self._max_width, self._max_height)
 
     def generate_image(
         self,

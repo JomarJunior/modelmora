@@ -1,4 +1,4 @@
-"""The submit, status and withdraw paths for text requests (Phase 3 MVP).
+"""The submit, status and withdraw paths for text and image requests.
 
 Generation runs synchronously inside the submit call rather than through a real queue
 (Phase 5, T030-T036): stand-in and real models both return fast enough for this to
@@ -6,6 +6,13 @@ still satisfy FR-010's "immediate first answer", and every request still passes
 through exactly the `waiting -> running -> done/failed` lifecycle FR-014 requires. The
 queue phase replaces this loop with real admission, ordering and a background worker
 without changing this module's public functions or their return types.
+
+Concurrent submissions each run on their own thread (`run_in_threadpool` in
+`api/app.py`), so two requests can call `Residency.ensure_loaded` at once; a request
+whose model fits alone could, in principle, be evicted by a concurrent request between
+the pre-queue capability check (`api/validate.py`) and its own load. Phase 5's single
+generation worker (T032) serializes every generation and removes that window; until
+then it would surface as `failed_during_generation`, never a wrong result.
 """
 
 from __future__ import annotations
@@ -16,9 +23,14 @@ import uuid
 from dataclasses import dataclass
 from datetime import UTC, datetime
 
-from modelmora.api.validate import model_ref, resolve_text_model
+from modelmora.api.validate import (
+    model_ref,
+    resolve_image_runner,
+    resolve_text_model,
+)
 from modelmora.messages import (
     Accepted,
+    ImageRequest,
     ModelRef,
     Refusal,
     RequestState,
@@ -29,7 +41,9 @@ from modelmora.messages import (
 from modelmora.refusals import ModelMoraRefusal
 from modelmora.registry.defaults import ModelRegistry
 from modelmora.runners.base import Runner
-from modelmora.worker.results import text_result
+from modelmora.worker.holding import ImageHoldingStore
+from modelmora.worker.residency import Residency
+from modelmora.worker.results import image_result, text_result
 
 
 @dataclass
@@ -91,16 +105,12 @@ class RequestStore:
         return record
 
 
-def _ensure_loaded(runner: Runner) -> None:
-    if not runner.is_loaded():
-        runner.load()
-
-
 def submit_text_request(
     *,
     store: RequestStore,
     registry: ModelRegistry,
     runners: dict[tuple[str, str], Runner],
+    residency: Residency,
     holding_seconds: int,
     caller: str,
     request: TextRequest,
@@ -133,7 +143,7 @@ def submit_text_request(
 
     store.update(request_id, state="running")
     try:
-        _ensure_loaded(runner)
+        residency.ensure_loaded(runner)  # may evict another resident model (FR-009)
         settings = request.settings
         generated = runner.generate_text(
             instructions=request.instructions,
@@ -163,6 +173,65 @@ def submit_text_request(
         return accepted
 
     result = text_result(model=ref, generated=generated, holding_seconds=holding_seconds)
+    store.update(request_id, state="done", result=result)
+    return accepted
+
+
+def submit_image_request(
+    *,
+    store: RequestStore,
+    registry: ModelRegistry,
+    runners: dict[tuple[str, str], Runner],
+    residency: Residency,
+    holding: ImageHoldingStore,
+    holding_seconds: int,
+    caller: str,
+    request: ImageRequest,
+) -> Accepted:
+    # Capability checks (size, footprint versus GPU capacity) raise ModelMoraRefusal
+    # here, before anything is queued (T025, US2 acceptance scenario 3).
+    model, runner = resolve_image_runner(registry, runners, residency, request)
+    ref = model_ref(model)
+
+    request_id = uuid.uuid4()
+    record = RequestRecord(
+        request_id=request_id,
+        caller=caller,
+        submitted_at=datetime.now(UTC),
+        model=ref,
+        state="waiting",
+    )
+    store.add(record)
+
+    accepted = Accepted(requestId=request_id, position=0, estimatedWaitSeconds=0, model=ref)
+
+    store.update(request_id, state="running")
+    try:
+        residency.ensure_loaded(runner)  # may evict a resident model, e.g. a text one (US2 AC2)
+        settings = request.settings
+        generated = runner.generate_image(
+            description=request.description,
+            avoid=request.avoid,
+            width=request.size.width,
+            height=request.size.height,
+            seed=settings.seed if settings else None,
+            steps=settings.steps if settings else None,
+            guidance=settings.guidance if settings else None,
+        )
+    except ModelMoraRefusal as refusal:
+        store.update(request_id, state="failed", failure=refusal.to_message())
+        return accepted
+    except Exception as exc:  # the model backend failed unexpectedly (spec Edge Cases)
+        store.update(
+            request_id,
+            state="failed",
+            failure=Refusal(reason="failed_during_generation", detail=type(exc).__name__),
+        )
+        return accepted
+
+    result = image_result(model=ref, generated=generated, holding_seconds=holding_seconds)
+    assert result.heldUntil is not None  # image_result always sets it
+    holding.put(request_id, generated.png_bytes, held_until=result.heldUntil)
     store.update(request_id, state="done", result=result)
     return accepted
 

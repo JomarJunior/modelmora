@@ -52,6 +52,15 @@ class Runner(abc.ABC):
     @abc.abstractmethod
     def is_loaded(self) -> bool: ...
 
+    def max_image_dimensions(self) -> tuple[int, int] | None:
+        """Largest (width, height) this model can produce, or `None` if unconstrained.
+
+        Checked before queueing (FR-011, US2 acceptance scenario 3): a size beyond this
+        is refused as `invalid_request`, distinct from `cannot_be_served_on_this_studio`
+        (declared footprint versus GPU capacity, checked separately).
+        """
+        return None
+
     def generate_text(
         self,
         *,

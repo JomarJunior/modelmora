@@ -1,7 +1,9 @@
-"""Three defects found reviewing the Phase 3 MVP.
+"""Defects found reviewing the Phase 3 MVP.
 
 Generation is synchronous until the queue lands (Phase 5, T030-T036). That is a stated
-shortcut; these tests pin the parts of it that must be true anyway.
+shortcut; these tests pin the parts of it that must be true anyway. A third original
+fix here (an honest refusal for images before Phase 4 existed) is superseded now that
+`tests/api/test_image_requests.py` covers real image serving.
 """
 
 from __future__ import annotations
@@ -12,7 +14,6 @@ import uuid
 from datetime import UTC, datetime, timedelta
 
 import httpx
-from starlette.testclient import TestClient
 
 from modelmora.api.app import create_app
 from modelmora.api.requests import RequestRecord, RequestStore
@@ -73,27 +74,6 @@ def test_a_slow_generation_does_not_stall_other_callers() -> None:
         f"availability took {elapsed:.2f}s while a {GENERATION_SECONDS}s generation ran: "
         "generation is blocking the event loop"
     )
-
-
-def test_an_image_request_is_refused_with_a_reason_that_is_true() -> None:
-    """A refusal a caller cannot act on is worse than none (FR-011).
-
-    Image generation arrives in Phase 4; saying "no image model on record" would be a
-    guess about the registry, and wrong as soon as one is added.
-    """
-    state = build_state()
-    client = TestClient(create_app(state), headers={"Authorization": f"Bearer {CALLER_TOKEN}"})
-
-    response = client.post(
-        "/modelmora/v1/requests",
-        json={"kind": "image", "description": "low tide", "size": {"width": 512, "height": 512}},
-    )
-
-    assert response.status_code == 404
-    body = response.json()
-    assert body["reason"] == "model_unavailable"
-    assert "not served yet" in body["detail"]
-    assert "on record" not in body["detail"]
 
 
 def test_a_result_is_discarded_once_its_holding_time_passes() -> None:
