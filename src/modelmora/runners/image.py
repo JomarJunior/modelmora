@@ -31,6 +31,7 @@ class ImageRunner(Runner):
         default_steps: int = 30,
         default_guidance: float = 7.5,
         device: str = "cuda",
+        declared_footprint_bytes: int | None = None,
     ) -> None:
         self.name = name
         self.version = version
@@ -42,7 +43,11 @@ class ImageRunner(Runner):
         self._default_steps = default_steps
         self._default_guidance = default_guidance
         self._pipeline: Any = None
-        self._footprint_bytes = 0
+        # See the matching comment in `runners/text.py`: `declared_footprint_bytes()`
+        # is asked before `load()` (FR-009, FR-011), so a real pipeline needs a hint
+        # to report before its weights are actually resident.
+        self._declared_footprint_bytes = declared_footprint_bytes
+        self._footprint_bytes = declared_footprint_bytes or 0
 
     def declared_footprint_bytes(self) -> int:
         return self._footprint_bytes
@@ -87,7 +92,7 @@ class ImageRunner(Runner):
         if not self.is_loaded():
             return
         self._pipeline = None
-        self._footprint_bytes = 0
+        self._footprint_bytes = self._declared_footprint_bytes or 0
         import gc
 
         import torch

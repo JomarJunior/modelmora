@@ -33,6 +33,7 @@ class TextRunner(Runner):
         model_path: str,
         reads_images: bool = False,
         device: str = "cuda",
+        declared_footprint_bytes: int | None = None,
     ) -> None:
         self.name = name
         self.version = version
@@ -41,7 +42,17 @@ class TextRunner(Runner):
         self._device = device
         self._model: Any = None
         self._tokenizer: Any = None
-        self._footprint_bytes = 0
+        # `Residency.ensure_loaded` and `check_image_capability` (api/validate.py) both
+        # call `declared_footprint_bytes()` *before* `load()`, to decide whether to
+        # evict or refuse (FR-009, FR-011) -- a stand-in already knows its fake number
+        # then; a real model's true footprint is only known once its weights are on
+        # the GPU. This optional hint (typically a size measured on a previous load,
+        # see `checks/studio_smoke.py`) is what `declared_footprint_bytes()` reports
+        # until `load()` replaces it with the real, measured figure; `unload()` falls
+        # back to it again rather than to zero, so a second admission decision for the
+        # same still-unloaded runner is not blind.
+        self._declared_footprint_bytes = declared_footprint_bytes
+        self._footprint_bytes = declared_footprint_bytes or 0
 
     def declared_footprint_bytes(self) -> int:
         return self._footprint_bytes
@@ -69,7 +80,7 @@ class TextRunner(Runner):
             return
         self._model = None
         self._tokenizer = None
-        self._footprint_bytes = 0
+        self._footprint_bytes = self._declared_footprint_bytes or 0
         import gc
 
         import torch

@@ -68,14 +68,19 @@ def shutdown(state: AppState) -> None:
 
     `begin_stopping` runs first, so a submission racing this call is refused outright
     (`stopping`, never silently dropped) rather than slipping into the line behind our
-    back. The waiting and currently-running requests already admitted are drained and
-    marked `stopped_before_completion` (US5 scenario 2, SC-009) without waiting for a
-    running generation to actually finish -- that wait is exactly what
-    `stopped_before_completion` promises the caller it will not have to do. The worker
-    thread is told to stop but not joined: on real hardware a generation call cannot be
-    interrupted mid-flight, and its eventual `record_success`/`record_failure` becomes
-    a no-op against the terminal state already recorded here
-    (`RequestStore.mark_terminal_if_open`).
+    back. The waiting and currently-running requests already admitted are marked
+    `stopped_before_completion` (US5 scenario 2, SC-009) *before* the worker thread is
+    joined, so a caller polling right after this call returns sees that answer
+    immediately -- it never depends on how long the join below takes. A running
+    generation cannot be interrupted mid-flight, so its eventual
+    `record_success`/`record_failure` becomes a no-op against the terminal state
+    already recorded here (`RequestStore.mark_terminal_if_open`).
+
+    The worker thread is still joined, with its own default timeout, rather than only
+    signalled: on real GPU hardware, abandoning a thread mid-`torch`/`diffusers` call
+    and letting interpreter shutdown tear it down anyway aborts the process (observed
+    on the Studio, T049) -- worse for an operator than `shutdown` itself taking a
+    little longer to return.
     """
     state.lifecycle.begin_stopping()
     open_ids: list[uuid.UUID] = []
@@ -84,8 +89,8 @@ def shutdown(state: AppState) -> None:
         running_id = state.line.running_request_id()
         if running_id is not None:
             open_ids.append(running_id)
-    if state.worker is not None:
-        state.worker.stop(timeout=0)
     for request_id in open_ids:
         state.store.mark_terminal_if_open(request_id, state="stopped_before_completion")
+    if state.worker is not None:
+        state.worker.stop()
     state.holding.wipe()

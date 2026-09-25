@@ -4,7 +4,10 @@ nothing is left without a final answer (T045, FR-029, SC-009).
 No GPU: a gated stand-in text runner (the same pattern as `test_admission.py`) keeps
 one request genuinely `running` -- past `on_running`, blocked inside `generate_text` --
 when shutdown is triggered, so the drain is exercised against a real mid-flight
-request rather than a race that might already be `done`.
+request rather than a race that might already be `done`. `shutdown` joins the worker
+thread (api/lifecycle.py), so the gate is released from a timer just after `shutdown`
+is called, matching how a real, bounded generation would finish on its own -- the
+caller-visible answer is still set before that join even starts.
 """
 
 from __future__ import annotations
@@ -54,6 +57,9 @@ def test_shutdown_answers_every_waiting_and_running_request(make_client) -> None
     assert peek_status(client, waiting.json()["requestId"])["state"] == "waiting"
 
     try:
+        # shutdown() joins the worker thread; releasing the gate right after it is
+        # called lets that join return quickly instead of waiting out its timeout.
+        threading.Timer(0.05, gate.set).start()
         shutdown(state)
 
         running_status = peek_status(client, running.json()["requestId"])
@@ -68,7 +74,7 @@ def test_shutdown_answers_every_waiting_and_running_request(make_client) -> None
         assert too_late.json()["reason"] == "stopping"
         assert too_late.json()["retryAfterSeconds"] is not None
     finally:
-        gate.set()  # let the blocked worker thread unwind so it does not outlive the test
+        gate.set()  # idempotent: in case shutdown()'s join already timed out
 
 
 def test_shutdown_drains_several_waiting_requests(make_client) -> None:
@@ -91,6 +97,7 @@ def test_shutdown_drains_several_waiting_requests(make_client) -> None:
     ]
 
     try:
+        threading.Timer(0.05, gate.set).start()
         shutdown(state)
 
         for request_id in waiting_ids:
