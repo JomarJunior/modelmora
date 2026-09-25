@@ -18,7 +18,7 @@ from modelmora.api.requests import RequestStore
 from modelmora.config import Config
 from modelmora.queue.estimates import Estimator
 from modelmora.queue.line import Line
-from modelmora.registry.defaults import ModelRegistry
+from modelmora.registry.registry import ModelRegistry
 from modelmora.runners.base import Runner
 from modelmora.worker.holding import ImageHoldingStore
 from modelmora.worker.residency import Residency

@@ -14,7 +14,7 @@ import uvicorn
 
 from modelmora.api.app import AppState, assert_loopback_host, create_app
 from modelmora.config import BIND_HOST, Config
-from modelmora.registry.defaults import ModelRegistry, RegisteredModel
+from modelmora.registry.registry import ModelRegistry, RegisteredModel
 from modelmora.runners.standin import StandInTextRunner
 
 

@@ -18,7 +18,7 @@ from PIL import Image
 from starlette.testclient import TestClient
 
 from modelmora.api.app import AppState, create_app
-from modelmora.registry.defaults import RegisteredModel
+from modelmora.registry.registry import RegisteredModel
 from modelmora.runners.standin import StandInImageRunner
 from tests.conftest import CALLER_TOKEN, IMAGE_MODEL, TEXT_MODEL, build_state
 

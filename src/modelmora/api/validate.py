@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from modelmora.messages import ImageRequest, ModelRef, TextRequest
 from modelmora.refusals import ModelMoraRefusal
-from modelmora.registry.defaults import ModelRegistry, RegisteredModel
+from modelmora.registry.registry import ModelRegistry, RegisteredModel
 from modelmora.runners.base import Runner
 from modelmora.worker.residency import Residency
 

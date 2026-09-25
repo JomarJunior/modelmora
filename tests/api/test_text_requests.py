@@ -13,7 +13,7 @@ from starlette.testclient import TestClient
 from modelmora.api.app import AppState, create_app
 from modelmora.api.requests import RequestStore
 from modelmora.config import Config
-from modelmora.registry.defaults import ModelRegistry
+from modelmora.registry.registry import ModelRegistry
 from modelmora.runners.base import Runner
 from modelmora.runners.standin import StandInTextRunner
 from tests.conftest import CALLER_TOKEN, TEXT_MODEL, VISION_MODEL

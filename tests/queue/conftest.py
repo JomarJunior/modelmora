@@ -18,7 +18,7 @@ from modelmora.api.requests import RequestStore
 from modelmora.api.state import AppState
 from modelmora.config import Config
 from modelmora.queue.line import Line
-from modelmora.registry.defaults import ModelRegistry, RegisteredModel
+from modelmora.registry.registry import ModelRegistry, RegisteredModel
 from modelmora.runners.standin import StandInImageRunner, StandInTextRunner
 from modelmora.worker.holding import ImageHoldingStore
 from modelmora.worker.residency import Residency
