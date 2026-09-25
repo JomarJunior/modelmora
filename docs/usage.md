@@ -109,37 +109,68 @@ see next.
 
 ### Add a model
 
+**🧠 ModelMora** never downloads a model itself: every model it serves is already on
+the Studio's own disk, in whatever collection the team keeps there. `--local-path`
+(defaults to `--weights-path`) is where `serve` builds a real runner from
+(`runners/build.py`); `--companion ROLE=PATH`, repeatable, names a file a runner needs
+beside the main weights (a vision projector, a VAE).
+
+A `.gguf` text model, read through a managed `llama-server` (`runners/llamacpp.py`),
+with a vision projector so it can also answer questions about images:
+
 ```bash
 modelmora model add \
-  --name a small open text model --version 1 --kind text \
-  --source <model page> \
-  --weights-path /data/modelmora-weights/a small open text model \
+  --name the Studio's GGUF text model --version Q4_K_XL --kind text --reads-images \
+  --source "<model page>, GGUF requantization by <model page>" \
+  --weights-path <text model .gguf> \
+  --local-path <text model .gguf> \
+  --companion mmproj=<text model mmproj .gguf> \
   --license Apache-2.0 \
-  --license-source <model page> \
+  --license-source "GGUF metadata general.license, naming base model <model page>" \
   --confirm-license
 ```
 
-`--weights-path` is hashed on the spot; that digest is what every later load is
-checked against, and a mismatch refuses to serve and tells the team rather than
-silently running something else (FR-022). Add `--reads-images` for a text model that
-can also answer questions about images (FR-003), and
-`--filter-disclosure disclosed|undisclosable` for a model with a built-in content
-filter -- `undisclosable` is recorded but never made servable (spec Edge Cases,
-FR-008).
+A single-file SDXL checkpoint (`from_single_file`, `runners/image.py`); `local-path`
+here is the same as `weights-path` since there is no companion file to add:
+
+```bash
+modelmora model add \
+  --name the default image checkpoint --version 111 --kind image \
+  --source "<model page>" \
+  --weights-path <image checkpoint> \
+  --license "the image checkpoints' shared base licence" \
+  --license-source "<licence page> ; base model SDXL-derived ; the checkpoint's metadata file permissions allowCommercialUse=its image-use permissions" \
+  --confirm-license
+```
+
+`--weights-path` is hashed on the spot (streamed, so a multi-gigabyte checkpoint is
+never held whole in memory); that digest is what every later load is checked against,
+and a mismatch refuses to serve and tells the team rather than silently running
+something else (FR-022). `--filter-disclosure disclosed|undisclosable` records a
+model with a built-in content filter -- `undisclosable` is recorded but never made
+servable (spec Edge Cases, FR-008).
 
 `--confirm-license` is the moment a team member states, as themselves, that the
 license is open-weight and allows the museum's use (FR-021, Principle V). Without it
 the model is recorded but refused whenever a caller asks for it; nothing is served on
 an incomplete record.
 
+The `.gguf` runner needs a `llama-server` binary and its CUDA runtime libraries
+somewhere on the Studio -- neither ships with this repository or any pip package.
+Point `MODELMORA_LLAMA_SERVER_BIN` at the binary and `MODELMORA_LLAMA_CUDART_LIB_DIR`
+at the directory holding its `libcudart`/`libcublas`; a prebuilt release from
+[the llama.cpp project](<llama.cpp releases>) (the
+`ubuntu-cuda-*-x64` and matching `cudart-*` assets) is the fastest way to get both
+without compiling anything.
+
 ### List, retire, verify, and change a default
 
 ```bash
 modelmora model list                 # servable models and the default per slot
 modelmora model list --all           # every record ever added, retired included, with service dates (SC-006)
-modelmora model retire --name a small open text model --version 1
-modelmora model verify --name a small open text model --version 1 --weights-path /data/modelmora-weights/a small open text model
-modelmora model set-default --slot text --name a small open text model --version 1
+modelmora model retire --name the default image checkpoint --version 111
+modelmora model verify --name the default image checkpoint --version 111 --weights-path <image checkpoint>
+modelmora model set-default --slot image --name the default image checkpoint --version 111
 ```
 
 Retiring keeps the record and its license, with the dates it was in service, so a
