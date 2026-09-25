@@ -17,6 +17,7 @@ DEFAULT_OVERTAKING_SECONDS = 120
 DEFAULT_HOLDING_SECONDS = 3600
 DEFAULT_IDLE_UNLOAD_SECONDS = 600
 DEFAULT_PORT = 8431
+DEFAULT_DB_PATH = "modelmora.db"
 
 # SC-002's burst is 20 requests; a lower line limit would make "busy" refusals the
 # reason SC-002 passes rather than actual results, which defeats the criterion.
@@ -57,6 +58,9 @@ class Config:
     # {bearer token: caller name}. An ownership marker, not a security boundary —
     # loopback is (R-9).
     caller_tokens: dict[str, str] = field(default_factory=dict)
+    # The one SQLite file for the registry and the served-model history (plan.md
+    # "Storage"). Never the store for request or result content (FR-030).
+    db_path: str = DEFAULT_DB_PATH
 
     def __post_init__(self) -> None:
         if self.line_limit < _MIN_LINE_LIMIT:
@@ -82,4 +86,5 @@ class Config:
             ),
             port=_env_int("MODELMORA_PORT", DEFAULT_PORT),
             caller_tokens=_env_caller_tokens(),
+            db_path=os.environ.get("MODELMORA_DB_PATH", DEFAULT_DB_PATH),
         )

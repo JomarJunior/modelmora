@@ -29,16 +29,14 @@ from starlette.responses import JSONResponse, Response
 from starlette.routing import Route
 
 from modelmora.api import requests as requests_api
+from modelmora.api.models import build_models_list
 from modelmora.api.state import AppState
 from modelmora.config import BIND_HOST, Config
 from modelmora.messages import (
     Availability,
     ImageRequest,
-    ModelsList,
     Refusal,
     Servable,
-    ServableDefaults,
-    ServableModel,
     TextRequest,
 )
 from modelmora.queue.line import QueuedRequest
@@ -206,27 +204,7 @@ async def fetch_result_image(request: Request) -> Response:
 
 async def list_models(request: Request) -> Response:
     state: AppState = request.app.state.modelmora
-    models = [
-        ServableModel(
-            name=m.name,
-            version=m.version,
-            kind=m.kind,
-            readsImages=m.reads_images,
-            license=m.license,
-        )
-        for m in state.registry.list_servable()
-    ]
-    defaults = state.registry.defaults()
-    body = ModelsList(
-        models=models,
-        defaults=ServableDefaults(
-            text=defaults["text"].name if defaults["text"] else None,
-            textWithImages=(
-                defaults["text_with_images"].name if defaults["text_with_images"] else None
-            ),
-            image=defaults["image"].name if defaults["image"] else None,
-        ),
-    )
+    body = build_models_list(state)
     return JSONResponse(body.model_dump(mode="json"))
 
 
