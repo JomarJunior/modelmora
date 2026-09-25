@@ -19,6 +19,7 @@ from tests.queue.conftest import (
     add_text_model,
     build_queue_state,
     peek_status,
+    poll_status,
     wait_until,
 )
 
@@ -104,3 +105,26 @@ def test_shutdown_drains_several_waiting_requests(make_client) -> None:
             assert peek_status(client, request_id)["state"] == "stopped_before_completion"
     finally:
         gate.set()
+
+
+def test_shutdown_unloads_every_resident_runner(make_client) -> None:
+    """A runner left resident is not the OS's job to clean up (T061).
+
+    A stand-in's `unload()` only ever flips a flag, but a runner managing its own
+    subprocess (`LlamaCppTextRunner`) does not get killed just because this process
+    exits -- discovered on the Studio as an orphaned `llama-server` still holding the
+    GPU after a clean shutdown. `shutdown()` must call `unload()` on everything
+    `Residency` still considers resident.
+    """
+    state = build_queue_state(line_limit=5)
+    model = add_text_model(state, "synthetic-text-shutdown-unload")
+    runner = state.runners[(model.name, model.version)]
+    client = make_client(state)
+
+    submitted = client.post("/modelmora/v1/requests", json=TEXT_BODY)
+    poll_status(client, submitted.json()["requestId"])  # let it finish and become resident
+    assert runner.is_loaded()
+
+    shutdown(state)
+
+    assert not runner.is_loaded()

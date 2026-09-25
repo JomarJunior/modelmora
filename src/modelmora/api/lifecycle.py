@@ -81,6 +81,14 @@ def shutdown(state: AppState) -> None:
     and letting interpreter shutdown tear it down anyway aborts the process (observed
     on the Studio, T049) -- worse for an operator than `shutdown` itself taking a
     little longer to return.
+
+    Every resident runner is unloaded once the worker has stopped, not left for
+    process exit to clean up: a runner that owns a subprocess of its own
+    (`LlamaCppTextRunner`, spec 002 amendment) is not a child the OS tears down just
+    because this process does, and letting it be a caller's own memory error
+    unloading it would be exactly the failure FR-009 exists to prevent -- discovered
+    on the Studio (T061) as an orphaned `llama-server` still holding the GPU after a
+    clean shutdown.
     """
     state.lifecycle.begin_stopping()
     open_ids: list[uuid.UUID] = []
@@ -93,4 +101,6 @@ def shutdown(state: AppState) -> None:
         state.store.mark_terminal_if_open(request_id, state="stopped_before_completion")
     if state.worker is not None:
         state.worker.stop()
+    for runner in state.residency.resident_runners():
+        runner.unload()
     state.holding.wipe()
