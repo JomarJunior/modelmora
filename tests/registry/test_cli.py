@@ -9,6 +9,8 @@ from pathlib import Path
 import pytest
 
 from modelmora import cli
+from modelmora.config import Config
+from modelmora.registry.registry import ModelRegistry
 
 
 @pytest.fixture
@@ -233,3 +235,77 @@ def test_set_default_then_list_shows_it(
 
     cli.main(["model", "list"])
     assert "default[text] = synthetic-default-model v1.0" in capsys.readouterr().out
+
+
+def test_local_path_and_companions_round_trip_through_add(
+    weights_dir: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """T054-T057: what `serve` needs to build a real runner survives `model add`."""
+    checkpoint = weights_dir / "weights.bin"
+    mmproj = weights_dir / "mmproj.bin"
+    mmproj.write_bytes(b"synthetic mmproj bytes")
+
+    assert (
+        cli.main(
+            [
+                "model",
+                "add",
+                "--name",
+                "synthetic-local-path-model",
+                "--version",
+                "1.0",
+                "--kind",
+                "text",
+                "--reads-images",
+                "--source",
+                "local fixture",
+                "--weights-path",
+                str(weights_dir),
+                "--local-path",
+                str(checkpoint),
+                "--companion",
+                f"mmproj={mmproj}",
+                "--license",
+                "Synthetic-Open-License",
+                "--license-source",
+                "https://example.invalid/license",
+                "--confirm-license",
+            ]
+        )
+        == 0
+    )
+    capsys.readouterr()
+
+    registry = ModelRegistry(Config.from_env().db_path)
+    record = registry.resolve_record("synthetic-local-path-model", "1.0")
+    assert record is not None
+    assert record.local_path == str(checkpoint)
+    assert record.companion_paths == {"mmproj": str(mmproj)}
+
+
+def test_local_path_defaults_to_the_weights_path(
+    weights_dir: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    cli.main(
+        [
+            "model",
+            "add",
+            "--name",
+            "synthetic-default-local-path",
+            "--version",
+            "1.0",
+            "--kind",
+            "text",
+            "--source",
+            "local fixture",
+            "--weights-path",
+            str(weights_dir),
+        ]
+    )
+    capsys.readouterr()
+
+    registry = ModelRegistry(Config.from_env().db_path)
+    record = registry.resolve_record("synthetic-default-local-path", "1.0")
+    assert record is not None
+    assert record.local_path == str(weights_dir)
+    assert record.companion_paths == {}

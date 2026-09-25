@@ -8,9 +8,10 @@ to `registry.py`, which is the only other module that imports this one.
 
 from __future__ import annotations
 
+import json
 import sqlite3
 import threading
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from importlib import resources
 from pathlib import Path
@@ -61,6 +62,14 @@ class ModelRecord:
     license_confirmed_at: datetime | None
     filter_disclosure: FilterDisclosure
     service_periods: tuple[ServicePeriod, ...]
+    # Where the model's files actually sit on this Studio, and any files a runner
+    # needs beside them -- a vision projector, a VAE (spec 002 amendment, T054): the
+    # link `cli.py`'s `_run_serve` needed to build a real runner from a record
+    # instead of leaving it unattached. `local_path` is `None` for a record added
+    # before this amendment or through the quick `register()` test-fixture path,
+    # which never needed a runner attached (FR-020).
+    local_path: str | None = None
+    companion_paths: dict[str, str] = field(default_factory=dict)
 
     @property
     def is_complete(self) -> bool:
@@ -94,10 +103,30 @@ class Store:
         self._connection = sqlite3.connect(str(path), check_same_thread=False)
         self._connection.execute("PRAGMA foreign_keys = ON")
         self._connection.executescript(_SCHEMA)
+        self._ensure_local_path_columns()
         self._connection.commit()
 
     def close(self) -> None:
         self._connection.close()
+
+    def _ensure_local_path_columns(self) -> None:
+        """Migrates a database created before the spec 002 amendment (T054).
+
+        `CREATE TABLE IF NOT EXISTS` in `schema.sql` no-ops once `model` already
+        exists, so a registry file written before `local_path`/`companion_paths`
+        existed would otherwise never gain them. `ALTER TABLE ... ADD COLUMN` is
+        itself idempotent-by-check here (`PRAGMA table_info`), so re-running this on
+        an already-migrated or brand-new database is a no-op; nothing here can lose
+        a row or a column already holding data (the licence trail, SC-005, is
+        untouched).
+        """
+        existing = {row[1] for row in self._connection.execute("PRAGMA table_info(model)")}
+        if "local_path" not in existing:
+            self._connection.execute("ALTER TABLE model ADD COLUMN local_path TEXT")
+        if "companion_paths" not in existing:
+            self._connection.execute(
+                "ALTER TABLE model ADD COLUMN companion_paths TEXT NOT NULL DEFAULT '{}'"
+            )
 
     def insert_model(
         self,
@@ -115,6 +144,8 @@ class Store:
         license_confirmed_by: str | None,
         license_confirmed_at: datetime | None,
         filter_disclosure: FilterDisclosure,
+        local_path: str | None = None,
+        companion_paths: dict[str, str] | None = None,
     ) -> int:
         with self._lock:
             cursor = self._connection.execute(
@@ -122,8 +153,9 @@ class Store:
                 INSERT INTO model (
                     name, version, kind, reads_images, license_name, license_source,
                     source, weights_digest, added_by, added_at,
-                    license_confirmed_by, license_confirmed_at, filter_disclosure
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    license_confirmed_by, license_confirmed_at, filter_disclosure,
+                    local_path, companion_paths
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     name,
@@ -139,6 +171,8 @@ class Store:
                     license_confirmed_by,
                     _format(license_confirmed_at) if license_confirmed_at else None,
                     filter_disclosure,
+                    local_path,
+                    json.dumps(companion_paths or {}),
                 ),
             )
             model_id = cursor.lastrowid
@@ -166,6 +200,8 @@ class Store:
             license_confirmed_by=row["license_confirmed_by"],
             license_confirmed_at=_parse(row["license_confirmed_at"]),
             filter_disclosure=row["filter_disclosure"],
+            local_path=row["local_path"],
+            companion_paths=json.loads(row["companion_paths"]) if row["companion_paths"] else {},
             service_periods=tuple(
                 ServicePeriod(
                     started_at=_parse(p["started_at"]) or datetime.now(UTC),

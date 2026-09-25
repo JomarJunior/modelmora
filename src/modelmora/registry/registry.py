@@ -86,13 +86,18 @@ class ModelRegistry:
         license_source: str | None = None,
         license_confirmed_by: str | None = None,
         filter_disclosure: FilterDisclosure = "none",
+        local_path: str | None = None,
+        companion_paths: dict[str, str] | None = None,
         now: datetime | None = None,
     ) -> ModelRecord:
         """The real primitive behind `modelmora model add` (FR-020, FR-025).
 
         Opens a service period immediately: a record can be in service before it is
         complete (an incomplete record is simply never servable, T037), and retiring
-        (`retire`) is the only thing that closes that period (FR-023).
+        (`retire`) is the only thing that closes that period (FR-023). `local_path`
+        and `companion_paths` (spec 002 amendment) are what let `serve` build a real
+        runner from this record afterward (`cli.py`); a record added without one is
+        listed and licence-tracked exactly as before, just never attached to a runner.
         """
         moment = now or datetime.now(UTC)
         model_id = self._store.insert_model(
@@ -109,6 +114,8 @@ class ModelRegistry:
             license_confirmed_by=license_confirmed_by,
             license_confirmed_at=moment if license_confirmed_by else None,
             filter_disclosure=filter_disclosure,
+            local_path=local_path,
+            companion_paths=companion_paths,
         )
         record = self._store.get_by_id(model_id)
         assert record is not None
@@ -160,6 +167,16 @@ class ModelRegistry:
     def list_all(self, kind: ModelKind | None = None) -> list[ModelRecord]:
         """Every record ever added, retired included (FR-023, SC-006)."""
         return [r for r in self._store.list_models() if kind is None or r.kind == kind]
+
+    def list_servable_records(self, kind: ModelKind | None = None) -> list[ModelRecord]:
+        """Servable records with every field a real runner needs (`local_path`,
+        `companion_paths`), unlike `list_servable`'s caller-facing `RegisteredModel`
+        projection. `cli.py`'s `_run_serve` is the one caller (spec 002 amendment)."""
+        return [
+            r
+            for r in self._store.list_models()
+            if r.is_servable and (kind is None or r.kind == kind)
+        ]
 
     def defaults(self) -> dict[Slot, RegisteredModel | None]:
         return {

@@ -5,11 +5,21 @@ component's own test suite run against the stand-ins in `runners/standin.py` ins
 (FR-033, FR-034). Imports of `torch` and `diffusers` are deferred into the methods
 that need them so importing this module never requires the GPU extra, mirroring
 `runners/text.py`.
+
+`model_path` may name a `diffusers`-layout directory (`from_pretrained`, the original
+shape of this runner) or a single checkpoint file (`from_single_file`, the spec 002
+amendment, T059, for the Studio's own SDXL-architecture collection): which one is used
+is decided by whether the path is a file or a directory, not declared separately,
+since every single-file checkpoint this Studio has recorded is SDXL and every
+directory one is SD1.5-architecture (`StableDiffusionPipeline`). A model that broke
+that pattern would need this runner taught an explicit architecture hint; none does
+yet.
 """
 
 from __future__ import annotations
 
 import io
+from pathlib import Path
 from typing import Any
 
 from modelmora.runners.base import GeneratedImage, Runner
@@ -64,27 +74,27 @@ class ImageRunner(Runner):
         if self.is_loaded():
             return
         import torch
-        from diffusers import StableDiffusionPipeline
+        from diffusers import StableDiffusionPipeline, StableDiffusionXLPipeline
 
+        is_single_file = Path(self._model_path).is_file()
+        pipeline_cls = StableDiffusionXLPipeline if is_single_file else StableDiffusionPipeline
         # Loaded with no safety checker attached: this runner reports a filter note
         # from whatever the pipeline itself declares at generation time (FR-008), and
         # a model whose weights ship none has nothing to disclose (filter_disclosure
         # "none" is the registry's matching judgment for such a model, T037a).
-        pipeline = StableDiffusionPipeline.from_pretrained(
-            self._model_path,
-            torch_dtype=torch.float16,
-            safety_checker=None,
-            feature_extractor=None,
+        no_filter_kwargs = (
+            {} if is_single_file else {"safety_checker": None, "feature_extractor": None}
         )
+        load_fn = pipeline_cls.from_single_file if is_single_file else pipeline_cls.from_pretrained
+        pipeline = load_fn(self._model_path, torch_dtype=torch.float16, **no_filter_kwargs)
         pipeline.set_progress_bar_config(disable=True)
         self._pipeline = pipeline.to(self._device)
+        text_encoders = [self._pipeline.text_encoder]
+        if hasattr(self._pipeline, "text_encoder_2") and self._pipeline.text_encoder_2 is not None:
+            text_encoders.append(self._pipeline.text_encoder_2)
         self._footprint_bytes = sum(
             parameter.numel() * parameter.element_size()
-            for component in (
-                self._pipeline.unet,
-                self._pipeline.vae,
-                self._pipeline.text_encoder,
-            )
+            for component in (self._pipeline.unet, self._pipeline.vae, *text_encoders)
             for parameter in component.parameters()
         )
 

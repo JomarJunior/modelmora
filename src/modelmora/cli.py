@@ -21,6 +21,8 @@ from modelmora.messages import FilterDisclosure, ModelKind
 from modelmora.refusals import ModelMoraRefusal
 from modelmora.registry.registry import ModelRecord, ModelRegistry, RegisteredModel
 from modelmora.registry.verify import compute_digest, verify_before_load
+from modelmora.runners.base import Runner
+from modelmora.runners.build import build_runner
 from modelmora.runners.standin import StandInTextRunner
 
 
@@ -71,6 +73,21 @@ def _build_parser() -> argparse.ArgumentParser:
         "changes an output (FR-008). `undisclosable` is never servable.",
     )
     add.add_argument("--added-by", default=None, help="Defaults to the current OS user (FR-020).")
+    add.add_argument(
+        "--local-path",
+        default=None,
+        help="Where the model's files sit on this Studio (a single-file checkpoint or "
+        "a directory); defaults to --weights-path. What `serve` builds a real runner "
+        "from (spec 002 amendment).",
+    )
+    add.add_argument(
+        "--companion",
+        action="append",
+        default=[],
+        metavar="ROLE=PATH",
+        help="A file a runner needs beside the main weights, e.g. mmproj=/path/to/mmproj.gguf "
+        "(a vision projector) or vae=/path/to/vae.safetensors. Repeatable.",
+    )
 
     list_cmd = model_commands.add_parser("list", help="List models (FR-024).")
     list_cmd.add_argument(
@@ -100,7 +117,7 @@ def _build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _test_mode_registry() -> tuple[ModelRegistry, dict[tuple[str, str], StandInTextRunner]]:
+def _test_mode_registry() -> tuple[ModelRegistry, dict[tuple[str, str], Runner]]:
     registry = ModelRegistry()  # in-memory: test mode never touches the Studio's file
     model = RegisteredModel(
         name="standin-text",
@@ -110,7 +127,7 @@ def _test_mode_registry() -> tuple[ModelRegistry, dict[tuple[str, str], StandInT
         license="N/A (test mode)",
     )
     registry.register(model, default_for=["text"])
-    runners = {
+    runners: dict[tuple[str, str], Runner] = {
         (model.name, model.version): StandInTextRunner(name=model.name, version=model.version)
     }
     return registry, runners
@@ -125,18 +142,18 @@ def _run_serve(args: argparse.Namespace) -> int:
     if args.test_mode:
         registry, runners = _test_mode_registry()
     else:
-        # `runners/text.py` and `runners/image.py` exist (T016, T023), but nothing in
-        # the registry schema records which local weights path or device a real
-        # runner should be built from, only a licence trail (data-model.md). Models
-        # added with `modelmora model add` are visible here and to `listModels`, but
-        # `serve` still has no runner to attach to them -- a caller gets
-        # `model_unavailable`, never a crash. Deliberate seam, left for a task that
-        # decides how a team member points a registry record at a loadable runner;
-        # tasks.md names none yet. `checks/studio_smoke.py` builds real runners
-        # directly, the same way `_test_mode_registry` does for stand-ins, until then.
-        registry, runners = ModelRegistry(config.db_path), {}
+        # A record with a `local_path` (spec 002 amendment, T054-T057) gets a real
+        # runner built for it (`runners/build.py`), chosen by kind and file format; a
+        # record without one is still listed with its licence, just unattached -- a
+        # caller asking for it gets `model_unavailable`, never a crash.
+        registry = ModelRegistry(config.db_path)
+        runners = {}
+        for record in registry.list_servable_records():
+            runner = build_runner(record)
+            if runner is not None:
+                runners[(record.name, record.version)] = runner
 
-    state = AppState(config=config, registry=registry, runners=runners)  # type: ignore[arg-type]
+    state = AppState(config=config, registry=registry, runners=runners)
     app = create_app(state)
     print(f"ModelMora listening on http://{BIND_HOST}:{config.port} (loopback only)")
     uvicorn.run(app, host=BIND_HOST, port=config.port, log_level="info")
@@ -157,6 +174,16 @@ def _print_record(record: ModelRecord, *, show_service_dates: bool) -> None:
     print(line)
 
 
+def _parse_companions(pairs: list[str]) -> dict[str, str]:
+    companions: dict[str, str] = {}
+    for pair in pairs:
+        role, _, path = pair.partition("=")
+        if not role or not path:
+            raise ValueError(f"malformed --companion {pair!r}, want ROLE=PATH")
+        companions[role] = path
+    return companions
+
+
 def _run_model_add(args: argparse.Namespace) -> int:
     registry = ModelRegistry(Config.from_env().db_path)
     added_by = args.added_by or getpass.getuser()
@@ -174,6 +201,8 @@ def _run_model_add(args: argparse.Namespace) -> int:
         license_source=args.license_source,
         license_confirmed_by=added_by if args.confirm_license else None,
         filter_disclosure=filter_disclosure,
+        local_path=args.local_path or args.weights_path,
+        companion_paths=_parse_companions(args.companion),
     )
     _print_record(record, show_service_dates=False)
     if not record.is_complete:
