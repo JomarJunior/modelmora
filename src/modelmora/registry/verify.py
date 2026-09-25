@@ -24,6 +24,17 @@ from modelmora.registry.store import ModelRecord
 logger = logging.getLogger("modelmora.registry")
 
 
+# Streamed, not read whole: the Studio's own models run into tens of gigabytes each
+# (spec 002 amendment); `read_bytes()` would try to hold one entirely in memory at once.
+_CHUNK_BYTES = 8 * 1024 * 1024
+
+
+def _update_with_file(digest: hashlib._Hash, file_path: Path) -> None:
+    with file_path.open("rb") as handle:
+        while chunk := handle.read(_CHUNK_BYTES):
+            digest.update(chunk)
+
+
 def compute_digest(weights_path: str | Path) -> str:
     """A stable digest over one file or every file under a directory.
 
@@ -33,11 +44,11 @@ def compute_digest(weights_path: str | Path) -> str:
     path = Path(weights_path)
     digest = hashlib.sha256()
     if path.is_file():
-        digest.update(path.read_bytes())
+        _update_with_file(digest, path)
     else:
         for file_path in sorted(p for p in path.rglob("*") if p.is_file()):
             digest.update(str(file_path.relative_to(path)).encode("utf-8"))
-            digest.update(file_path.read_bytes())
+            _update_with_file(digest, file_path)
     return f"sha256:{digest.hexdigest()}"
 
 
