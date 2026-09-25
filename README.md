@@ -52,8 +52,9 @@ uv run modelmora serve --test-mode --port 8431
 
 See
 [`specs/002-modelmora-inference/quickstart.md`](https://github.com/JomarJunior/miraveja-ecosystem/blob/main/specs/002-modelmora-inference/quickstart.md)
-in the hub for the full walkthrough. `docs/usage.md` follows once the registry and CLI
-land (usage docs for a caller and a team member are tracked as later tasks).
+in the hub for the full walkthrough, and [`docs/usage.md`](./docs/usage.md) for how a
+Studio component submits, polls, withdraws and collects, and how a team member adds
+and retires a model.
 
 ## License
 
