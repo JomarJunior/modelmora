@@ -115,3 +115,8 @@ class Residency:
     def resident_runners(self) -> list[Runner]:
         with self._lock:
             return [r.runner for r in self._resident.values()]
+
+    def resident_keys(self) -> set[tuple[str, str]]:
+        """Which (name, version) pairs are on the GPU right now (`queue/ordering.py`, T031)."""
+        with self._lock:
+            return set(self._resident.keys())

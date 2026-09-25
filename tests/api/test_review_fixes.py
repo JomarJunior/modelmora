@@ -1,9 +1,10 @@
 """Defects found reviewing the Phase 3 MVP.
 
-Generation is synchronous until the queue lands (Phase 5, T030-T036). That is a stated
-shortcut; these tests pin the parts of it that must be true anyway. A third original
-fix here (an honest refusal for images before Phase 4 existed) is superseded now that
-`tests/api/test_image_requests.py` covers real image serving.
+Generation now runs on the background worker (Phase 5, T032), never on the request
+path; these tests pin behavior that had to hold under Phase 3's synchronous stopgap
+and still must hold now. A third original fix here (an honest refusal for images
+before Phase 4 existed) is superseded now that `tests/api/test_image_requests.py`
+covers real image serving.
 """
 
 from __future__ import annotations
@@ -27,9 +28,9 @@ GENERATION_SECONDS = 1.5
 def test_a_slow_generation_does_not_stall_other_callers() -> None:
     """A running request must not block the service (FR-010, SC-003).
 
-    Generation is synchronous until the queue lands, so it has to run off the event loop.
-    Inline, it holds the loop for its whole duration and every other caller's status and
-    availability call waits behind it.
+    Generation runs on the worker's own thread (T032): submitting only validates and
+    enqueues, so a slow `generate_text` should never be able to hold up another
+    caller's status or availability call, whatever generation itself is doing.
 
     Driven through ASGI rather than TestClient, which starts a fresh event loop per call
     and so cannot see the loop being blocked at all.

@@ -4,6 +4,12 @@ Binds `127.0.0.1` only (FR-027) and identifies callers by a bearer token that na
 them (R-9) -- an ownership marker, not a security boundary; loopback is that boundary.
 Test mode (wired by `cli.py`) selects stand-in runners so every path here can be
 exercised with no GPU (FR-033, FR-034).
+
+`create_app` is also where the single generation worker (T032) is built and started:
+submitting a request only validates and enqueues it (`api/requests.py`), so nothing on
+the request path ever calls a runner's `generate_*` -- that happens on the worker's own
+thread, which is what keeps every answer here immediate (SC-003) regardless of how long
+generation takes.
 """
 
 from __future__ import annotations
@@ -11,7 +17,6 @@ from __future__ import annotations
 import uuid
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from dataclasses import dataclass, field
 from functools import partial
 from typing import Any
 
@@ -24,6 +29,7 @@ from starlette.responses import JSONResponse, Response
 from starlette.routing import Route
 
 from modelmora.api import requests as requests_api
+from modelmora.api.state import AppState
 from modelmora.config import BIND_HOST, Config
 from modelmora.messages import (
     Availability,
@@ -35,11 +41,12 @@ from modelmora.messages import (
     ServableModel,
     TextRequest,
 )
+from modelmora.queue.line import QueuedRequest
 from modelmora.refusals import ModelMoraRefusal
-from modelmora.registry.defaults import ModelRegistry
-from modelmora.runners.base import Runner
-from modelmora.worker.holding import ImageHoldingStore
-from modelmora.worker.residency import Residency
+from modelmora.runners.base import GeneratedImage, GeneratedText
+from modelmora.worker.worker import Worker
+
+__all__ = ["AppState", "InvalidBindHost", "assert_loopback_host", "create_app"]
 
 
 class InvalidBindHost(RuntimeError):
@@ -49,16 +56,6 @@ class InvalidBindHost(RuntimeError):
 def assert_loopback_host(host: str) -> None:
     if host != BIND_HOST:
         raise InvalidBindHost(f"ModelMora must bind {BIND_HOST} only, got {host!r} (FR-027)")
-
-
-@dataclass
-class AppState:
-    config: Config
-    registry: ModelRegistry
-    runners: dict[tuple[str, str], Runner] = field(default_factory=dict)
-    store: requests_api.RequestStore = field(default_factory=requests_api.RequestStore)
-    residency: Residency = field(default_factory=Residency)
-    holding: ImageHoldingStore = field(default_factory=ImageHoldingStore)
 
 
 def _refused(
@@ -98,6 +95,18 @@ def _parse_request_id(request: Request) -> uuid.UUID | None:
         return None
 
 
+def _parse_wait_seconds(request: Request) -> int | None:
+    """0-30 (the contract's `waitSeconds`); `None` means the value itself is invalid."""
+    raw = request.query_params.get("waitSeconds")
+    if raw is None:
+        return 0
+    try:
+        value = int(raw)
+    except ValueError:
+        return None
+    return value if 0 <= value <= 30 else None
+
+
 async def submit_request(request: Request) -> Response:
     state: AppState = request.app.state.modelmora
     caller: str = request.state.caller
@@ -114,21 +123,10 @@ async def submit_request(request: Request) -> Response:
         except Exception as exc:  # pydantic ValidationError, kept out of caller content
             return _refused(400, "invalid_request", detail=type(exc).__name__)
         try:
-            # Off the event loop: generation is synchronous until the queue arrives
-            # (Phase 5), and running it inline would stall every other caller's status
-            # and availability call for the whole generation, breaking FR-010's
-            # immediate first answer for everyone but the submitter.
-            accepted = await run_in_threadpool(
-                partial(
-                    requests_api.submit_text_request,
-                    store=state.store,
-                    registry=state.registry,
-                    runners=state.runners,
-                    residency=state.residency,
-                    holding_seconds=state.config.holding_seconds,
-                    caller=caller,
-                    request=text_request,
-                )
+            # Validating and enqueueing is fast: no generation happens on this path
+            # (R-6), so there is nothing here that needs to run off the event loop.
+            accepted = requests_api.submit_text_request(
+                state=state, caller=caller, request=text_request
             )
         except ModelMoraRefusal as refusal:
             return _refused(
@@ -142,19 +140,8 @@ async def submit_request(request: Request) -> Response:
         except Exception as exc:
             return _refused(400, "invalid_request", detail=type(exc).__name__)
         try:
-            # Off the event loop, same reasoning as the text path above (FR-010, SC-003).
-            accepted = await run_in_threadpool(
-                partial(
-                    requests_api.submit_image_request,
-                    store=state.store,
-                    registry=state.registry,
-                    runners=state.runners,
-                    residency=state.residency,
-                    holding=state.holding,
-                    holding_seconds=state.config.holding_seconds,
-                    caller=caller,
-                    request=image_request,
-                )
+            accepted = requests_api.submit_image_request(
+                state=state, caller=caller, request=image_request
             )
         except ModelMoraRefusal as refusal:
             return _refused(
@@ -171,7 +158,20 @@ async def get_request_status(request: Request) -> Response:
     request_id = _parse_request_id(request)
     if request_id is None:
         return _refused(404, "invalid_request", detail="no such request")
-    status = requests_api.request_status(state.store, caller, request_id)
+    wait_seconds = _parse_wait_seconds(request)
+    if wait_seconds is None:
+        return _refused(400, "invalid_request", detail="waitSeconds must be 0-30")
+    # The long poll (up to 30s, T035) blocks a real thread, so it must run off the
+    # event loop or it would stall every other caller's request meanwhile (SC-003).
+    status = await run_in_threadpool(
+        partial(
+            requests_api.request_status,
+            state=state,
+            caller=caller,
+            request_id=request_id,
+            wait_seconds=wait_seconds,
+        )
+    )
     if status is None:
         return _refused(404, "invalid_request", detail="no such request")
     return JSONResponse(status.model_dump(mode="json"))
@@ -183,7 +183,7 @@ async def withdraw_request(request: Request) -> Response:
     request_id = _parse_request_id(request)
     if request_id is None:
         return _refused(404, "invalid_request", detail="no such request")
-    status = requests_api.withdraw_request(state.store, caller, request_id)
+    status = requests_api.withdraw_request(state=state, caller=caller, request_id=request_id)
     if status is None:
         return _refused(404, "invalid_request", detail="no such request")
     return JSONResponse(status.model_dump(mode="json"))
@@ -232,9 +232,13 @@ async def list_models(request: Request) -> Response:
 
 async def availability(request: Request) -> Response:
     state: AppState = request.app.state.modelmora
+    # `state` (starting/stopping) and draining the line on shutdown are T046's job
+    # (Phase 7); the line's length is real as of T030, and every caller sees the same
+    # number, never anything about who else is in it (FR-017).
+    queue_length = len(state.line) if state.line is not None else 0
     body = Availability(
         state="running",
-        queueLength=0,
+        queueLength=queue_length,
         servable=Servable(
             text=len(state.registry.list_servable("text")),
             image=len(state.registry.list_servable("image")),
@@ -243,20 +247,55 @@ async def availability(request: Request) -> Response:
     return JSONResponse(body.model_dump(mode="json"))
 
 
-def _wipe_held_images_on_shutdown(state: AppState) -> Any:
-    """Nothing a caller collected outlives the process (T026, R-7)."""
+def _build_worker(state: AppState) -> Worker:
+    assert state.line is not None  # set in AppState.__post_init__
+
+    def on_running(request: QueuedRequest) -> None:
+        requests_api.mark_running(state, request)
+
+    def on_done(
+        request: QueuedRequest, generated: GeneratedText | GeneratedImage, elapsed: float
+    ) -> None:
+        del elapsed  # the worker has already recorded it for the estimator (T033)
+        requests_api.record_success(state, request, generated)
+
+    def on_failed(request: QueuedRequest, error: BaseException) -> None:
+        requests_api.record_failure(state, request, error)
+
+    return Worker(
+        line=state.line,
+        residency_provider=lambda: state.residency,
+        estimator=state.estimator,
+        overtaking_seconds=state.config.overtaking_seconds,
+        idle_unload_seconds=state.config.idle_unload_seconds,
+        on_running=on_running,
+        on_done=on_done,
+        on_failed=on_failed,
+    )
+
+
+def _lifespan(state: AppState) -> Any:
+    """Nothing outlives the process: the worker stops, then held images are wiped
+    (T026, R-7). Graceful draining of open requests into `stopped_before_completion`
+    is T046's job (Phase 7); this only stops the thread cleanly."""
 
     @asynccontextmanager
     async def lifespan(_: Starlette) -> AsyncIterator[None]:
         try:
             yield
         finally:
+            if state.worker is not None:
+                state.worker.stop()
             state.holding.wipe()
 
     return lifespan
 
 
 def create_app(state: AppState) -> Starlette:
+    if state.worker is None:
+        state.worker = _build_worker(state)
+        state.worker.start()
+
     app = Starlette(
         routes=[
             Route("/modelmora/v1/requests", submit_request, methods=["POST"]),
@@ -271,7 +310,7 @@ def create_app(state: AppState) -> Starlette:
             Route("/modelmora/v1/availability", availability, methods=["GET"]),
         ],
         middleware=[Middleware(RequireCallerTokenMiddleware)],
-        lifespan=_wipe_held_images_on_shutdown(state),
+        lifespan=_lifespan(state),
     )
     app.state.modelmora = state
     return app

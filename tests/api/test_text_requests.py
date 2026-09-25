@@ -1,4 +1,8 @@
-"""US1 acceptance scenarios 1-6 and SC-001 (spec.md), against stand-in models."""
+"""US1 acceptance scenarios 1-6 and SC-001 (spec.md), against stand-in models.
+
+Generation happens on the background worker (T032), not inline with the POST, so
+`_poll` long-polls (`waitSeconds`) for a terminal state instead of racing it.
+"""
 
 from __future__ import annotations
 
@@ -22,7 +26,7 @@ def _submit_text(client: TestClient, **body_overrides: object):
 
 
 def _poll(client: TestClient, request_id: str) -> dict[str, Any]:
-    response = client.get(f"/modelmora/v1/requests/{request_id}")
+    response = client.get(f"/modelmora/v1/requests/{request_id}", params={"waitSeconds": 5})
     assert response.status_code == 200
     return response.json()  # type: ignore[no-any-return]
 

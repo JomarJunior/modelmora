@@ -3,6 +3,10 @@
 US2 acceptance scenarios 1 to 3, and SC-001 for images: a caller names at most a model
 and never loads or places one. Everything here runs on the stand-in image runner, so no
 GPU is involved; the real `diffusers` runner is T023, verifiable only on the Studio.
+
+Generation happens on the background worker (T032), not inline with the POST, so a
+status check right after submitting polls with `waitSeconds` instead of assuming the
+result is already there.
 """
 
 from __future__ import annotations
@@ -32,6 +36,14 @@ def _submit(client: TestClient, **overrides: object) -> dict:
     return {"status": response.status_code, "body": response.json()}
 
 
+def _poll(client: TestClient, request_id: str) -> dict:
+    # Generation runs on the background worker (T032); the long poll waits for it
+    # to reach a terminal state instead of racing it.
+    response = client.get(f"/modelmora/v1/requests/{request_id}", params={"waitSeconds": 5})
+    assert response.status_code == 200
+    return response.json()
+
+
 def test_an_image_comes_back_with_its_model_seed_and_settings(client: TestClient) -> None:
     """US2 acceptance scenario 1, and SC-001: no model named, nothing loaded by the caller."""
     submitted = _submit(client, settings={"seed": 7, "steps": 12})
@@ -40,7 +52,7 @@ def test_an_image_comes_back_with_its_model_seed_and_settings(client: TestClient
     assert submitted["body"]["model"]["name"] == IMAGE_MODEL.name
     request_id = submitted["body"]["requestId"]
 
-    status = client.get(f"/modelmora/v1/requests/{request_id}").json()
+    status = _poll(client, request_id)
     assert status["state"] == "done"
     result = status["result"]
     assert result["model"] == {"name": IMAGE_MODEL.name, "version": IMAGE_MODEL.version}
@@ -60,6 +72,8 @@ def test_the_same_seed_reproduces_the_same_image(client: TestClient) -> None:
     """FR-006: same model, same request, same seed, same result."""
     first = _submit(client, settings={"seed": 42, "steps": 8})
     second = _submit(client, settings={"seed": 42, "steps": 8})
+    _poll(client, first["body"]["requestId"])
+    _poll(client, second["body"]["requestId"])
 
     first_bytes = client.get(f"/modelmora/v1/requests/{first['body']['requestId']}/image").content
     second_bytes = client.get(f"/modelmora/v1/requests/{second['body']['requestId']}/image").content
@@ -76,13 +90,14 @@ def test_a_text_model_is_evicted_to_make_room_and_the_caller_only_waits(
 
     # Fill the GPU: the text model alone leaves no room beside the image model.
     state.residency = type(state.residency)(capacity_bytes=image_runner.declared_footprint_bytes())
-    client.post("/modelmora/v1/requests", json={"kind": "text", "instructions": "first"})
+    first = client.post("/modelmora/v1/requests", json={"kind": "text", "instructions": "first"})
+    _poll(client, first.json()["requestId"])
     assert text_runner.is_loaded()
 
     submitted = _submit(client)
 
     assert submitted["status"] == 202, "an image request saw an error instead of a wait"
-    status = client.get(f"/modelmora/v1/requests/{submitted['body']['requestId']}").json()
+    status = _poll(client, submitted["body"]["requestId"])
     assert status["state"] == "done"
     assert status["failure"] is None
     assert image_runner.is_loaded()

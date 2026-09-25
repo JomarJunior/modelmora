@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterator
+
 import pytest
 from starlette.testclient import TestClient
 
-from modelmora.api.app import AppState, create_app
+from modelmora.api.app import create_app
 from modelmora.api.requests import RequestStore
+from modelmora.api.state import AppState
 from modelmora.config import Config
 from modelmora.registry.defaults import ModelRegistry, RegisteredModel
 from modelmora.runners.base import Runner
@@ -75,6 +78,11 @@ def state() -> AppState:
 
 
 @pytest.fixture
-def client(state: AppState) -> TestClient:
+def client(state: AppState) -> Iterator[TestClient]:
     app = create_app(state)
-    return TestClient(app, headers={"Authorization": f"Bearer {CALLER_TOKEN}"})
+    try:
+        yield TestClient(app, headers={"Authorization": f"Bearer {CALLER_TOKEN}"})
+    finally:
+        # The worker thread `create_app` started (T032) must not outlive its test.
+        if state.worker is not None:
+            state.worker.stop(timeout=2.0)
