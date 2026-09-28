@@ -42,7 +42,7 @@ def test_a_hub_identifier_local_path_is_rejected() -> None:
     already caught by the same check as any other relative path."""
     registry = ModelRegistry()
     with pytest.raises(ValueError, match="absolute path"):
-        _add(registry, local_path="the base SDXL pipeline")
+        _add(registry, local_path="example-org/example-image-model")
 
 
 def test_a_nonexistent_absolute_local_path_is_rejected(tmp_path: Path) -> None:

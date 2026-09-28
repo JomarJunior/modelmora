@@ -120,26 +120,27 @@ with a vision projector so it can also answer questions about images:
 
 ```bash
 modelmora model add \
-  --name the Studio's GGUF text model --version Q4_K_XL --kind text --reads-images \
-  --source "<model page>, GGUF requantization by <model page>" \
-  --weights-path <text model .gguf> \
-  --local-path <text model .gguf> \
-  --companion mmproj=<text model mmproj .gguf> \
+  --name example-text-model --version Q4_K_M --kind text --reads-images \
+  --source "<where the model came from: its page or repository>" \
+  --weights-path /path/to/models/example-text-model/model.gguf \
+  --companion mmproj=/path/to/models/example-text-model/mmproj.gguf \
   --license Apache-2.0 \
-  --license-source "GGUF metadata general.license, naming base model <model page>" \
+  --license-source "<where the licence terms were read>" \
   --confirm-license
 ```
 
-A single-file SDXL checkpoint (`from_single_file`, `runners/image.py`); `local-path`
-here is the same as `weights-path` since there is no companion file to add:
+A single-file SDXL checkpoint (`from_single_file`, `runners/image.py`), with the
+pipeline config it loads with as its `config` companion (see below); `local-path`
+defaults to `weights-path`:
 
 ```bash
 modelmora model add \
-  --name the default image checkpoint --version 111 --kind image \
-  --source "<model page>" \
-  --weights-path <image checkpoint> \
-  --license "the image checkpoints' shared base licence" \
-  --license-source "<licence page> ; base model SDXL-derived ; the checkpoint's metadata file permissions allowCommercialUse=its image-use permissions" \
+  --name example-image-model --version 1.0 --kind image \
+  --source "<where the model came from: its page or repository>" \
+  --weights-path /path/to/models/example-image-model.safetensors \
+  --companion config=/path/to/pipeline-config \
+  --license "<licence name>" \
+  --license-source "<where the licence terms were read, and any extra permissions noted there>" \
   --confirm-license
 ```
 
@@ -158,21 +159,19 @@ an incomplete record.
 The `.gguf` runner needs a `llama-server` binary and its CUDA runtime libraries
 somewhere on the Studio -- neither ships with this repository or any pip package.
 Point `MODELMORA_LLAMA_SERVER_BIN` at the binary and `MODELMORA_LLAMA_CUDART_LIB_DIR`
-at the directory holding its `libcudart`/`libcublas`; a prebuilt release from
-[the llama.cpp project](<llama.cpp releases>) (the
-`ubuntu-cuda-*-x64` and matching `cudart-*` assets) is the fastest way to get both
-without compiling anything. Each `LlamaCppTextRunner` picks its own free loopback
+at the directory holding its `libcudart`/`libcublas`; the llama.cpp project's own
+prebuilt release (its `ubuntu-cuda-*-x64` and matching `cudart-*` assets) is the
+fastest way to get both without compiling anything. Each `LlamaCppTextRunner` picks its own free loopback
 port unless `MODELMORA_LLAMA_SERVER_PORT` pins one.
 
 A single-file SDXL checkpoint needs a pipeline config and tokenizer from somewhere,
 too -- `diffusers` fetches them from the Hub at load time otherwise. Record a local
-directory holding them (for example an already-cached
-`.../<base SDXL pipeline snapshot>/snapshots/<hash>/`) as the
-model's `config` companion, at `model add` time (`--companion config=<dir>`) or later:
+directory holding them (for example a copy of an already-cached base SDXL pipeline
+snapshot's config and tokenizer files, no weights) as the model's `config` companion, at `model add` time (`--companion config=<dir>`) or later:
 
 ```bash
-modelmora model add-companion --name the default image checkpoint --version 111 \
-  --companion config=/data/hf-cache/hub/<base SDXL pipeline snapshot>/snapshots/<hash>
+modelmora model add-companion --name example-image-model --version 1.0 \
+  --companion config=/path/to/pipeline-config
 ```
 
 It is digested like any other companion, checked before the first load, and read by
@@ -189,9 +188,9 @@ new version. (`MODELMORA_SDXL_CONFIG_PATH` remains a fallback for a record witho
 ```bash
 modelmora model list                 # servable models and the default per slot
 modelmora model list --all           # every record ever added, retired included, with service dates (SC-006)
-modelmora model retire --name the default image checkpoint --version 111
-modelmora model verify --name the default image checkpoint --version 111 --weights-path <image checkpoint>
-modelmora model set-default --slot image --name the default image checkpoint --version 111
+modelmora model retire --name example-image-model --version 1.0
+modelmora model verify --name example-image-model --version 1.0 --weights-path /path/to/models/example-image-model.safetensors
+modelmora model set-default --slot image --name example-image-model --version 1.0
 ```
 
 Retiring keeps the record and its license, with the dates it was in service, so a
@@ -208,4 +207,4 @@ to run and to a reviewer tracing a license, and useless -- worse, immersion-brea
 to a museum visitor (Principle IV: no system internals on a visitor-facing surface).
 Carrying that name forward into anything a person sees is the calling component's own
 duty, not **🧠 ModelMora**'s (spec Assumptions): **🎭 SonaVida** renders "away from the
-studio," never "waiting on `a small open text model` v1 to load."
+studio," never "waiting on `example-text-model` v1 to load."

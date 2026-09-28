@@ -39,9 +39,6 @@ PORT = int(os.environ.get("MODELMORA_SMOKE_PORT", "8907"))
 _BASE_URL = f"http://127.0.0.1:{PORT}"
 _MAX_WAIT_SECONDS = 30  # the contract's own cap on a single long poll (R-6)
 
-TEXT_MODEL_NAME = os.environ.get("MODELMORA_SMOKE_TEXT_MODEL_NAME", "the Studio's GGUF text model")
-IMAGE_MODEL_NAME = os.environ.get("MODELMORA_SMOKE_IMAGE_MODEL_NAME", "the default image checkpoint")
-
 
 def _log(message: str) -> None:
     print(f"[studio_smoke] {message}", flush=True)
@@ -154,8 +151,14 @@ def main() -> int:
         assert availability["state"] == "running"
         assert availability["servable"]["text"] >= 1
         assert availability["servable"]["image"] >= 1
+        # The registry's own defaults, never a model named here: which models the
+        # Studio serves is Studio state, not something this public repository records.
+        _, models = _request("GET", "/modelmora/v1/models")
+        text_model_name = models["defaults"]["text"]
+        image_model_name = models["defaults"]["image"]
+        assert text_model_name and image_model_name, models["defaults"]
 
-        _log(f"submitting a text request to {TEXT_MODEL_NAME}...")
+        _log(f"submitting a text request to the default text model, {text_model_name}...")
         started = time.monotonic()
         status, submitted = _request(
             "POST",
@@ -172,10 +175,11 @@ def main() -> int:
             f"(GPU {_gpu_memory_used_mib()}): {text_status['result']['text']!r}"
         )
         assert text_status["state"] == "done"
-        assert text_status["result"]["model"]["name"] == TEXT_MODEL_NAME
+        assert text_status["result"]["model"]["name"] == text_model_name
 
         _log(
-            f"submitting an image request to {IMAGE_MODEL_NAME} -- the real GPU capacity "
+            f"submitting an image request to the default image model, {image_model_name} -- "
+            f"the real GPU capacity "
             f"decides whether the text model must be evicted (FR-009), nothing forced by hand..."
         )
         started = time.monotonic()

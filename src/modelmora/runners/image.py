@@ -31,12 +31,13 @@ from modelmora.runners.base import GeneratedImage, Runner
 _DEFAULT_MAX_WIDTH = 2048
 _DEFAULT_MAX_HEIGHT = 2048
 
-# Empirical calibration from the Studio (RTX 4090, spec 002 amendment log): the default image checkpoint
-# SDXL at 832x1216/24 steps measured ~15.2GB total GPU against a ~7GB measured
-# parameter footprint -- the remaining ~8.2GB is CFG-doubled UNet/VAE activations and
-# the diffusers CUDA allocator's own overhead, which scales with the image's pixel
-# count. A calibrated constant, not a first-principles memory model (Principle IX):
-# enough to keep a pair that truly will not fit from being loaded together (T063).
+# Empirical calibration from the Studio (RTX 4090, spec 002 amendment log): the
+# Studio's default single-file SDXL checkpoint at 832x1216/24 steps measured ~15.2GB
+# total GPU against a ~7GB measured parameter footprint -- the remaining ~8.2GB is
+# CFG-doubled UNet/VAE activations and the diffusers CUDA allocator's own overhead,
+# which scales with the image's pixel count. A calibrated constant, not a
+# first-principles memory model (Principle IX): enough to keep a pair that truly will
+# not fit from being loaded together (T063).
 _SDXL_OVERHEAD_BYTES_PER_PIXEL = 8_200_000_000 / (832 * 1216)
 
 

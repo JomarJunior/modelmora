@@ -32,8 +32,8 @@ _HEALTH_TIMEOUT_SECONDS = 120.0
 _HEALTH_POLL_SECONDS = 0.5
 DEFAULT_MAX_TOKENS = 512
 
-# Calibrated from the Studio (RTX 4090, spec 002 amendment log): the Studio's GGUF text model resident
-# measured ~19.2GB total GPU against ~18.8GB of file sizes (main + mmproj) at
+# Calibrated from the Studio (RTX 4090, spec 002 amendment log): the Studio's GGUF
+# text model resident measured ~19.2GB total GPU against ~18.8GB of file sizes (main + mmproj) at
 # context_size 4096 -- the remaining ~0.4GB is the KV cache and llama-server's own
 # runtime overhead, which grows with the context window. A calibrated constant, not
 # an architecture-derived one (Principle IX): T063, the same idea as
@@ -198,7 +198,7 @@ class LlamaCppTextRunner(Runner):
             self._host,
             "--port",
             str(self._port),
-            # T068: the Studio's GGUF text model's chat template thinks by default, which can spend
+            # T068: the Studio's GGUF model's chat template thinks by default, which can spend
             # the whole token budget "thinking" and leave `content` empty. Disabling
             # reasoning at the server level (confirmed against this exact build,
             # b11191) means `content` is always what is returned -- never a
