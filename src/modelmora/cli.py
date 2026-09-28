@@ -95,6 +95,21 @@ def _build_parser() -> argparse.ArgumentParser:
         "(a vision projector) or vae=/path/to/vae.safetensors. Repeatable.",
     )
 
+    add_companion = model_commands.add_parser(
+        "add-companion",
+        help="Attach a companion a runner needs to an existing model, e.g. the pipeline "
+        "config a single-file image checkpoint loads with (FR-020, FR-025).",
+    )
+    add_companion.add_argument("--name", required=True)
+    add_companion.add_argument("--version", required=True)
+    add_companion.add_argument(
+        "--companion",
+        action="append",
+        required=True,
+        metavar="ROLE=PATH",
+        help="e.g. config=/path/to/pipeline-config-dir. Repeatable.",
+    )
+
     list_cmd = model_commands.add_parser("list", help="List models (FR-024).")
     list_cmd.add_argument(
         "--all",
@@ -237,6 +252,20 @@ def _run_model_add(args: argparse.Namespace) -> int:
     return 0
 
 
+def _run_model_add_companion(args: argparse.Namespace) -> int:
+    registry = ModelRegistry(Config.from_env().db_path)
+    try:
+        record = None
+        for role, path in _parse_companions(args.companion).items():
+            record = registry.add_companion(args.name, args.version, role=role, path=path)
+    except ValueError as exc:  # an invalid path, an unknown model, or a role already set
+        print(exc, file=sys.stderr)
+        return 1
+    assert record is not None
+    _print_record(record, show_service_dates=False)
+    return 0
+
+
 def _run_model_list(args: argparse.Namespace) -> int:
     registry = ModelRegistry(Config.from_env().db_path)
     records = registry.list_all()
@@ -293,6 +322,7 @@ def _run_model_set_default(args: argparse.Namespace) -> int:
 
 _MODEL_COMMANDS = {
     "add": _run_model_add,
+    "add-companion": _run_model_add_companion,
     "list": _run_model_list,
     "retire": _run_model_retire,
     "verify": _run_model_verify,

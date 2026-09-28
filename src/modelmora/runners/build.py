@@ -71,4 +71,7 @@ def build_runner(record: ModelRecord) -> Runner | None:
         version=record.version,
         model_path=str(path),
         declared_footprint_bytes=declared_footprint_hint(path),
+        # T073: a single-file checkpoint's pipeline config and tokenizer, recorded as
+        # the `config` companion, so `serve` loads it offline from the registry alone.
+        sdxl_config_path=record.companion_paths.get("config"),
     )

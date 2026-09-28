@@ -128,15 +128,11 @@ def main() -> int:
         "MODELMORA_LLAMA_CUDART_LIB_DIR",
         "/data/llamacpp/cudart/cudart-llama-b11191-bin-ubuntu-cuda-13.4-x64",
     )
-    env.setdefault("HF_HOME", "/data/hf-cache")
-    # T064: the exact local snapshot directory already cached under HF_HOME above --
-    # `ImageRunner.load()` passes this straight to `from_single_file`'s own `config`
-    # argument, bypassing repo-id/Hub cache resolution entirely, proven offline.
-    env.setdefault(
-        "MODELMORA_SDXL_CONFIG_PATH",
-        "/data/hf-cache/hub/<base SDXL pipeline snapshot>/"
-        "snapshots/462165984030d82259a11f4367a4eed129e94a7b",
-    )
+    # T073: a single-file image checkpoint's pipeline config comes from its record's
+    # own `config` companion, never from this environment -- removed here so the run
+    # proves `serve` needs nothing but the registry to load it offline (FR-028).
+    env.pop("MODELMORA_SDXL_CONFIG_PATH", None)
+    env.pop("HF_HOME", None)
     env["HF_HUB_OFFLINE"] = "1"  # belt: this run must not touch the network at all
 
     if not Path(env["MODELMORA_DB_PATH"]).exists():

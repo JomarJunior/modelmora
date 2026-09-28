@@ -168,3 +168,80 @@ def test_the_intended_server_passes_the_identity_check(monkeypatch: pytest.Monke
 class _AlwaysAlive:
     def poll(self) -> int | None:
         return None
+
+
+class _FakeServerProcess:
+    """A `llama-server` that is up and healthy, for the offload check (T074)."""
+
+    pid = 424242
+
+    def __init__(self) -> None:
+        self.terminated = False
+
+    def poll(self) -> int | None:
+        return 0 if self.terminated else None
+
+    def terminate(self) -> None:
+        self.terminated = True
+
+    def wait(self, timeout: float | None = None) -> int:
+        return 0
+
+
+def _started_runner(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Any, *, gpu_bytes_used: int | None
+) -> tuple[LlamaCppTextRunner, _FakeServerProcess]:
+    model = tmp_path / "synthetic-model.gguf"
+    with model.open("wb") as handle:
+        handle.truncate(64 * 1024 * 1024)  # a 64 MiB sparse stand-in, no real weights
+    process = _FakeServerProcess()
+    monkeypatch.setattr(llamacpp.subprocess, "Popen", lambda command, **kwargs: process)
+    monkeypatch.setattr(LlamaCppTextRunner, "_wait_until_healthy", lambda self: None)
+    monkeypatch.setattr(llamacpp, "_gpu_memory_used_by_pid", lambda pid: gpu_bytes_used)
+    return _runner(model_path=str(model)), process
+
+
+def test_a_server_that_did_not_offload_to_the_gpu_fails_its_load(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Any
+) -> None:
+    """T074: a missing CUDA runtime makes llama-server fall back to the CPU silently;
+    that is a load failure with a reason the team can act on, not a slow success."""
+    runner, process = _started_runner(monkeypatch, tmp_path, gpu_bytes_used=2 * 1024 * 1024)
+
+    with pytest.raises(LlamaServerStartupError, match="GPU"):
+        runner.load()
+
+    assert process.terminated, "a CPU-bound server was left running"
+    assert not runner.is_loaded()
+
+
+def test_a_server_holding_its_weights_on_the_gpu_loads(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Any
+) -> None:
+    runner, process = _started_runner(monkeypatch, tmp_path, gpu_bytes_used=70 * 1024 * 1024)
+
+    runner.load()
+
+    assert runner.is_loaded()
+    assert not process.terminated
+
+
+def test_no_gpu_visible_means_the_offload_check_cannot_tell_and_does_not_block(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Any
+) -> None:
+    runner, _process = _started_runner(monkeypatch, tmp_path, gpu_bytes_used=None)
+
+    runner.load()
+
+    assert runner.is_loaded()
+
+
+def test_a_deliberately_cpu_only_runner_is_not_checked(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Any
+) -> None:
+    runner, _process = _started_runner(monkeypatch, tmp_path, gpu_bytes_used=0)
+    runner._n_gpu_layers = 0
+
+    runner.load()
+
+    assert runner.is_loaded()

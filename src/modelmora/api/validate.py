@@ -79,6 +79,17 @@ def model_ref(model: RegisteredModel) -> ModelRef:
     return ModelRef(name=model.name, version=model.version)
 
 
+def check_loadable(runner: Runner, residency: Residency) -> None:
+    """Refuses before queueing a model whose load already failed in this process
+    (T072, spec Edge Cases): `model_unavailable` now, rather than accepted only to
+    retry a load known to fail. No other model is used in its place (FR-007)."""
+    if residency.is_unloadable(runner):
+        raise ModelMoraRefusal(
+            "model_unavailable",
+            detail=f"{runner.name} v{runner.version} could not be loaded on this Studio",
+        )
+
+
 def check_text_capability(runner: Runner, request: TextRequest) -> None:
     """Refuses before queueing (T065, FR-007, FR-011).
 
@@ -162,5 +173,6 @@ def resolve_image_runner(
         raise ModelMoraRefusal(
             "model_unavailable", detail=f"{model.name} v{model.version} has no runner attached"
         )
+    check_loadable(runner, residency)
     footprint = check_image_capability(runner, request, residency)
     return model, runner, footprint

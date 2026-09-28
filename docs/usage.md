@@ -165,12 +165,24 @@ without compiling anything. Each `LlamaCppTextRunner` picks its own free loopbac
 port unless `MODELMORA_LLAMA_SERVER_PORT` pins one.
 
 A single-file SDXL checkpoint needs a pipeline config and tokenizer from somewhere,
-too -- `diffusers` fetches them from the Hub at load time otherwise. Point
-`MODELMORA_SDXL_CONFIG_PATH` at an already-cached local snapshot directory (for
-example under `HF_HOME`, `.../<base SDXL pipeline snapshot>/snapshots/<hash>/`)
-so no lookup, cached or not, is ever needed; `serve` also forces
-`HF_HUB_OFFLINE=1` and `local_files_only=True` regardless, so an unset
-`MODELMORA_SDXL_CONFIG_PATH` fails loudly rather than reaching the network (FR-028).
+too -- `diffusers` fetches them from the Hub at load time otherwise. Record a local
+directory holding them (for example an already-cached
+`.../<base SDXL pipeline snapshot>/snapshots/<hash>/`) as the
+model's `config` companion, at `model add` time (`--companion config=<dir>`) or later:
+
+```bash
+modelmora model add-companion --name the default image checkpoint --version 111 \
+  --companion config=/data/hf-cache/hub/<base SDXL pipeline snapshot>/snapshots/<hash>
+```
+
+It is digested like any other companion, checked before the first load, and read by
+`serve` from the registry alone, so no `HF_HOME` or other environment variable is
+needed (FR-028). `serve` also forces `HF_HUB_OFFLINE=1` and `local_files_only=True`
+regardless, so a checkpoint recorded without one fails its load loudly -- reported
+`model_unavailable`, with a WARNING line for the team -- rather than reaching the
+network. A companion role already recorded is never replaced: a changed model is a
+new version. (`MODELMORA_SDXL_CONFIG_PATH` remains a fallback for a record without a
+`config` companion.)
 
 ### List, retire, verify, and change a default
 

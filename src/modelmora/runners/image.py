@@ -75,15 +75,22 @@ class ImageRunner(Runner):
         self._pipeline: Any = None
         # T064: a single-file SDXL checkpoint needs a pipeline config and tokenizer
         # from *somewhere*; `from_single_file` will happily fetch them from the Hub at
-        # load time otherwise. Supplied here as a local directory (already cached on
-        # the Studio, `docs/usage.md`) so no lookup, cached or not, is ever needed;
-        # `local_files_only=True` in `load()` is the second, defence-in-depth half.
+        # load time otherwise. Supplied here as a local directory so no lookup, cached
+        # or not, is ever needed; `local_files_only=True` in `load()` is the second,
+        # defence-in-depth half. T073: `serve` passes the record's own `config`
+        # companion (`runners/build.py`), so the registry alone is enough; the
+        # environment variable is only a fallback for a record without one.
         self._sdxl_config_path = sdxl_config_path or os.environ.get("MODELMORA_SDXL_CONFIG_PATH")
         # See the matching comment in `runners/text.py`: `declared_footprint_bytes()`
         # is asked before `load()` (FR-009, FR-011), so a real pipeline needs a hint
         # to report before its weights are actually resident.
         self._declared_footprint_bytes = declared_footprint_bytes
         self._footprint_bytes = declared_footprint_bytes or 0
+
+    @property
+    def sdxl_config_path(self) -> str | None:
+        """The local pipeline config directory a single-file load reads (T064, T073)."""
+        return self._sdxl_config_path
 
     def declared_footprint_bytes(self) -> int:
         return self._footprint_bytes

@@ -15,12 +15,17 @@ startup, not reprobed per request.
 
 from __future__ import annotations
 
+import logging
 import subprocess
 import threading
 import time
 from dataclasses import dataclass
 
+from modelmora.refusals import ModelMoraRefusal
 from modelmora.runners.base import Runner
+
+# The one channel for telling the team (plan.md): a WARNING line in the operator log.
+logger = logging.getLogger("modelmora.worker")
 
 # plan.md: "one Linux or macOS machine with an RTX 4090 (24 GB)".
 DEFAULT_CAPACITY_BYTES = 24 * 1024**3
@@ -60,6 +65,13 @@ def detect_gpu_capacity_bytes() -> int | None:
     return None
 
 
+def _unavailable(runner: Runner) -> ModelMoraRefusal:
+    return ModelMoraRefusal(
+        "model_unavailable",
+        detail=f"{runner.name} v{runner.version} could not be loaded on this Studio",
+    )
+
+
 class CannotFit(Exception):
     """A model's declared footprint alone exceeds capacity (spec Edge Cases)."""
 
@@ -77,10 +89,18 @@ class Residency:
         self._capacity_bytes = capacity_bytes
         self._lock = threading.Lock()
         self._resident: dict[tuple[str, str], _Resident] = {}
+        # Models whose load failed in this process (T072). Known broken until the
+        # team fixes the files and restarts `serve`; never retried per request.
+        self._unloadable: set[tuple[str, str]] = set()
 
     @staticmethod
     def _key(runner: Runner) -> tuple[str, str]:
         return (runner.name, runner.version)
+
+    def is_unloadable(self, runner: Runner) -> bool:
+        """Whether `runner`'s load already failed in this process (T072, spec Edge Cases)."""
+        with self._lock:
+            return self._key(runner) in self._unloadable
 
     def fits_alone(self, footprint_bytes: int) -> bool:
         """Whether a model of this footprint could ever be resident, alone (Edge Cases)."""
@@ -122,6 +142,8 @@ class Residency:
             )
         with self._lock:
             key = self._key(runner)
+            if key in self._unloadable:
+                raise _unavailable(runner)
             if runner.is_loaded():
                 self._resident[key] = _Resident(runner=runner, last_used=time.monotonic())
                 return
@@ -129,7 +151,26 @@ class Residency:
             while self._resident_bytes(excluding=key) + footprint > self._capacity_bytes:
                 self._evict_least_recently_used_locked()
 
-            runner.load()
+            try:
+                runner.load()
+            except Exception as exc:
+                # A model that cannot be loaded at all is `model_unavailable`, never a
+                # generation failure (spec Edge Cases, T072). A digest mismatch has
+                # already told the team (`registry/verify.py`); anything else is told
+                # here, with the error's own reason so the team can act on it (T074).
+                # Safe under FR-030: `load()` is never handed a request, so nothing it
+                # raises can carry request or result content.
+                self._unloadable.add(key)
+                if isinstance(exc, ModelMoraRefusal):
+                    raise
+                logger.warning(
+                    "model could not be loaded: %s v%s (%s: %s); refusing it until serve restarts",
+                    runner.name,
+                    runner.version,
+                    type(exc).__name__,
+                    exc,
+                )
+                raise _unavailable(runner) from exc
             self._resident[key] = _Resident(runner=runner, last_used=time.monotonic())
 
     def _evict_least_recently_used_locked(self) -> None:

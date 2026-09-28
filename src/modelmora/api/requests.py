@@ -26,6 +26,7 @@ from typing import TYPE_CHECKING
 
 from modelmora.api.lifecycle import LIFECYCLE_RETRY_AFTER_SECONDS
 from modelmora.api.validate import (
+    check_loadable,
     check_text_capability,
     model_ref,
     resolve_image_runner,
@@ -219,6 +220,7 @@ def submit_text_request(*, state: AppState, caller: str, request: TextRequest) -
     runner = state.runners.get((model.name, model.version))
     if runner is None:
         raise ModelMoraRefusal("model_unavailable", detail=f"{model.name} has no runner attached")
+    check_loadable(runner, state.residency)  # T072: a known-broken load is never retried
     check_text_capability(runner, request)  # T065: refused before queueing, never mid-generation
 
     settings = request.settings

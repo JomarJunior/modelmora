@@ -27,6 +27,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from modelmora.messages import FilterDisclosure, ModelKind
+from modelmora.registry.digest import compute_digest
 from modelmora.registry.store import ModelRecord, Slot, Store
 
 __all__ = ["ModelRegistry", "ModelRecord", "RegisteredModel", "Slot"]
@@ -173,6 +174,30 @@ class ModelRegistry:
         if record is None or not record.is_servable:
             return None
         return _as_registered(record)
+
+    def add_companion(self, name: str, version: str, *, role: str, path: str) -> ModelRecord:
+        """Attaches a companion a runner needs to an existing record (T073, FR-020,
+        FR-025) -- such as the `config` directory a single-file image checkpoint is
+        loaded with -- digested now, so `serve`'s check before the first load covers
+        it like any other companion (FR-022).
+
+        Validated like every other path on a record (T070). A role already recorded is
+        never replaced: that would silently change what "that exact version" means; a
+        team member records a changed model as a new version instead.
+        """
+        _validate_local_path(f"companion path {role!r}", path)
+        record = self._store.get_by_name_version(name, version)
+        if record is None:
+            raise ValueError(f"no model on record named {name!r} version {version!r}")
+        if role in record.companion_paths:
+            raise ValueError(
+                f"{name} v{version} already records a {role!r} companion; "
+                "record a changed model as a new version instead"
+            )
+        self._store.set_companion(record.id, role=role, path=path, digest=compute_digest(path))
+        updated = self._store.get_by_id(record.id)
+        assert updated is not None
+        return updated
 
     def resolve_record(self, name: str, version: str) -> ModelRecord | None:
         """The full record, servable or not -- for the CLI and the licence trail."""

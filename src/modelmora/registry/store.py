@@ -247,6 +247,24 @@ class Store:
             self._connection.commit()
             return model_id
 
+    def set_companion(self, model_id: int, *, role: str, path: str, digest: str) -> None:
+        """Records one more companion, with its digest, on an existing model (T073)."""
+        with self._lock:
+            self._connection.row_factory = sqlite3.Row
+            row = self._connection.execute(
+                "SELECT companion_paths, companion_digests FROM model WHERE id = ?", (model_id,)
+            ).fetchone()
+            assert row is not None
+            paths: dict[str, str] = json.loads(row["companion_paths"] or "{}")
+            digests: dict[str, str] = json.loads(row["companion_digests"] or "{}")
+            paths[role] = path
+            digests[role] = digest
+            self._connection.execute(
+                "UPDATE model SET companion_paths = ?, companion_digests = ? WHERE id = ?",
+                (json.dumps(paths), json.dumps(digests), model_id),
+            )
+            self._connection.commit()
+
     def _row_to_record(self, row: sqlite3.Row, periods: list[sqlite3.Row]) -> ModelRecord:
         return ModelRecord(
             id=row["id"],

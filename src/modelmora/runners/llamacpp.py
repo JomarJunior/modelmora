@@ -43,6 +43,38 @@ _OVERHEAD_BYTES_PER_CONTEXT_TOKEN = 400_000_000 / 4096
 _PR_SET_PDEATHSIG = 1  # linux/prctl.h; Linux-only (this Studio's kernel), T069
 
 
+# A server that really offloaded its model holds at least this share of the weights'
+# size in GPU memory; a CPU fallback holds almost none (T074). Deliberately loose:
+# the point is to tell "on the GPU" from "not on the GPU", not to measure the load.
+_MIN_OFFLOADED_SHARE = 0.5
+
+
+def _gpu_memory_used_by_pid(pid: int) -> int | None:
+    """GPU memory held by process `pid`, in bytes: 0 if it holds none, `None` when no
+    GPU can be asked at all (no `nvidia-smi`: CI, a machine without one), in which
+    case the offload check cannot tell and does not block (T074)."""
+    try:
+        result = subprocess.run(  # noqa: S603
+            [  # noqa: S607
+                "nvidia-smi",
+                "--query-compute-apps=pid,used_memory",
+                "--format=csv,noheader,nounits",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=True,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    used_mib = 0
+    for line in result.stdout.strip().splitlines():
+        fields = [field.strip() for field in line.split(",")]
+        if len(fields) == 2 and fields[0] == str(pid) and fields[1].isdigit():
+            used_mib += int(fields[1])
+    return used_mib * 1024 * 1024
+
+
 class LlamaServerStartupError(RuntimeError):
     """Raised when the managed `llama-server` subprocess never became healthy, or
     when it answers but is not serving the model this runner was built for."""
@@ -192,6 +224,38 @@ class LlamaCppTextRunner(Runner):
             preexec_fn=_die_with_parent,  # T069: dies if this process is ever killed
         )
         self._wait_until_healthy()
+        self._verify_offloaded()
+
+    def _verify_offloaded(self) -> None:
+        """A `llama-server` that cannot find its CUDA runtime falls back to the CPU
+        without an error: an order of magnitude slower, while residency counts GPU
+        memory it does not hold (T074, FR-009). Once healthy (weights loaded), a
+        server asked to offload must actually hold them on the GPU; otherwise the
+        load fails with a reason the team can act on, and the server is stopped.
+        """
+        if self._n_gpu_layers == 0 or self._process is None:
+            return  # deliberately CPU-only: nothing to check
+        weights = self._weights_bytes()
+        if weights == 0:
+            return  # no weights on disk to compare against
+        used = _gpu_memory_used_by_pid(self._process.pid)
+        if used is None:
+            return  # no GPU to ask: cannot tell, so do not block
+        if used >= weights * _MIN_OFFLOADED_SHARE:
+            return
+        self.unload()
+        raise LlamaServerStartupError(
+            f"{self.name} v{self.version}: llama-server is not holding its model on the GPU "
+            f"({used // (1024 * 1024)} MiB used for {weights // (1024 * 1024)} MiB of weights); "
+            f"check that its CUDA runtime is found (MODELMORA_LLAMA_CUDART_LIB_DIR)"
+        )
+
+    def _weights_bytes(self) -> int:
+        """The model file and its vision projector on disk: what offloading moves."""
+        total = Path(self._model_path).stat().st_size if Path(self._model_path).exists() else 0
+        if self._mmproj_path and Path(self._mmproj_path).exists():
+            total += Path(self._mmproj_path).stat().st_size
+        return total
 
     def _wait_until_healthy(self) -> None:
         deadline = time.monotonic() + self._startup_timeout_seconds
