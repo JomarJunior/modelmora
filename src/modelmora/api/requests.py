@@ -25,7 +25,12 @@ from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
 from modelmora.api.lifecycle import LIFECYCLE_RETRY_AFTER_SECONDS
-from modelmora.api.validate import model_ref, resolve_image_runner, resolve_text_model
+from modelmora.api.validate import (
+    check_text_capability,
+    model_ref,
+    resolve_image_runner,
+    resolve_text_model,
+)
 from modelmora.messages import (
     Accepted,
     ImageRequest,
@@ -166,6 +171,7 @@ def _enqueue(
     model: ModelRef,
     runner: Runner,
     generate: Generate,
+    footprint_hint: int | None = None,
 ) -> Accepted:
     assert state.line is not None  # set in AppState.__post_init__
     lifecycle_reason = state.lifecycle.refusal_reason()
@@ -181,6 +187,7 @@ def _enqueue(
         runner=runner,
         submitted_at=submitted_at,
         generate=generate,
+        footprint_hint=footprint_hint,
     )
 
     # The record must exist before the request becomes visible to the worker (the
@@ -212,6 +219,7 @@ def submit_text_request(*, state: AppState, caller: str, request: TextRequest) -
     runner = state.runners.get((model.name, model.version))
     if runner is None:
         raise ModelMoraRefusal("model_unavailable", detail=f"{model.name} has no runner attached")
+    check_text_capability(runner, request)  # T065: refused before queueing, never mid-generation
 
     settings = request.settings
 
@@ -241,7 +249,9 @@ def submit_text_request(*, state: AppState, caller: str, request: TextRequest) -
 def submit_image_request(*, state: AppState, caller: str, request: ImageRequest) -> Accepted:
     # Capability checks (size, footprint versus GPU capacity) raise ModelMoraRefusal
     # here, before anything is queued (T025, US2 acceptance scenario 3).
-    model, runner = resolve_image_runner(state.registry, state.runners, state.residency, request)
+    model, runner, footprint = resolve_image_runner(
+        state.registry, state.runners, state.residency, request
+    )
     ref = model_ref(model)
     settings = request.settings
 
@@ -257,7 +267,13 @@ def submit_image_request(*, state: AppState, caller: str, request: ImageRequest)
         )
 
     return _enqueue(
-        state=state, caller=caller, kind="image", model=ref, runner=runner, generate=generate
+        state=state,
+        caller=caller,
+        kind="image",
+        model=ref,
+        runner=runner,
+        generate=generate,
+        footprint_hint=footprint,
     )
 
 

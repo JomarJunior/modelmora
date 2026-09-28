@@ -40,6 +40,10 @@ class QueuedRequest:
     runner: Runner
     submitted_at: datetime
     generate: Generate
+    # This request's own peak footprint (weights plus its runtime overhead), computed
+    # once at admission when known (image sizing, T063); `None` defers to the
+    # runner's own `declared_footprint_bytes()` (`worker/residency.py`).
+    footprint_hint: int | None = None
 
 
 @dataclass(frozen=True)

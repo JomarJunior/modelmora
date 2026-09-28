@@ -51,7 +51,9 @@ def test_a_burst_under_contention_never_changes_what_was_asked_for(make_client) 
             body = {
                 "kind": "image",
                 "description": f"request {i}",
-                "size": {"width": 64 + i, "height": 96 + i},
+                # Multiples of 8 (T066): every SDXL/SD-family VAE's own downsampling
+                # factor, enforced before queueing regardless of runner.
+                "size": {"width": 64 + i * 8, "height": 96 + i * 8},
                 "settings": {"seed": i, "steps": 10 + i},
                 "model": {"name": image_a.name, "version": image_a.version},
             }

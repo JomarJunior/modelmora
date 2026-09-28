@@ -17,6 +17,7 @@ from importlib import resources
 from pathlib import Path
 
 from modelmora.messages import FilterDisclosure, ModelKind
+from modelmora.registry.digest import compute_digest
 
 Slot = str  # "text" | "text_with_images" | "image" (data-model.md)
 
@@ -70,6 +71,12 @@ class ModelRecord:
     # which never needed a runner attached (FR-020).
     local_path: str | None = None
     companion_paths: dict[str, str] = field(default_factory=dict)
+    # A digest per companion role (T062), the same idea as `weights_digest` but for
+    # the files in `companion_paths`. `{}` for a record with no companion, or one
+    # whose companion predates this field and has not yet been backfilled (see
+    # `Store._backfill_companion_digests`) -- until then that companion is simply not
+    # checked at load time, rather than refused for a digest never computed.
+    companion_digests: dict[str, str] = field(default_factory=dict)
 
     @property
     def is_complete(self) -> bool:
@@ -104,7 +111,9 @@ class Store:
         self._connection.execute("PRAGMA foreign_keys = ON")
         self._connection.executescript(_SCHEMA)
         self._ensure_local_path_columns()
+        self._ensure_companion_digest_column()
         self._connection.commit()
+        self._backfill_companion_digests()
 
     def close(self) -> None:
         self._connection.close()
@@ -128,6 +137,58 @@ class Store:
                 "ALTER TABLE model ADD COLUMN companion_paths TEXT NOT NULL DEFAULT '{}'"
             )
 
+    def _ensure_companion_digest_column(self) -> None:
+        """Migrates a database written before T062 the same way (see above)."""
+        existing = {row[1] for row in self._connection.execute("PRAGMA table_info(model)")}
+        if "companion_digests" not in existing:
+            self._connection.execute(
+                "ALTER TABLE model ADD COLUMN companion_digests TEXT NOT NULL DEFAULT '{}'"
+            )
+
+    def _backfill_companion_digests(self) -> None:
+        """Computes and records a digest for every companion that does not have one
+        yet (T062): a record's `companion_paths` existed before `companion_digests`
+        did (T054-T057), so a companion added then has files on disk but nothing yet
+        recorded to check them against. This establishes that baseline once, from
+        whatever is on disk right now -- exactly what happened for `weights_digest`
+        itself at `model add` time originally; a companion whose file is missing is
+        left unbackfilled rather than raising, since `verify_companions_before_load`
+        already treats "no recorded digest" as "not yet checkable", not a mismatch.
+        Idempotent: a companion that already has a digest is left alone, so reopening
+        an already-backfilled database does no hashing at all.
+        """
+        with self._lock:
+            self._connection.row_factory = sqlite3.Row
+            rows = list(
+                self._connection.execute(
+                    "SELECT id, companion_paths, companion_digests FROM model "
+                    "WHERE companion_paths != '{}'"
+                )
+            )
+            changed = False
+            for row in rows:
+                companions: dict[str, str] = json.loads(row["companion_paths"])
+                digests: dict[str, str] = (
+                    json.loads(row["companion_digests"]) if row["companion_digests"] else {}
+                )
+                missing = {role: p for role, p in companions.items() if role not in digests}
+                if not missing:
+                    continue
+                for role, companion_path in missing.items():
+                    file_path = Path(companion_path)
+                    if file_path.exists():
+                        digests[role] = compute_digest(file_path)
+                        changed = True
+                if digests != (
+                    json.loads(row["companion_digests"]) if row["companion_digests"] else {}
+                ):
+                    self._connection.execute(
+                        "UPDATE model SET companion_digests = ? WHERE id = ?",
+                        (json.dumps(digests), row["id"]),
+                    )
+            if changed:
+                self._connection.commit()
+
     def insert_model(
         self,
         *,
@@ -146,6 +207,7 @@ class Store:
         filter_disclosure: FilterDisclosure,
         local_path: str | None = None,
         companion_paths: dict[str, str] | None = None,
+        companion_digests: dict[str, str] | None = None,
     ) -> int:
         with self._lock:
             cursor = self._connection.execute(
@@ -154,8 +216,8 @@ class Store:
                     name, version, kind, reads_images, license_name, license_source,
                     source, weights_digest, added_by, added_at,
                     license_confirmed_by, license_confirmed_at, filter_disclosure,
-                    local_path, companion_paths
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    local_path, companion_paths, companion_digests
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     name,
@@ -173,6 +235,7 @@ class Store:
                     filter_disclosure,
                     local_path,
                     json.dumps(companion_paths or {}),
+                    json.dumps(companion_digests or {}),
                 ),
             )
             model_id = cursor.lastrowid
@@ -202,6 +265,9 @@ class Store:
             filter_disclosure=row["filter_disclosure"],
             local_path=row["local_path"],
             companion_paths=json.loads(row["companion_paths"]) if row["companion_paths"] else {},
+            companion_digests=(
+                json.loads(row["companion_digests"]) if row["companion_digests"] else {}
+            ),
             service_periods=tuple(
                 ServicePeriod(
                     started_at=_parse(p["started_at"]) or datetime.now(UTC),

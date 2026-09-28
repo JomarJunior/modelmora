@@ -5,13 +5,17 @@ a memory error. `declared_footprint_bytes()` is asked of the runner, real or fak
 (R-10); this module makes no assumption about GPU internals beyond "the resident
 footprints must fit within capacity".
 
-Capacity detection for a real GPU (`torch.cuda.get_device_properties`) belongs to the
-real image runner (T023, out of scope on hardware with no GPU); `DEFAULT_CAPACITY_BYTES`
-below stands in for one Studio RTX 4090 (plan.md "Target Platform") until then.
+`DEFAULT_CAPACITY_BYTES` stands in for one Studio RTX 4090 (plan.md "Target
+Platform"): the fixed value test mode, CI and every existing test keep using
+(`Residency()` with no `capacity_bytes`, unchanged from before T063). `serve` itself
+(`cli.py`, non-test-mode) asks `detect_gpu_capacity_bytes()` for the real GPU's own
+free memory instead, and passes that in explicitly -- capacity is measured once at
+startup, not reprobed per request.
 """
 
 from __future__ import annotations
 
+import subprocess
 import threading
 import time
 from dataclasses import dataclass
@@ -20,6 +24,40 @@ from modelmora.runners.base import Runner
 
 # plan.md: "one Linux or macOS machine with an RTX 4090 (24 GB)".
 DEFAULT_CAPACITY_BYTES = 24 * 1024**3
+
+
+def detect_gpu_capacity_bytes() -> int | None:
+    """Free GPU memory right now, real hardware only (T063); `None` with no GPU
+    visible (stand-ins and CI keep the fixed `DEFAULT_CAPACITY_BYTES` instead,
+    R-10). Free rather than total: measured on the Studio, something else (the
+    desktop compositor) already holds a few hundred MiB before ModelMora starts,
+    and reserving for that is more honest than assuming the whole card is ours.
+
+    Tried in order: `nvidia-smi` (works with no Python CUDA package installed at
+    all), then `torch.cuda.mem_get_info` if the `gpu` extra is present. Neither is
+    imported or run at module load, only when a real `serve` actually calls this.
+    """
+    try:
+        result = subprocess.run(  # noqa: S603, S607
+            ["nvidia-smi", "--query-gpu=memory.total,memory.used", "--format=csv,noheader,nounits"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=True,
+        )
+        total_mib, used_mib = result.stdout.strip().splitlines()[0].split(",")
+        return (int(total_mib) - int(used_mib)) * 1024 * 1024
+    except (OSError, subprocess.SubprocessError, ValueError, IndexError):
+        pass
+    try:
+        import torch
+
+        if torch.cuda.is_available():
+            free_bytes, _total_bytes = torch.cuda.mem_get_info(0)
+            return int(free_bytes)
+    except ImportError:
+        pass
+    return None
 
 
 class CannotFit(Exception):
@@ -55,14 +93,28 @@ class Residency:
             if key != excluding
         )
 
-    def ensure_loaded(self, runner: Runner) -> None:
+    def ensure_loaded(self, runner: Runner, *, footprint_override: int | None = None) -> None:
         """Loads `runner`, evicting least-recently-used residents to make room.
+
+        `footprint_override`, when given, is the peak footprint for the *specific*
+        request about to run -- weights plus that request's own runtime overhead
+        (T063: SDXL activations sized to the request, a llama.cpp KV cache), computed
+        once at admission (`api/validate.py`) and carried on the `QueuedRequest`
+        (`worker/worker.py`). Every *other* resident runner still reports through its
+        own `declared_footprint_bytes()`, its resting weights-only figure: only the
+        runner about to actually generate incurs activation overhead, and by
+        construction (one worker, one generation at a time) nothing else is
+        generating while this decision is made.
 
         Raises `CannotFit` if the runner's own footprint exceeds capacity, even alone.
         Callers that must refuse before queueing (FR-011) check `fits_alone` first
         (`api/validate.py`); this is the belt for the worker's own use.
         """
-        footprint = runner.declared_footprint_bytes()
+        footprint = (
+            footprint_override
+            if footprint_override is not None
+            else runner.declared_footprint_bytes()
+        )
         if not self.fits_alone(footprint):
             raise CannotFit(
                 f"{runner.name} v{runner.version} needs {footprint} bytes, more than "

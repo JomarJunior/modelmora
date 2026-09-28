@@ -99,7 +99,7 @@ class Worker:
         try:
             was_resident = request.runner.is_loaded()
             load_started = time.monotonic()
-            residency.ensure_loaded(request.runner)
+            residency.ensure_loaded(request.runner, footprint_override=request.footprint_hint)
             if not was_resident:
                 self._estimator.record_load(request.model, time.monotonic() - load_started)
             generated = request.generate()

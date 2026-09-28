@@ -129,6 +129,15 @@ def main() -> int:
         "/data/llamacpp/cudart/cudart-llama-b11191-bin-ubuntu-cuda-13.4-x64",
     )
     env.setdefault("HF_HOME", "/data/hf-cache")
+    # T064: the exact local snapshot directory already cached under HF_HOME above --
+    # `ImageRunner.load()` passes this straight to `from_single_file`'s own `config`
+    # argument, bypassing repo-id/Hub cache resolution entirely, proven offline.
+    env.setdefault(
+        "MODELMORA_SDXL_CONFIG_PATH",
+        "/data/hf-cache/hub/<base SDXL pipeline snapshot>/"
+        "snapshots/462165984030d82259a11f4367a4eed129e94a7b",
+    )
+    env["HF_HUB_OFFLINE"] = "1"  # belt: this run must not touch the network at all
 
     if not Path(env["MODELMORA_DB_PATH"]).exists():
         raise AssertionError(
@@ -212,6 +221,23 @@ def main() -> int:
             f"{text_status_2['result']['text']!r}"
         )
         assert text_status_2["state"] == "done"
+
+        _log("checking same-seed reproducibility (FR-006, T067)...")
+        seeded_body = {
+            "kind": "text",
+            "instructions": "Write one sentence describing an empty gallery at dawn.",
+            "settings": {"seed": 777, "temperature": 0.8},
+        }
+        status, first_seeded = _request("POST", "/modelmora/v1/requests", json_body=seeded_body)
+        assert status == 202, first_seeded
+        first_seeded_status = _poll_until_terminal(first_seeded["requestId"], timeout_seconds=180)
+        status, second_seeded = _request("POST", "/modelmora/v1/requests", json_body=seeded_body)
+        assert status == 202, second_seeded
+        second_seeded_status = _poll_until_terminal(second_seeded["requestId"], timeout_seconds=180)
+        first_text = first_seeded_status["result"]["text"]
+        second_text = second_seeded_status["result"]["text"]
+        _log(f"same seed, same request, twice: {first_text!r} == {second_text!r}")
+        assert first_text == second_text, "same model, request and seed produced different text"
 
         _log("stopping `modelmora serve` (SIGINT, the same signal an operator's Ctrl+C sends)...")
         process.send_signal(signal.SIGINT)

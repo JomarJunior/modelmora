@@ -14,8 +14,11 @@ environment variables), never fetched here.
 
 from __future__ import annotations
 
+import ctypes
 import json
 import os
+import signal
+import socket
 import subprocess
 import time
 import urllib.error
@@ -27,11 +30,42 @@ from modelmora.runners.base import GeneratedText, Runner
 
 _HEALTH_TIMEOUT_SECONDS = 120.0
 _HEALTH_POLL_SECONDS = 0.5
-_DEFAULT_MAX_TOKENS = 512
+DEFAULT_MAX_TOKENS = 512
+
+# Calibrated from the Studio (RTX 4090, spec 002 amendment log): the Studio's GGUF text model resident
+# measured ~19.2GB total GPU against ~18.8GB of file sizes (main + mmproj) at
+# context_size 4096 -- the remaining ~0.4GB is the KV cache and llama-server's own
+# runtime overhead, which grows with the context window. A calibrated constant, not
+# an architecture-derived one (Principle IX): T063, the same idea as
+# `estimate_activation_overhead_bytes` in `runners/image.py`.
+_OVERHEAD_BYTES_PER_CONTEXT_TOKEN = 400_000_000 / 4096
+
+_PR_SET_PDEATHSIG = 1  # linux/prctl.h; Linux-only (this Studio's kernel), T069
 
 
 class LlamaServerStartupError(RuntimeError):
-    """Raised when the managed `llama-server` subprocess never became healthy."""
+    """Raised when the managed `llama-server` subprocess never became healthy, or
+    when it answers but is not serving the model this runner was built for."""
+
+
+def _find_free_port() -> int:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.bind(("127.0.0.1", 0))
+        return int(sock.getsockname()[1])
+
+
+def _die_with_parent() -> None:
+    """Run in the child right after `fork()`, before `exec()` (T069): if this Python
+    process is ever killed outright (SIGKILL, an unhandled crash) rather than
+    reaching `unload()`'s own `terminate()`, the kernel sends `llama-server` SIGTERM
+    too, instead of leaving it orphaned and still holding the GPU. Linux-only
+    (`prctl`), matching this Studio's kernel; harmless best-effort elsewhere.
+    """
+    try:
+        libc = ctypes.CDLL("libc.so.6", use_errno=True)
+        libc.prctl(_PR_SET_PDEATHSIG, signal.SIGTERM)
+    except OSError:
+        pass
 
 
 def _read_json(request: urllib.request.Request, *, timeout: float) -> dict[str, Any]:
@@ -74,7 +108,15 @@ class LlamaCppTextRunner(Runner):
         self._model_path = model_path
         self._mmproj_path = mmproj_path
         self._host = host
-        self._port = port or int(os.environ.get("MODELMORA_LLAMA_SERVER_PORT", "8901"))
+        # T069: each runner gets its own free loopback port unless told otherwise --
+        # an explicit constructor argument (tests) or `MODELMORA_LLAMA_SERVER_PORT`
+        # (an operator pinning a single instance) both still win, in that order.
+        if port is not None:
+            self._port = port
+        elif "MODELMORA_LLAMA_SERVER_PORT" in os.environ:
+            self._port = int(os.environ["MODELMORA_LLAMA_SERVER_PORT"])
+        else:
+            self._port = _find_free_port()
         self._n_gpu_layers = n_gpu_layers
         self._context_size = context_size
         # No repository or pip package ships the llama.cpp binaries or their CUDA
@@ -89,7 +131,12 @@ class LlamaCppTextRunner(Runner):
         footprint = Path(model_path).stat().st_size if Path(model_path).exists() else 0
         if mmproj_path and Path(mmproj_path).exists():
             footprint += Path(mmproj_path).stat().st_size
+        footprint += int(context_size * _OVERHEAD_BYTES_PER_CONTEXT_TOKEN)  # T063: KV cache
         self._footprint_bytes = footprint
+
+    @property
+    def port(self) -> int:
+        return self._port
 
     @property
     def _base_url(self) -> str:
@@ -97,6 +144,9 @@ class LlamaCppTextRunner(Runner):
 
     def declared_footprint_bytes(self) -> int:
         return self._footprint_bytes
+
+    def context_window_tokens(self) -> int | None:
+        return self._context_size
 
     def is_loaded(self) -> bool:
         return self._process is not None and self._process.poll() is None
@@ -116,6 +166,13 @@ class LlamaCppTextRunner(Runner):
             self._host,
             "--port",
             str(self._port),
+            # T068: the Studio's GGUF text model's chat template thinks by default, which can spend
+            # the whole token budget "thinking" and leave `content` empty. Disabling
+            # reasoning at the server level (confirmed against this exact build,
+            # b11191) means `content` is always what is returned -- never a
+            # reasoning trace standing in for an answer.
+            "--reasoning",
+            "off",
         ]
         if self._mmproj_path:
             command += ["--mmproj", self._mmproj_path]
@@ -128,7 +185,11 @@ class LlamaCppTextRunner(Runner):
             )
 
         self._process = subprocess.Popen(  # noqa: S603
-            command, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            command,
+            env=env,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            preexec_fn=_die_with_parent,  # T069: dies if this process is ever killed
         )
         self._wait_until_healthy()
 
@@ -143,6 +204,7 @@ class LlamaCppTextRunner(Runner):
             try:
                 request = urllib.request.Request(f"{self._base_url}/health")  # noqa: S310
                 _read_json(request, timeout=2.0)
+                self._verify_serving_this_model()
                 return
             except (urllib.error.URLError, TimeoutError, ConnectionError):
                 time.sleep(_HEALTH_POLL_SECONDS)
@@ -151,6 +213,22 @@ class LlamaCppTextRunner(Runner):
             f"{self.name} v{self.version}: llama-server did not become healthy within "
             f"{self._startup_timeout_seconds}s"
         )
+
+    def _verify_serving_this_model(self) -> None:
+        """A stale `llama-server` already listening on this port would pass `/health`
+        without ever being the model this runner was built for (T069). `/props`'s
+        `model_path` is exactly the `-m` argument the intended server was started
+        with, so an exact match is the whole check.
+        """
+        request = urllib.request.Request(f"{self._base_url}/props")  # noqa: S310
+        body = _read_json(request, timeout=5.0)
+        served_path = body.get("model_path")
+        if served_path != self._model_path:
+            raise LlamaServerStartupError(
+                f"{self.name} v{self.version}: llama-server on port {self._port} is "
+                f"serving {served_path!r}, not {self._model_path!r} -- a stale server "
+                f"may already be listening on this port"
+            )
 
     def unload(self) -> None:
         if self._process is None:
@@ -210,10 +288,17 @@ class LlamaCppTextRunner(Runner):
             "messages": self._chat_messages(
                 instructions=instructions, conversation=conversation, images=images
             ),
-            "max_tokens": max_length or _DEFAULT_MAX_TOKENS,
+            "max_tokens": max_length or DEFAULT_MAX_TOKENS,
         }
         if seed is not None:
             payload["seed"] = seed
+            # T067: llama-server's prompt cache (default on) can reuse a previous
+            # request's cached computation for a shared prefix; measured on the
+            # Studio to be reproducible even so for this model and build, but a
+            # caller asking for a specific seed (FR-006) is asking to reproduce a
+            # result exactly, and reusing another request's cached state is exactly
+            # the kind of cross-request coupling that promise must not depend on.
+            payload["cache_prompt"] = False
         if temperature is not None:
             payload["temperature"] = temperature
 
@@ -223,15 +308,16 @@ class LlamaCppTextRunner(Runner):
             headers={"Content-Type": "application/json"},
             method="POST",
         )
-        body = _read_json(request, timeout=max(60.0, (max_length or _DEFAULT_MAX_TOKENS) * 0.5))
+        body = _read_json(request, timeout=max(60.0, (max_length or DEFAULT_MAX_TOKENS) * 0.5))
         message = body["choices"][0]["message"]
-        # A model whose chat template preserves reasoning (this model family's does, by default)
-        # can spend its whole token budget "thinking" and leave `content` empty; the
-        # reasoning trace is still real generated text about the request, so it is
-        # what is returned rather than nothing (spec Assumptions carry no promise
-        # that a model's thinking is discarded, only that what is returned is honest
-        # about being this model's output).
-        text = message.get("content") or message.get("reasoning_content") or ""
+        # T068: reasoning is disabled server-side (`load()`'s `--reasoning off`), so
+        # `content` is always the answer, never a reasoning trace standing in for
+        # one. If a model still produced nothing -- an empty turn, not an error the
+        # server itself raised -- that is a generation failure with a reason the
+        # caller can act on (spec Edge Cases), not a silent empty result.
+        text = message.get("content") or ""
+        if not text:
+            raise RuntimeError(f"{self.name} v{self.version} produced no answer")
 
         settings_used: dict[str, Any] = {
             "seed": seed,

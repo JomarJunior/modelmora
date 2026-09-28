@@ -20,10 +20,16 @@ from modelmora.config import BIND_HOST, Config
 from modelmora.messages import FilterDisclosure, ModelKind
 from modelmora.refusals import ModelMoraRefusal
 from modelmora.registry.registry import ModelRecord, ModelRegistry, RegisteredModel
-from modelmora.registry.verify import compute_digest, verify_before_load
+from modelmora.registry.verify import (
+    VerifyingRunner,
+    compute_digest,
+    verify_before_load,
+    verify_companions_before_load,
+)
 from modelmora.runners.base import Runner
 from modelmora.runners.build import build_runner
 from modelmora.runners.standin import StandInTextRunner
+from modelmora.worker.residency import DEFAULT_CAPACITY_BYTES, Residency, detect_gpu_capacity_bytes
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -141,19 +147,27 @@ def _run_serve(args: argparse.Namespace) -> int:
 
     if args.test_mode:
         registry, runners = _test_mode_registry()
+        residency = Residency()  # the stand-in default (24 GiB), never probed (FR-033)
     else:
         # A record with a `local_path` (spec 002 amendment, T054-T057) gets a real
         # runner built for it (`runners/build.py`), chosen by kind and file format; a
         # record without one is still listed with its licence, just unattached -- a
-        # caller asking for it gets `model_unavailable`, never a crash.
+        # caller asking for it gets `model_unavailable`, never a crash. Every real
+        # runner is wrapped so its files are checked against the registry's recorded
+        # digest before its very first load (T062), not only through the separate
+        # `model verify` command.
         registry = ModelRegistry(config.db_path)
         runners = {}
         for record in registry.list_servable_records():
             runner = build_runner(record)
             if runner is not None:
-                runners[(record.name, record.version)] = runner
+                runners[(record.name, record.version)] = VerifyingRunner(runner, record)
+        # The real GPU's own capacity (T063), not the 24 GiB stand-in default; a
+        # Studio with no GPU visible falls back to that default rather than refusing
+        # to start.
+        residency = Residency(capacity_bytes=detect_gpu_capacity_bytes() or DEFAULT_CAPACITY_BYTES)
 
-    state = AppState(config=config, registry=registry, runners=runners)
+    state = AppState(config=config, registry=registry, runners=runners, residency=residency)
     app = create_app(state)
     print(f"ModelMora listening on http://{BIND_HOST}:{config.port} (loopback only)")
     uvicorn.run(app, host=BIND_HOST, port=config.port, log_level="info")
@@ -189,21 +203,30 @@ def _run_model_add(args: argparse.Namespace) -> int:
     added_by = args.added_by or getpass.getuser()
     kind: ModelKind = args.kind
     filter_disclosure: FilterDisclosure = args.filter_disclosure
-    record = registry.add_model(
-        name=args.name,
-        version=args.version,
-        kind=kind,
-        reads_images=args.reads_images,
-        source=args.source,
-        weights_digest=compute_digest(args.weights_path),
-        added_by=added_by,
-        license_name=args.license_name,
-        license_source=args.license_source,
-        license_confirmed_by=added_by if args.confirm_license else None,
-        filter_disclosure=filter_disclosure,
-        local_path=args.local_path or args.weights_path,
-        companion_paths=_parse_companions(args.companion),
-    )
+    companion_paths = _parse_companions(args.companion)
+    # Digested eagerly, same as the main weights: this is what `VerifyingRunner`
+    # checks a companion file against before `serve`'s very first real load (T062).
+    companion_digests = {role: compute_digest(path) for role, path in companion_paths.items()}
+    try:
+        record = registry.add_model(
+            name=args.name,
+            version=args.version,
+            kind=kind,
+            reads_images=args.reads_images,
+            source=args.source,
+            weights_digest=compute_digest(args.weights_path),
+            added_by=added_by,
+            license_name=args.license_name,
+            license_source=args.license_source,
+            license_confirmed_by=added_by if args.confirm_license else None,
+            filter_disclosure=filter_disclosure,
+            local_path=args.local_path or args.weights_path,
+            companion_paths=companion_paths,
+            companion_digests=companion_digests,
+        )
+    except ValueError as exc:  # T070: an invalid local_path or companion path
+        print(exc, file=sys.stderr)
+        return 1
     _print_record(record, show_service_dates=False)
     if not record.is_complete:
         print(
@@ -247,6 +270,7 @@ def _run_model_verify(args: argparse.Namespace) -> int:
         return 1
     try:
         verify_before_load(record, args.weights_path)
+        verify_companions_before_load(record)
     except ModelMoraRefusal as refusal:
         # verify_before_load already logged the WARNING line (plan.md "Telling the
         # team"); this is the CLI's own non-zero exit for the same event.

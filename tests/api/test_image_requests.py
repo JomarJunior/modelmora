@@ -149,6 +149,60 @@ def test_a_model_too_large_for_this_studio_is_refused_at_once() -> None:
     assert submitted["body"]["reason"] == "cannot_be_served_on_this_studio"
 
 
+class _OverheadAwareStandIn(StandInImageRunner):
+    """Adds a fixed overhead on top of its declared weights footprint, the way a
+    real `ImageRunner` does for its request's size (T063) -- a stand-in kept simple
+    (a constant, not pixel-scaled) since only the wiring is under test here, not the
+    calibration (that is `runners/image.py`'s own concern, proven in
+    `tests/registry/test_...` and by the Studio smoke check).
+    """
+
+    def __init__(self, *, extra_overhead_bytes: int, **kwargs: object) -> None:
+        super().__init__(**kwargs)  # type: ignore[arg-type]
+        self._extra_overhead_bytes = extra_overhead_bytes
+
+    def footprint_bytes_for_image(self, *, width: int, height: int) -> int:
+        return self.declared_footprint_bytes() + self._extra_overhead_bytes
+
+
+def test_activation_overhead_is_counted_toward_capacity(client: TestClient) -> None:
+    """T063: a runner that would fit by weights alone but not with its own runtime
+    overhead added must still be refused before queueing, not accepted and left to
+    fail against the real GPU later.
+    """
+    state = build_state()
+    capacity = 2 * 1024**3
+    state.residency = type(state.residency)(capacity_bytes=capacity)
+    huge = RegisteredModel(
+        name="synthetic-image-overhead",
+        version="1.0",
+        kind="image",
+        reads_images=False,
+        license="Synthetic-Test-License",
+    )
+    state.registry.register(huge, default_for=["image"])
+    state.runners[(huge.name, huge.version)] = _OverheadAwareStandIn(
+        name=huge.name,
+        version=huge.version,
+        fake_footprint_bytes=capacity - 1,  # fits alone by its declared weights...
+        extra_overhead_bytes=1024**3,  # ...but not once this request's overhead is added
+    )
+    client = TestClient(create_app(state), headers={"Authorization": f"Bearer {CALLER_TOKEN}"})
+
+    submitted = _submit(client)
+
+    assert submitted["body"]["reason"] == "cannot_be_served_on_this_studio"
+
+
+def test_a_size_not_a_multiple_of_eight_is_refused_before_queueing(client: TestClient) -> None:
+    """T066: every SDXL/SD-family VAE's own downsampling factor."""
+    submitted = _submit(client, size={"width": 100, "height": 100})
+
+    assert submitted["status"] == 400
+    assert submitted["body"]["reason"] == "invalid_request"
+    assert "multiples of 8" in submitted["body"]["detail"]
+
+
 def test_an_unknown_image_model_is_refused_with_no_substitute(client: TestClient) -> None:
     """FR-004 and FR-007: a named model is served or refused, never swapped."""
     submitted = _submit(client, model={"name": "no-such-model", "version": "9.9"})

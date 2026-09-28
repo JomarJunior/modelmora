@@ -283,6 +283,35 @@ def test_local_path_and_companions_round_trip_through_add(
     assert record.companion_paths == {"mmproj": str(mmproj)}
 
 
+def test_an_invalid_local_path_is_rejected_with_a_nonzero_exit(
+    weights_dir: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """T070: a URL or a relative path is refused, not silently recorded."""
+    exit_code = cli.main(
+        [
+            "model",
+            "add",
+            "--name",
+            "synthetic-bad-local-path",
+            "--version",
+            "1.0",
+            "--kind",
+            "text",
+            "--source",
+            "local fixture",
+            "--weights-path",
+            str(weights_dir),
+            "--local-path",
+            "https://example.invalid/weights.safetensors",
+        ]
+    )
+    assert exit_code == 1
+    assert "URL" in capsys.readouterr().err
+
+    registry = ModelRegistry(Config.from_env().db_path)
+    assert registry.resolve_record("synthetic-bad-local-path", "1.0") is None
+
+
 def test_local_path_defaults_to_the_weights_path(
     weights_dir: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:

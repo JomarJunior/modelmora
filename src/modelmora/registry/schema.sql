@@ -6,8 +6,10 @@
 -- `companion_paths` (added in the spec 002 amendment, 2026-09-26) are what let
 -- `modelmora serve` build a real runner from a record instead of leaving it
 -- unattached: where the model's files actually sit on this Studio, and any files a
--- runner needs beside them (a vision projector, a VAE). `Store` migrates an
--- existing database that predates these columns (see `_ensure_local_path_columns`);
+-- runner needs beside them (a vision projector, a VAE). `companion_digests` (T062)
+-- is the digest for each of those companion files, the same idea as `weights_digest`
+-- but per role. `Store` migrates an existing database that predates these columns
+-- (see `_ensure_local_path_columns`, `_ensure_companion_digest_column`);
 -- `CREATE TABLE IF NOT EXISTS` alone would not add them to an already-created table.
 
 CREATE TABLE IF NOT EXISTS model (
@@ -28,6 +30,7 @@ CREATE TABLE IF NOT EXISTS model (
         CHECK (filter_disclosure IN ('none', 'disclosed', 'undisclosable')),
     local_path TEXT,
     companion_paths TEXT NOT NULL DEFAULT '{}',
+    companion_digests TEXT NOT NULL DEFAULT '{}',
     UNIQUE (name, version)
 );
 

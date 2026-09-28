@@ -114,6 +114,30 @@ def test_an_idle_model_is_unloaded_to_leave_the_gpu_free() -> None:
     assert residency.resident_runners() == []
 
 
+def test_footprint_override_is_used_instead_of_the_runners_declared_footprint() -> None:
+    """T063: the pending request's own peak footprint (weights plus its runtime
+    overhead) decides eviction, not the runner's resting `declared_footprint_bytes()`.
+    """
+    residency = Residency(capacity_bytes=2 * ONE_GIB)
+    resident = _text("resident", footprint=ONE_GIB)
+    incoming = _text("incoming", footprint=ONE_GIB)  # would fit alone at its own figure
+
+    residency.ensure_loaded(resident)
+    residency.ensure_loaded(incoming, footprint_override=2 * ONE_GIB)  # but not with this override
+
+    assert not resident.is_loaded(), "the override was ignored, so nothing was evicted for it"
+    assert incoming.is_loaded()
+
+
+def test_footprint_override_that_alone_exceeds_capacity_still_cannot_fit() -> None:
+    residency = Residency(capacity_bytes=ONE_GIB)
+    runner = _text("small-on-its-own", footprint=ONE_GIB // 2)
+
+    with pytest.raises(CannotFit):
+        residency.ensure_loaded(runner, footprint_override=8 * ONE_GIB)
+    assert not runner.is_loaded()
+
+
 def test_a_busy_model_is_left_alone_by_idle_unload() -> None:
     residency = Residency(capacity_bytes=4 * ONE_GIB)
     runner = _text("busy")

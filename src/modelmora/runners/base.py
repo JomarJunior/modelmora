@@ -61,6 +61,24 @@ class Runner(abc.ABC):
         """
         return None
 
+    def footprint_bytes_for_image(self, *, width: int, height: int) -> int:
+        """Peak GPU footprint for generating at this size, including this request's
+        own runtime overhead (activations, VAE buffers) on top of the resting weights
+        (T063) -- a runner with none to add just returns `declared_footprint_bytes()`.
+        Only a resident runner about to *run* needs this; an idle resident one holds
+        only its weights, so eviction math for everyone else keeps using
+        `declared_footprint_bytes()` unchanged.
+        """
+        return self.declared_footprint_bytes()
+
+    def context_window_tokens(self) -> int | None:
+        """This model's fixed context window, in tokens, or `None` if unconstrained
+        (T065). Checked before queueing: a conversation plus the requested output
+        length that could never fit is refused rather than accepted and left to fail
+        or truncate mid-generation.
+        """
+        return None
+
     def generate_text(
         self,
         *,

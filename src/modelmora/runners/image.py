@@ -19,10 +19,29 @@ yet.
 from __future__ import annotations
 
 import io
+import os
 from pathlib import Path
 from typing import Any
 
 from modelmora.runners.base import GeneratedImage, Runner
+
+# SDXL's own practical ceiling on this Studio (T066): trained near 1024x1024, usable
+# well beyond it, but a size far past this is not a size this runner promises to
+# produce well, and every multiple-of-8 requirement below still applies at any size.
+_DEFAULT_MAX_WIDTH = 2048
+_DEFAULT_MAX_HEIGHT = 2048
+
+# Empirical calibration from the Studio (RTX 4090, spec 002 amendment log): the default image checkpoint
+# SDXL at 832x1216/24 steps measured ~15.2GB total GPU against a ~7GB measured
+# parameter footprint -- the remaining ~8.2GB is CFG-doubled UNet/VAE activations and
+# the diffusers CUDA allocator's own overhead, which scales with the image's pixel
+# count. A calibrated constant, not a first-principles memory model (Principle IX):
+# enough to keep a pair that truly will not fit from being loaded together (T063).
+_SDXL_OVERHEAD_BYTES_PER_PIXEL = 8_200_000_000 / (832 * 1216)
+
+
+def estimate_activation_overhead_bytes(width: int, height: int) -> int:
+    return int(width * height * _SDXL_OVERHEAD_BYTES_PER_PIXEL)
 
 
 class ImageRunner(Runner):
@@ -36,12 +55,13 @@ class ImageRunner(Runner):
         name: str,
         version: str,
         model_path: str,
-        max_width: int | None = None,
-        max_height: int | None = None,
+        max_width: int | None = _DEFAULT_MAX_WIDTH,
+        max_height: int | None = _DEFAULT_MAX_HEIGHT,
         default_steps: int = 30,
         default_guidance: float = 7.5,
         device: str = "cuda",
         declared_footprint_bytes: int | None = None,
+        sdxl_config_path: str | None = None,
     ) -> None:
         self.name = name
         self.version = version
@@ -53,6 +73,12 @@ class ImageRunner(Runner):
         self._default_steps = default_steps
         self._default_guidance = default_guidance
         self._pipeline: Any = None
+        # T064: a single-file SDXL checkpoint needs a pipeline config and tokenizer
+        # from *somewhere*; `from_single_file` will happily fetch them from the Hub at
+        # load time otherwise. Supplied here as a local directory (already cached on
+        # the Studio, `docs/usage.md`) so no lookup, cached or not, is ever needed;
+        # `local_files_only=True` in `load()` is the second, defence-in-depth half.
+        self._sdxl_config_path = sdxl_config_path or os.environ.get("MODELMORA_SDXL_CONFIG_PATH")
         # See the matching comment in `runners/text.py`: `declared_footprint_bytes()`
         # is asked before `load()` (FR-009, FR-011), so a real pipeline needs a hint
         # to report before its weights are actually resident.
@@ -61,6 +87,9 @@ class ImageRunner(Runner):
 
     def declared_footprint_bytes(self) -> int:
         return self._footprint_bytes
+
+    def footprint_bytes_for_image(self, *, width: int, height: int) -> int:
+        return self.declared_footprint_bytes() + estimate_activation_overhead_bytes(width, height)
 
     def is_loaded(self) -> bool:
         return self._pipeline is not None
@@ -82,9 +111,21 @@ class ImageRunner(Runner):
         # from whatever the pipeline itself declares at generation time (FR-008), and
         # a model whose weights ship none has nothing to disclose (filter_disclosure
         # "none" is the registry's matching judgment for such a model, T037a).
-        no_filter_kwargs = (
+        no_filter_kwargs: dict[str, Any] = (
             {} if is_single_file else {"safety_checker": None, "feature_extractor": None}
         )
+        if is_single_file:
+            # T064: no Hub lookup at load time, ever -- `HF_HUB_OFFLINE` makes
+            # huggingface_hub raise rather than silently fall back to the network if
+            # anything here were somehow not already local; `local_files_only` is
+            # `from_single_file`'s own belt for the same promise. When
+            # `MODELMORA_SDXL_CONFIG_PATH` names an already-cached local snapshot
+            # directory, `config` bypasses repo-id resolution entirely -- proven
+            # offline on the Studio (T064).
+            os.environ.setdefault("HF_HUB_OFFLINE", "1")
+            no_filter_kwargs["local_files_only"] = True
+            if self._sdxl_config_path:
+                no_filter_kwargs["config"] = self._sdxl_config_path
         load_fn = pipeline_cls.from_single_file if is_single_file else pipeline_cls.from_pretrained
         pipeline = load_fn(self._model_path, torch_dtype=torch.float16, **no_filter_kwargs)
         pipeline.set_progress_bar_config(disable=True)

@@ -161,7 +161,16 @@ Point `MODELMORA_LLAMA_SERVER_BIN` at the binary and `MODELMORA_LLAMA_CUDART_LIB
 at the directory holding its `libcudart`/`libcublas`; a prebuilt release from
 [the llama.cpp project](<llama.cpp releases>) (the
 `ubuntu-cuda-*-x64` and matching `cudart-*` assets) is the fastest way to get both
-without compiling anything.
+without compiling anything. Each `LlamaCppTextRunner` picks its own free loopback
+port unless `MODELMORA_LLAMA_SERVER_PORT` pins one.
+
+A single-file SDXL checkpoint needs a pipeline config and tokenizer from somewhere,
+too -- `diffusers` fetches them from the Hub at load time otherwise. Point
+`MODELMORA_SDXL_CONFIG_PATH` at an already-cached local snapshot directory (for
+example under `HF_HOME`, `.../<base SDXL pipeline snapshot>/snapshots/<hash>/`)
+so no lookup, cached or not, is ever needed; `serve` also forces
+`HF_HUB_OFFLINE=1` and `local_files_only=True` regardless, so an unset
+`MODELMORA_SDXL_CONFIG_PATH` fails loudly rather than reaching the network (FR-028).
 
 ### List, retire, verify, and change a default
 

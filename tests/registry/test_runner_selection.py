@@ -14,6 +14,7 @@ from pathlib import Path
 from modelmora.registry.store import ModelRecord, ServicePeriod
 from modelmora.runners.build import build_runner, declared_footprint_hint
 from modelmora.runners.image import ImageRunner
+from modelmora.runners.llamacpp import _OVERHEAD_BYTES_PER_CONTEXT_TOKEN as _LLAMACPP_OVERHEAD
 from modelmora.runners.llamacpp import LlamaCppTextRunner
 from modelmora.runners.text import TextRunner
 
@@ -65,7 +66,14 @@ def test_a_gguf_text_model_gets_the_llamacpp_runner(tmp_path: Path) -> None:
     assert isinstance(runner, LlamaCppTextRunner)
     assert runner.name == "synthetic-model"
     assert runner.reads_images is True
-    assert runner.declared_footprint_bytes() == gguf.stat().st_size + mmproj.stat().st_size
+    # File sizes plus the KV cache overhead for the runner's default context window
+    # (T063) -- calibrated, not zero, so eviction math never assumes a `.gguf` model
+    # costs only what its files weigh on disk.
+    expected_overhead = int(4096 * _LLAMACPP_OVERHEAD)
+    assert (
+        runner.declared_footprint_bytes()
+        == gguf.stat().st_size + mmproj.stat().st_size + expected_overhead
+    )
 
 
 def test_a_directory_text_model_gets_the_transformers_runner(tmp_path: Path) -> None:

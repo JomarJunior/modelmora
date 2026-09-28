@@ -31,6 +31,24 @@ from modelmora.registry.store import ModelRecord, Slot, Store
 
 __all__ = ["ModelRegistry", "ModelRecord", "RegisteredModel", "Slot"]
 
+
+def _validate_local_path(label: str, path: str) -> None:
+    """A record's `local_path` and every companion path must already exist on this
+    Studio (T070, FR-026, FR-028): the registry cannot hold a hosted model or
+    anything that runs off this machine, so a URL or a bare Hub identifier ("A URL"
+    caught here directly; a Hub id such as "org/repo" is simply not an absolute path,
+    caught by the check below it) is rejected before it is ever recorded, not
+    discovered later as a load failure.
+    """
+    if "://" in path:
+        raise ValueError(f"{label} must be a local file or directory, not a URL: {path!r}")
+    candidate = Path(path)
+    if not candidate.is_absolute():
+        raise ValueError(f"{label} must be an absolute path on this Studio: {path!r}")
+    if not candidate.exists():
+        raise ValueError(f"{label} does not exist on this Studio: {path!r}")
+
+
 _TEST_FIXTURE_PROVENANCE = {
     "source": "test-fixture",
     "weights_digest": "sha256:test-fixture",
@@ -88,6 +106,7 @@ class ModelRegistry:
         filter_disclosure: FilterDisclosure = "none",
         local_path: str | None = None,
         companion_paths: dict[str, str] | None = None,
+        companion_digests: dict[str, str] | None = None,
         now: datetime | None = None,
     ) -> ModelRecord:
         """The real primitive behind `modelmora model add` (FR-020, FR-025).
@@ -98,7 +117,14 @@ class ModelRegistry:
         and `companion_paths` (spec 002 amendment) are what let `serve` build a real
         runner from this record afterward (`cli.py`); a record added without one is
         listed and licence-tracked exactly as before, just never attached to a runner.
+        Both, and every companion path, are validated as existing absolute paths on
+        this Studio before anything is written (T070) -- never a URL or a Hub id.
         """
+        if local_path is not None:
+            _validate_local_path("local_path", local_path)
+        for role, path in (companion_paths or {}).items():
+            _validate_local_path(f"companion path {role!r}", path)
+
         moment = now or datetime.now(UTC)
         model_id = self._store.insert_model(
             name=name,
@@ -116,6 +142,7 @@ class ModelRegistry:
             filter_disclosure=filter_disclosure,
             local_path=local_path,
             companion_paths=companion_paths,
+            companion_digests=companion_digests,
         )
         record = self._store.get_by_id(model_id)
         assert record is not None
